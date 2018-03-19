@@ -1,0 +1,58 @@
+package com.mapuni.gdydcaiji.net;
+
+
+import com.mapuni.gdydcaiji.utils.LogUtils;
+
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * Created by oldJin on 2017/11/9.
+ */
+
+public class RetrofitFactory {
+
+    public static final String BASE_URL = "";
+
+    /**
+     * 请求超时时间
+     */
+    private static final int DEFAULT_TIMEOUT = 10000;
+
+
+    public static RetrofitService create(Class<RetrofitService> service) {
+        RetrofitService retrofitService = new Retrofit.Builder()
+                .client(getOkHttpClient())
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+                .create(service);
+
+        return retrofitService;
+    }
+
+    private static OkHttpClient getOkHttpClient() {
+
+        //新建log拦截器
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                LogUtils.d("request:" + message);
+            }
+        });
+        //日志显示级别
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return new OkHttpClient
+                .Builder()
+                .addInterceptor(loggingInterceptor)
+                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .build();
+    }
+
+}

@@ -2,6 +2,8 @@ package com.mapuni.gdydcaiji;
 
 import android.app.Application;
 
+import com.mapuni.gdydcaiji.utils.Utils;
+
 /**
  * Created by yf on 2018/3/15.
  */
@@ -18,6 +20,7 @@ public class GdydApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instances = this;
+        Utils.init(this);
 //        setDatabase();
     }
 

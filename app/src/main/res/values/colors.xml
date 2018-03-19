@@ -4,4 +4,13 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
+    <!-- 提示字体颜色 -->
+    <color name="hintTextColor">#CCCCCC</color>
+    <color name="login_bg">#0090fe</color>
+    <!-- 登录normal -->
+    <color name="loginNormal">#00BFFF</color>
+    <!-- 登录Press -->
+    <color name="loginPress">#00aafb</color>
+    <color name="mapbtnPress">#66CCCCCC</color>
+    <color name="mapbtnNormal">#33CCCCCC</color>
 </resources>

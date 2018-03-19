@@ -6,15 +6,52 @@
     android:layout_height="match_parent"
     tools:context="com.mapuni.gdydcaiji.activity.MainActivity">
 
-    <include layout="@layout/layout_title" />
+    <com.esri.android.map.MapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></com.esri.android.map.MapView>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+    <Button
+        android:id="@+id/btn_periphery"
+        style="@style/style_btn_map"
+        android:text="周边"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_create_poi"
+        style="@style/style_btn_map"
+        android:text="POI"
+        app:layout_constraintStart_toEndOf="@+id/btn_periphery"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_create_line"
+        style="@style/style_btn_map"
+        android:text="新建线"
+        app:layout_constraintStart_toEndOf="@+id/btn_create_poi"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_create_gon"
+        style="@style/style_btn_map"
+        android:text="新建面"
+        app:layout_constraintStart_toEndOf="@+id/btn_create_line"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_upload_data"
+        style="@style/style_btn_map"
+        android:text="上传数据"
+        app:layout_constraintStart_toEndOf="@+id/btn_create_gon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_marker_setting"
+        style="@style/style_btn_map"
+        android:text="标注设置"
+        app:layout_constraintStart_toEndOf="@+id/btn_upload_data"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>
