@@ -2,25 +2,16 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
 import com.esri.android.map.event.OnLongPressListener;
-import com.esri.android.map.event.OnPanListener;
-import com.esri.android.map.event.OnPinchListener;
 import com.esri.android.map.event.OnSingleTapListener;
 import com.esri.android.runtime.ArcGISRuntime;
 import com.esri.core.geometry.Geometry;
@@ -41,29 +32,15 @@ import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity implements OnLongPressListener, OnSingleTapListener {
 
     @BindView(R.id.mapview)
     MapView mapview;
-    @BindView(R.id.btn_periphery)
-    Button btnPeriphery;
-    @BindView(R.id.btn_create_poi)
-    Button btnCreatePoi;
-    @BindView(R.id.btn_create_line)
-    Button btnCreateLine;
-    @BindView(R.id.btn_create_gon)
-    Button btnCreateGon;
-    @BindView(R.id.btn_upload_data)
-    Button btnUploadData;
-    @BindView(R.id.btn_marker_setting)
-    Button btnMarkerSetting;
     private long mExitTime;
     private GraphicsLayer graphicsLayer;
     private String mapFileName;
@@ -179,6 +156,23 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
         builder.show();
     }
 
+    @OnClick({R.id.btn_periphery, R.id.btn_create_poi, R.id.btn_create_line, R.id.btn_create_gon, R.id.btn_upload_data, R.id.btn_marker_setting})
+    public void onViewClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_periphery:
+                break;
+            case R.id.btn_create_poi:
+                break;
+            case R.id.btn_create_line:
+                break;
+            case R.id.btn_create_gon:
+                break;
+            case R.id.btn_upload_data:
+                break;
+            case R.id.btn_marker_setting:
+                break;
+        }
+    }
 
     @Override
     public boolean onLongPress(float v, float v1) {
