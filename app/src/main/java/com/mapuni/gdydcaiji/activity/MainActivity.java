@@ -31,6 +31,9 @@ import com.mapuni.gdydcaiji.utils.ScreenUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.io.File;
 import java.util.List;
 
@@ -66,6 +69,7 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
 
     @Override
     protected void initView() {
+        EventBus.getDefault().register(this);
         PermissionUtils.requestAllPermission(this);
 
     }
@@ -149,7 +153,7 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                openActivity(mContext, DownloadMapActivity.class);
+                openActivity(mContext, DownloadMapActivity.class);
             }
         });
         builder.setNegativeButton("取消", null);
@@ -350,6 +354,12 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
         return (GraphicsLayer) mapview.getLayer(1);
     }
 
+    @Subscribe
+    public void onEventMainThread(DownloadMapActivity.SuccessEvent successEvent) {
+        // 下载成功
+        getAllFiles();
+    }
+
     /**
      * @param keyCode
      * @param event
@@ -376,5 +386,11 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
         } else {
             finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

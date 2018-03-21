@@ -13,4 +13,6 @@
     <color name="loginPress">#00aafb</color>
     <color name="mapbtnPress">#66CCCCCC</color>
     <color name="mapbtnNormal">#33CCCCCC</color>
+    <color name="gray_line">#D4D3D7</color>
+    <color name="darkgray">#A9A9A9</color><!--暗灰色 -->
 </resources>

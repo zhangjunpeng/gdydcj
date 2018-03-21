@@ -30,8 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     EditText etPassword;
     @BindView(R.id.cb_remember)
     CheckBox cbRemember;
-    @BindView(R.id.btn_login)
-    Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void login(String username, String password) {
 //        final Call<LoginBean> call = RetrofitFactory.create(RetrofitService.class)
-//                .login(username, password, bill);
+//                .login(username, password);
 //        // Dialog
 //        final ProgressDialog pd = new ProgressDialog(this);
 //        pd.setMessage("正在登录...");
