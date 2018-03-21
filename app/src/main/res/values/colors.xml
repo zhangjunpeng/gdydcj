@@ -15,6 +15,9 @@
     <color name="mapbtnNormal">#33CCCCCC</color>
     <color name="gray_line">#D4D3D7</color>
     <color name="darkgray">#A9A9A9</color><!--暗灰色 -->
+    <color name="black_text">#333333</color>
+    <color name="color_deep_sky_blue">#00BFFF</color>
+    <color name="color_black">#000000</color>
 
     <color name="themeColor">#FD9230</color>
     <color name="themeColor_press">#FBB06C</color>

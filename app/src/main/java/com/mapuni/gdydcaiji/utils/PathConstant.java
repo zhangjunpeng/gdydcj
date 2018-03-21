@@ -19,7 +19,9 @@ public class PathConstant {
     public static final String DATABASE_PATH = ROOT_PATH + "/database";
     // ZIP路径
     public static final String ZIP_PATH = ROOT_PATH + "/data";
-    // 图片路径
+    // 临时图片路径
+    public static final String IMAGE_PATH_CACHE = ROOT_PATH + "/chcheimg" + "/chche.jpg";
+    // 压缩后图片路径
     public static final String IMAGE_PATH = ROOT_PATH + "/img";
 
 }
