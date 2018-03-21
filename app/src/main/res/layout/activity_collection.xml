@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
     <Button
-        android:id="@+id/newline_collect"
+        android:id="@+id/louyu_collect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#49878787"
@@ -45,7 +45,7 @@
         android:text="面采集"
         android:layout_marginLeft="14dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintLeft_toRightOf="@+id/newline_collect"
+        app:layout_constraintLeft_toRightOf="@+id/louyu_collect"
         app:layout_constraintTop_toTopOf="parent"
         />
     <ImageView
@@ -56,7 +56,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginLeft="14dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="60dp"
         />
     <ImageView
         android:layout_width="30dp"
@@ -74,9 +74,57 @@
         android:layout_height="wrap_content"
         android:background="#49878787"
         android:text="村采集"
-        android:layout_marginTop="20dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="14dp"
-        app:layout_constraintTop_toBottomOf="@id/newploygon_collect"
+        app:layout_constraintTop_toBottomOf="@+id/newploygon_collect"
+        android:layout_marginTop="10dp"
         />
+    <Button
+        android:id="@+id/tianjia_collect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#49878787"
+        android:text="填加点"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="14dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    <LinearLayout
+        android:id="@+id/linear_tools_collect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        >
+
+        <Button
+            android:id="@+id/baocun_collect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#49878787"
+            android:text="保存"
+
+            />
+        <Button
+            android:id="@+id/houtui_collect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#49878787"
+            android:text="后退"
+            android:layout_marginLeft="14dp"
+
+            />
+        <Button
+            android:id="@+id/chanel_collect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#49878787"
+            android:text="取消"
+            android:layout_marginLeft="14dp"
+            />
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
