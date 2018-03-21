@@ -7,8 +7,6 @@ import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
 import com.mapuni.gdydcaiji.R
-import com.mapuni.gdydcaiji.R.id.dingwei_collect
-import com.mapuni.gdydcaiji.R.id.mapview_collect
 import kotlinx.android.synthetic.main.activity_collection.*
 
 
