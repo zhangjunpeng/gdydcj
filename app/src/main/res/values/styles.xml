@@ -17,6 +17,59 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="HintText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">3</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/black_text</item>
+    </style>
+
+    <style name="CollectEditText">
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:layout_weight">7</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@null</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black_text</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CustomSpinner">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">7</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:dropDownVerticalOffset">48dp</item>
+    </style>
+
+
+    <style name="HorizontalLinearLayout">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    
+    <!-- Dialog样式 -->
+    <style name="ChooseDialogStyle" parent="android:Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Dialog进出动画 -->
+    <style name="DialogAnimation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_out</item>
+    </style>
+    
     <!-- 提示TextView样式 -->
     <style name="hintTextViewStyle">
         <item name="android:layout_width">wrap_content</item>
