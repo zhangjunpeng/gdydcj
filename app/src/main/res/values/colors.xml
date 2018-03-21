@@ -15,4 +15,8 @@
     <color name="mapbtnNormal">#33CCCCCC</color>
     <color name="gray_line">#D4D3D7</color>
     <color name="darkgray">#A9A9A9</color><!--暗灰色 -->
+
+    <color name="themeColor">#FD9230</color>
+    <color name="themeColor_press">#FBB06C</color>
+
 </resources>
