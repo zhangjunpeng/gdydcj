@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.mapuni.gdydcaiji.R
 
 class NewPOIActivity : AppCompatActivity() {
 
