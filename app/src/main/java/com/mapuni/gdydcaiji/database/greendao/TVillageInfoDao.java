@@ -44,6 +44,7 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
         public final static Property Opttime = new Property(17, java.util.Date.class, "opttime", false, "OPTTIME");
         public final static Property Type = new Property(18, String.class, "type", false, "TYPE");
         public final static Property Img = new Property(19, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(20, int.class, "flag", false, "FLAG");
     }
 
 
@@ -78,7 +79,8 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
                 "\"LNG\" REAL," + // 16: lng
                 "\"OPTTIME\" INTEGER," + // 17: opttime
                 "\"TYPE\" TEXT," + // 18: type
-                "\"IMG\" TEXT);"); // 19: img
+                "\"IMG\" TEXT," + // 19: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 20: flag
     }
 
     /** Drops the underlying database table. */
@@ -190,6 +192,7 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
         if (img != null) {
             stmt.bindString(20, img);
         }
+        stmt.bindLong(21, entity.getFlag());
     }
 
     @Override
@@ -295,6 +298,7 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
         if (img != null) {
             stmt.bindString(20, img);
         }
+        stmt.bindLong(21, entity.getFlag());
     }
 
     @Override
@@ -324,7 +328,8 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
             cursor.isNull(offset + 16) ? null : cursor.getDouble(offset + 16), // lng
             cursor.isNull(offset + 17) ? null : new java.util.Date(cursor.getLong(offset + 17)), // opttime
             cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // type
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19) // img
+            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // img
+            cursor.getInt(offset + 20) // flag
         );
         return entity;
     }
@@ -351,6 +356,7 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
         entity.setOpttime(cursor.isNull(offset + 17) ? null : new java.util.Date(cursor.getLong(offset + 17)));
         entity.setType(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
         entity.setImg(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
+        entity.setFlag(cursor.getInt(offset + 20));
      }
     
     @Override

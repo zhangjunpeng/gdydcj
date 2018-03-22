@@ -31,7 +31,7 @@ public class PermissionUtils {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.INTERNET
-                        
+
                 )
                 .rationale(new RationaleListener() {
                     @Override
@@ -48,6 +48,8 @@ public class PermissionUtils {
                         File file2 = new File(PathConstant.DOWNLOAD_MAP_PATH);
                         File file3 = new File(PathConstant.DATABASE_PATH);
                         File file4 = new File(PathConstant.ZIP_PATH);
+                        File file5 = new File(PathConstant.IMAGE_PATH);
+                        File file6 = new File(PathConstant.IMAGE_PATH_CACHE);
                         if (!file1.exists()) {
                             file1.mkdirs();
                         }
@@ -60,6 +62,13 @@ public class PermissionUtils {
                         if (!file4.exists()) {
                             file4.mkdirs();
                         }
+                        if (!file5.exists()) {
+                            file5.mkdirs();
+                        }
+                        if (!file6.exists()) {
+                            file6.mkdirs();
+                        }
+
                     }
 
                     @Override

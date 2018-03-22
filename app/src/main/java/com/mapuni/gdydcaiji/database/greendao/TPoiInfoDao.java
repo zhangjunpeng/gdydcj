@@ -52,6 +52,7 @@ public class TPoiInfoDao extends AbstractDao<TPoiInfo, Long> {
         public final static Property Lng = new Property(25, Double.class, "lng", false, "LNG");
         public final static Property Opttime = new Property(26, java.util.Date.class, "opttime", false, "OPTTIME");
         public final static Property Img = new Property(27, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(28, int.class, "flag", false, "FLAG");
     }
 
 
@@ -94,7 +95,8 @@ public class TPoiInfoDao extends AbstractDao<TPoiInfo, Long> {
                 "\"LAT\" REAL," + // 24: lat
                 "\"LNG\" REAL," + // 25: lng
                 "\"OPTTIME\" INTEGER," + // 26: opttime
-                "\"IMG\" TEXT);"); // 27: img
+                "\"IMG\" TEXT," + // 27: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 28: flag
     }
 
     /** Drops the underlying database table. */
@@ -246,6 +248,7 @@ public class TPoiInfoDao extends AbstractDao<TPoiInfo, Long> {
         if (img != null) {
             stmt.bindString(28, img);
         }
+        stmt.bindLong(29, entity.getFlag());
     }
 
     @Override
@@ -391,6 +394,7 @@ public class TPoiInfoDao extends AbstractDao<TPoiInfo, Long> {
         if (img != null) {
             stmt.bindString(28, img);
         }
+        stmt.bindLong(29, entity.getFlag());
     }
 
     @Override
@@ -428,7 +432,8 @@ public class TPoiInfoDao extends AbstractDao<TPoiInfo, Long> {
             cursor.isNull(offset + 24) ? null : cursor.getDouble(offset + 24), // lat
             cursor.isNull(offset + 25) ? null : cursor.getDouble(offset + 25), // lng
             cursor.isNull(offset + 26) ? null : new java.util.Date(cursor.getLong(offset + 26)), // opttime
-            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27) // img
+            cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // img
+            cursor.getInt(offset + 28) // flag
         );
         return entity;
     }
@@ -463,6 +468,7 @@ public class TPoiInfoDao extends AbstractDao<TPoiInfo, Long> {
         entity.setLng(cursor.isNull(offset + 25) ? null : cursor.getDouble(offset + 25));
         entity.setOpttime(cursor.isNull(offset + 26) ? null : new java.util.Date(cursor.getLong(offset + 26)));
         entity.setImg(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
+        entity.setFlag(cursor.getInt(offset + 28));
      }
     
     @Override

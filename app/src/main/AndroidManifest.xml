@@ -23,7 +23,13 @@
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.DownloadMapActivity">
         </activity>
-        
+        <activity android:name=".activity.PoiDetail" />
+        <activity android:name=".activity.BuildingDetail" ></activity>
+        <activity android:name=".activity.SocialDetail" />
+        <activity android:name=".activity.VillageDetail" />
+        <activity android:name=".activity.UploadDataActivity" />
+        <activity android:name=".activity.ImageActivity" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.gdydcaiji.fileprovider"

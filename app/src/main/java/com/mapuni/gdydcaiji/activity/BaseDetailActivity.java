@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventBean;
@@ -59,6 +60,8 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     //是否是新增
     protected boolean isInsert;
     protected byte[] imgUrl;
+    protected double lat;
+    protected double lng;
 
     @Override
     protected void initView() {
@@ -90,6 +93,8 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
             showData();
         } else {
             //新增
+            lat = getIntent().getDoubleExtra("lat", 0);
+            lng = getIntent().getDoubleExtra("lng", 0);
             edit.setVisibility(View.GONE);
             cover.setVisibility(View.GONE);
             btnSave.setVisibility(View.VISIBLE);
@@ -110,8 +115,11 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         if (imgUrl != null && imgUrl.length > 0) {
             Glide
                     .with(mContext)
-                    .load(imgUrl)
-                    .apply(new RequestOptions().error(R.drawable.not_have_image).timeout(1000))
+                    .load(Base64.decode(imgUrl, Base64.DEFAULT))
+                    .apply(new RequestOptions()
+                            .error(R.drawable.not_have_image)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .timeout(1000))
                     .into(ivImg);
         }
     }
@@ -132,7 +140,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
             String pathStr = null;
             switch (requestCode) {
                 case 5001:
-                    pathStr = PathConstant.IMAGE_PATH_CACHE;
+                    pathStr = PathConstant.IMAGE_PATH_CACHE + "/chche.jpg";
                     break;
                 case 5002:
                     if (data != null) {
@@ -153,6 +161,13 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
                         @Override
                         public void onSuccess(File file) {
                             imgUrl = Base64.encode(FileIOUtils.readFile2BytesByChannel(file), Base64.DEFAULT);
+                            Glide
+                                    .with(mContext)
+                                    .load(Base64.decode(imgUrl, Base64.DEFAULT))
+                                    .apply(new RequestOptions()
+                                            .error(R.drawable.not_have_image)
+                                            .diskCacheStrategy(DiskCacheStrategy.NONE).timeout(1000))
+                                    .into(ivImg);
                         }
 
                         @Override
@@ -195,7 +210,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
                 if (imgUrl == null || imgUrl.length == 0) {
                     //没照片
                     // 添加照片
-                    DialogUtils.showChooseDialog(BaseDetailActivity.this, PathConstant.IMAGE_PATH_CACHE);
+                    DialogUtils.showChooseDialog(BaseDetailActivity.this, PathConstant.IMAGE_PATH_CACHE + "/chche.jpg");
                 } else {
                     viewPluImg();
                 }
@@ -228,6 +243,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     public void deletePhoto(EventBean event) {
         if ("deleteImg".equals(event.beanStr)) {
             imgUrl = null;
+            ivImg.setImageResource(R.drawable.selector_camera);
         }
     }
 

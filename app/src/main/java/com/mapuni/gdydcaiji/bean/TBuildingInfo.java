@@ -1,20 +1,26 @@
 package com.mapuni.gdydcaiji.bean;
 
+import com.google.gson.annotations.Expose;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Date;
+
 import org.greenrobot.greendao.annotation.Generated;
+
 /**
  * 楼宇信息点采集不全
- * @author meiak
  *
+ * @author meiak
  */
 @Entity
-public class TBuildingInfo {
+public class TBuildingInfo implements Serializable{
+    private static final long serialVersionUID = 1L;
     @Id
     private Long id;
-    
+
     private String bm;
 
     private String csbs;
@@ -27,16 +33,20 @@ public class TBuildingInfo {
 
     private String lygs;
 
+    @Expose
     private String lytype;
 
+    @Expose
     private String lyxz;
 
+    @Expose
     private String lyfl;
 
     private String xqid;
 
     private String xqmc;
 
+    @Expose
     private String name;
 
     private String firstad;
@@ -45,14 +55,18 @@ public class TBuildingInfo {
 
     private String thirdad;
 
+    @Expose
     private String forthad;
 
+    @Expose
     private String fifad;
 
+    @Expose
     private String sixad;
 
     private String lydz;
 
+    @Expose
     private String lycs;
 
     private String lydscs;
@@ -69,28 +83,35 @@ public class TBuildingInfo {
 
     private Double lymj;
 
+    @Expose
     private String optuser;
 
+    @Expose
     private Double lat;
 
+    @Expose
     private Double lng;
 
+    @Expose
     private Date opttime;
 
     private String lygd;
 
+    @Expose
     private String lyzhs;
 
+    @Expose
     private String img;
 
-    @Generated(hash = 1655551627)
-    public TBuildingInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
-            String gsjd, String lygs, String lytype, String lyxz, String lyfl,
-            String xqid, String xqmc, String name, String firstad, String secondad,
-            String thirdad, String forthad, String fifad, String sixad, String lydz,
-            String lycs, String lydscs, Double x, Double y, Double lydbx, Date gxsj,
-            String bz, Double lymj, String optuser, Double lat, Double lng,
-            Date opttime, String lygd, String lyzhs, String img) {
+    private int flag; //是否已上传状态（1-> 已上传、0->未上传）
+
+    @Generated(hash = 224011539)
+    public TBuildingInfo(Long id, String bm, String csbs, String qxbs, String xzbs, String gsjd,
+            String lygs, String lytype, String lyxz, String lyfl, String xqid, String xqmc, String name,
+            String firstad, String secondad, String thirdad, String forthad, String fifad, String sixad,
+            String lydz, String lycs, String lydscs, Double x, Double y, Double lydbx, Date gxsj,
+            String bz, Double lymj, String optuser, Double lat, Double lng, Date opttime, String lygd,
+            String lyzhs, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.csbs = csbs;
@@ -126,6 +147,7 @@ public class TBuildingInfo {
         this.lygd = lygd;
         this.lyzhs = lyzhs;
         this.img = img;
+        this.flag = flag;
     }
 
     @Generated(hash = 1921453099)
@@ -410,5 +432,13 @@ public class TBuildingInfo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getFlag() {
+        return this.flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 }

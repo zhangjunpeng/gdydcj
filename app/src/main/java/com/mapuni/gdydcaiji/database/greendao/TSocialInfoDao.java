@@ -54,6 +54,7 @@ public class TSocialInfoDao extends AbstractDao<TSocialInfo, Long> {
         public final static Property Zhs = new Property(27, String.class, "zhs", false, "ZHS");
         public final static Property Lds = new Property(28, String.class, "lds", false, "LDS");
         public final static Property Img = new Property(29, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(30, int.class, "flag", false, "FLAG");
     }
 
 
@@ -98,7 +99,8 @@ public class TSocialInfoDao extends AbstractDao<TSocialInfo, Long> {
                 "\"LYSL\" TEXT," + // 26: lysl
                 "\"ZHS\" TEXT," + // 27: zhs
                 "\"LDS\" TEXT," + // 28: lds
-                "\"IMG\" TEXT);"); // 29: img
+                "\"IMG\" TEXT," + // 29: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 30: flag
     }
 
     /** Drops the underlying database table. */
@@ -260,6 +262,7 @@ public class TSocialInfoDao extends AbstractDao<TSocialInfo, Long> {
         if (img != null) {
             stmt.bindString(30, img);
         }
+        stmt.bindLong(31, entity.getFlag());
     }
 
     @Override
@@ -415,6 +418,7 @@ public class TSocialInfoDao extends AbstractDao<TSocialInfo, Long> {
         if (img != null) {
             stmt.bindString(30, img);
         }
+        stmt.bindLong(31, entity.getFlag());
     }
 
     @Override
@@ -454,7 +458,8 @@ public class TSocialInfoDao extends AbstractDao<TSocialInfo, Long> {
             cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // lysl
             cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27), // zhs
             cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // lds
-            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29) // img
+            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // img
+            cursor.getInt(offset + 30) // flag
         );
         return entity;
     }
@@ -491,6 +496,7 @@ public class TSocialInfoDao extends AbstractDao<TSocialInfo, Long> {
         entity.setZhs(cursor.isNull(offset + 27) ? null : cursor.getString(offset + 27));
         entity.setLds(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
         entity.setImg(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
+        entity.setFlag(cursor.getInt(offset + 30));
      }
     
     @Override

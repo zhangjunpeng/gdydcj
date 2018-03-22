@@ -106,7 +106,7 @@
                         android:text="联系电话" />
 
                     <com.mapuni.gdydcaiji.view.ClearEditText
-                        android:id="@+id/et_sslymc"
+                        android:id="@+id/et_lxdh"
                         style="@style/CollectEditText"
                         android:inputType="phone"/>
 

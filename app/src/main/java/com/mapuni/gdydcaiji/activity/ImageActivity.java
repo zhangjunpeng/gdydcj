@@ -3,10 +3,12 @@ package com.mapuni.gdydcaiji.activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventBean;
@@ -35,10 +37,13 @@ public class ImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         ButterKnife.bind(this);
         position = getIntent().getIntExtra("position", -1);
-        String path = getIntent().getStringExtra("path");
+        byte[] path = getIntent().getByteArrayExtra("path");
         Glide.with(this)
-                .load(path)
-                .apply(new RequestOptions().error(R.drawable.not_have_image).timeout(1000))
+                .load(Base64.decode(path, Base64.DEFAULT))
+                .apply(new RequestOptions()
+                        .error(R.drawable.not_have_image)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .timeout(1000))
                 .into(imageView);
     }
 
