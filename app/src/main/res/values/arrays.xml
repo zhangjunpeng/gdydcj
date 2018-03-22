@@ -19,6 +19,11 @@
         <item>医院</item>
     </string-array>
 
+    <string-array name="village_type">
+        <item>行政村</item>
+        <item>自然村</item>
+    </string-array>
+
     <string-array name="building_fl">
         <item>党政军机关</item>
         <item>党政军宿舍</item>

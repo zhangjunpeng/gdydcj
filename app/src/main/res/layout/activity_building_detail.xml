@@ -30,7 +30,6 @@
                 <LinearLayout style="@style/HorizontalLinearLayout">
 
                     <TextView
-                        android:id="@+id/tv_person_name"
                         style="@style/HintText"
                         android:text="楼宇类型" />
 
@@ -79,7 +78,6 @@
                 <LinearLayout style="@style/HorizontalLinearLayout">
 
                     <TextView
-                        android:id="@+id/tv_person_nation"
                         style="@style/HintText"
                         android:text="第四级" />
 
@@ -92,7 +90,6 @@
                 <LinearLayout style="@style/HorizontalLinearLayout">
 
                     <TextView
-                        android:id="@+id/tv_person_identity"
                         style="@style/HintText"
                         android:text="第五级" />
 
@@ -105,7 +102,6 @@
                 <LinearLayout style="@style/HorizontalLinearLayout">
 
                     <TextView
-                        android:id="@+id/tv_person_birth"
                         style="@style/HintText"
                         android:text="第六级" />
 
@@ -118,7 +114,6 @@
                 <LinearLayout style="@style/HorizontalLinearLayout">
 
                     <TextView
-                        android:id="@+id/tv_person_tel"
                         style="@style/HintText"
                         android:text="楼宇层数" />
 
@@ -153,7 +148,8 @@
                         android:id="@+id/iv_image"
                         android:layout_width="0dp"
                         android:layout_height="96dp"
-                        android:layout_weight="7" />
+                        android:layout_weight="7"
+                        android:src="@drawable/selector_camera" />
 
                 </LinearLayout>
 

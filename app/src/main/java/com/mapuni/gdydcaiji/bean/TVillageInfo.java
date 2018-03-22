@@ -1,21 +1,26 @@
 package com.mapuni.gdydcaiji.bean;
 
+import com.google.gson.annotations.Expose;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Date;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * 行政村、自然村点采集
- * @author meiak
  *
+ * @author meiak
  */
 @Entity
-public class TVillageInfo {
+public class TVillageInfo implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     private Long id;
-    
+
     private String bm;
 
     private String csbs;
@@ -28,8 +33,10 @@ public class TVillageInfo {
 
     private String gsxzc;
 
+    @Expose
     private String name;
 
+    @Expose
     private String dz;
 
     private Double x;
@@ -42,23 +49,31 @@ public class TVillageInfo {
 
     private Double czmj;
 
+    @Expose
     private String optuser;
 
+    @Expose
     private Double lat;
 
+    @Expose
     private Double lng;
 
+    @Expose
     private Date opttime;
 
+    @Expose
     private String type;
 
+    @Expose
     private String img;
 
-    @Generated(hash = 1434740945)
+    private int flag; //是否已上传状态（1-> 已上传、0->未上传）
+
+    @Generated(hash = 619381927)
     public TVillageInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
-            String gsjd, String gsxzc, String name, String dz, Double x, Double y,
-            Double zrcbj, Date gxsj, Double czmj, String optuser, Double lat,
-            Double lng, Date opttime, String type, String img) {
+                        String gsjd, String gsxzc, String name, String dz, Double x, Double y,
+                        Double zrcbj, Date gxsj, Double czmj, String optuser, Double lat,
+                        Double lng, Date opttime, String type, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.csbs = csbs;
@@ -79,6 +94,7 @@ public class TVillageInfo {
         this.opttime = opttime;
         this.type = type;
         this.img = img;
+        this.flag = flag;
     }
 
     @Generated(hash = 439369900)
@@ -243,5 +259,13 @@ public class TVillageInfo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getFlag() {
+        return this.flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 }

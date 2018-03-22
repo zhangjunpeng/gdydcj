@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.TextUtils;
@@ -22,7 +23,13 @@ import com.esri.core.map.Graphic;
 import com.esri.core.symbol.PictureMarkerSymbol;
 import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
+import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.database.greendao.DaoSession;
+import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
+import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
+import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
+import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
 import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.PermissionUtils;
@@ -164,6 +171,8 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
     public void onViewClick(View view) {
         switch (view.getId()) {
             case R.id.btn_periphery:
+                Intent intent1 = new Intent(mContext, BuildingDetail.class);
+                startActivity(intent1);
                 break;
             case R.id.btn_create_poi:
                 break;
@@ -172,11 +181,14 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
             case R.id.btn_create_gon:
                 break;
             case R.id.btn_upload_data:
+                Intent intent = new Intent(mContext, UploadDataActivity.class);
+                startActivity(intent);
                 break;
             case R.id.btn_marker_setting:
                 break;
         }
     }
+
 
     @Override
     public boolean onLongPress(float v, float v1) {

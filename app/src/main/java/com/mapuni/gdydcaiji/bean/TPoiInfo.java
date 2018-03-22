@@ -1,8 +1,11 @@
 package com.mapuni.gdydcaiji.bean;
 
+import com.google.gson.annotations.Expose;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
@@ -12,7 +15,8 @@ import org.greenrobot.greendao.annotation.Generated;
  *
  */
 @Entity
-public class TPoiInfo {
+public class TPoiInfo implements Serializable{
+    private static final long serialVersionUID = 1L;
     @Id
     private Long id;
     
@@ -26,6 +30,7 @@ public class TPoiInfo {
 
     private String gsjd;
 
+    @Expose
     private String name;
 
     private String firstad;
@@ -34,22 +39,29 @@ public class TPoiInfo {
 
     private String thirdad;
 
+    @Expose
     private String forthad;
 
+    @Expose
     private String fifad;
 
+    @Expose
     private String sixad;
 
+    @Expose
     private String sevenad;
 
     private String lydz;
 
+    @Expose
     private String fl;
 
+    @Expose
     private String mjdj;
 
     private String sslc;
 
+    @Expose
     private String sslymc;
 
     private Double x;
@@ -60,23 +72,30 @@ public class TPoiInfo {
 
     private String bz;
 
+    @Expose
     private String optuser;
 
+    @Expose
     private Double lat;
 
+    @Expose
     private Double lng;
 
+    @Expose
     private Date opttime;
 
+    @Expose
     private String img;
 
-    @Generated(hash = 1645889607)
+    private int flag; //是否已上传状态（1-> 已上传、0->未上传）
+
+    @Generated(hash = 1969789401)
     public TPoiInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
             String gsjd, String name, String firstad, String secondad,
             String thirdad, String forthad, String fifad, String sixad,
             String sevenad, String lydz, String fl, String mjdj, String sslc,
             String sslymc, Double x, Double y, Date gxsj, String bz, String optuser,
-            Double lat, Double lng, Date opttime, String img) {
+            Double lat, Double lng, Date opttime, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.csbs = csbs;
@@ -105,6 +124,7 @@ public class TPoiInfo {
         this.lng = lng;
         this.opttime = opttime;
         this.img = img;
+        this.flag = flag;
     }
 
     @Generated(hash = 1842064909)
@@ -333,5 +353,13 @@ public class TPoiInfo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getFlag() {
+        return this.flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 }

@@ -20,8 +20,10 @@ public class PathConstant {
     // ZIP路径
     public static final String ZIP_PATH = ROOT_PATH + "/data";
     // 临时图片路径
-    public static final String IMAGE_PATH_CACHE = ROOT_PATH + "/chcheimg" + "/chche.jpg";
+    public static final String IMAGE_PATH_CACHE = ROOT_PATH + "/chcheimg";
     // 压缩后图片路径
     public static final String IMAGE_PATH = ROOT_PATH + "/img";
+    // 上传数据路径
+    public static final String UPLOAD_DATA = ROOT_PATH + "/uploaddata";
 
 }

@@ -1,8 +1,11 @@
 package com.mapuni.gdydcaiji.bean;
 
+import com.google.gson.annotations.Expose;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
@@ -12,7 +15,8 @@ import org.greenrobot.greendao.annotation.Generated;
  *
  */
 @Entity
-public class TSocialInfo {
+public class TSocialInfo implements Serializable{
+    private static final long serialVersionUID = 1L;
     @Id
     private Long id;
     
@@ -28,6 +32,7 @@ public class TSocialInfo {
 
     private String xqid;
 
+    @Expose
     private String name;
 
     private String firstad;
@@ -36,10 +41,13 @@ public class TSocialInfo {
 
     private String thirdad;
 
+    @Expose
     private String forthad;
 
+    @Expose
     private String fifad;
 
+    @Expose
     private String xqdz;
 
     private Double x;
@@ -48,22 +56,29 @@ public class TSocialInfo {
 
     private Date gxsj;
 
+    @Expose
     private String wyxx;
 
+    @Expose
     private String lxdh;
 
     private String glgx;
 
     private Double xqmj;
 
+    @Expose
     private String optuser;
 
+    @Expose
     private Double lat;
 
+    @Expose
     private Double lng;
 
+    @Expose
     private Date opttime;
 
+    @Expose
     private String type;
 
     private String lysl;
@@ -72,15 +87,18 @@ public class TSocialInfo {
 
     private String lds;
 
+    @Expose
     private String img;
 
-    @Generated(hash = 329196633)
+    private int flag; //是否已上传状态（1-> 已上传、0->未上传）
+
+    @Generated(hash = 1407505096)
     public TSocialInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
             String gsjd, String xqid, String name, String firstad, String secondad,
             String thirdad, String forthad, String fifad, String xqdz, Double x,
             Double y, Date gxsj, String wyxx, String lxdh, String glgx, Double xqmj,
             String optuser, Double lat, Double lng, Date opttime, String type,
-            String lysl, String zhs, String lds, String img) {
+            String lysl, String zhs, String lds, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.csbs = csbs;
@@ -111,6 +129,7 @@ public class TSocialInfo {
         this.zhs = zhs;
         this.lds = lds;
         this.img = img;
+        this.flag = flag;
     }
 
     @Generated(hash = 282476677)
@@ -355,5 +374,13 @@ public class TSocialInfo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getFlag() {
+        return this.flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 }

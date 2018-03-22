@@ -51,6 +51,18 @@
 
                 </LinearLayout>
 
+                <LinearLayout style="@style/HorizontalLinearLayout">
+
+                    <TextView
+                        style="@style/HintText"
+                        android:text="分类" />
+
+                    <Spinner
+                        android:id="@+id/sp_fl"
+                        style="@style/CustomSpinner" />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="96dp"
