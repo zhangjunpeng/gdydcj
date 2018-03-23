@@ -2,54 +2,84 @@ package com.mapuni.gdydcaiji.activity
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
+import com.esri.android.map.event.OnSingleTapListener
 import com.esri.android.runtime.ArcGISRuntime
 import com.esri.core.geometry.Point
 import com.esri.core.geometry.Polygon
 import com.esri.core.map.Graphic
-import com.esri.core.symbol.PictureMarkerSymbol
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
+import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
-import com.mapuni.gdydcaiji.utils.ScreenUtils
+import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao
+import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao
+import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao
+import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao
 import kotlinx.android.synthetic.main.activity_collection.*
-import java.util.*
+import org.greenrobot.eventbus.EventBus
+import kotlin.collections.ArrayList
 
 
-class CollectionActivity : AppCompatActivity(),View.OnClickListener {
+class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapListener,View.OnTouchListener {
+
 
 
     var mapfilePath = ""
 
-    //poi0，楼宇采集1，采集面2，寸采集3
+    //poi0，楼宇采集1，采集面2，村采集3,
     //除2都是点
+    //4特殊，范围选择点
     var currentCode=0
     var targetCode=-1
 
     val pointPloygon=ArrayList<Point>()
     lateinit var graphicsLayer: GraphicsLayer
-
     lateinit  var alertDialog:AlertDialog
+
+    //poi跳转请求码
+    private val requestCode_poi:Int=10001
+    //面跳转请求码
+    val requestCode_ploygon:Int=10002
+
+    var tolerance:Int=100
+
+    //数据库操作对象
+    lateinit var tBuildingInfoDao:TBuildingInfoDao
+    lateinit var tPoiInfoDao: TPoiInfoDao
+    lateinit var tSocialInfoDao: TSocialInfoDao
+    lateinit var tVillageInfoDao: TVillageInfoDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
 
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
         mapfilePath = Environment.getExternalStorageDirectory().absolutePath+"/map/" + "/layers"
+        initData()
         initMapView()
         initListener()
         upDateView()
+
+
+    }
+
+    private fun initData() {
+        tBuildingInfoDao=GdydApplication.instances.daoSession.tBuildingInfoDao
+        tPoiInfoDao=GdydApplication.instances.daoSession.tPoiInfoDao
+        tSocialInfoDao=GdydApplication.instances.daoSession.tSocialInfoDao
+        tVillageInfoDao=GdydApplication.instances.daoSession.tVillageInfoDao
     }
 
     private fun initListener() {
@@ -70,13 +100,14 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
 
     }
 
-    fun initMapView() {
+    private fun initMapView() {
 
         val layer = ArcGISLocalTiledLayer(mapfilePath)
         mapview_collect.addLayer(layer)
         graphicsLayer = GraphicsLayer()
         mapview_collect.addLayer(graphicsLayer, 1)
-
+        mapview_collect.onSingleTapListener = this
+//        mapview_collect.setOnTouchListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -111,7 +142,6 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
                 R.id.cancel_action->{
                     graphicsLayer.removeGraphic(grahicGonUid)
                     pointPloygon.clear()
-
                 }
             }
         }
@@ -119,22 +149,34 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun addPointInmap() {
+        val center=mapview_collect.center
         when(currentCode){
             0->{
-
+                val intent1=Intent(this,PoiDetail::class.java)
+                intent1.putExtra("lat",center.x)
+                intent1.putExtra("lng",center.y)
+                startActivity(intent1)
             }
             1->{
-
+                val intent1=Intent(this,BuildingDetail::class.java)
+                intent1.putExtra("lat",center.x)
+                intent1.putExtra("lng",center.y)
+                startActivity(intent1)
             }
             2->{
                 addPolygonInMap()
             }
             3->{
-
+                val intent1=Intent(this,VillageDetail::class.java)
+                intent1.putExtra("lat",center.x)
+                intent1.putExtra("lng",center.y)
+                startActivity(intent1)
             }
         }
 
     }
+
+
 
     private fun ploygonBack() {
         graphicsLayer.removeGraphic(grahicGonUid)
@@ -142,24 +184,18 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
             pointPloygon.remove(pointPloygon.last())
             drawGon(pointPloygon)
         }
-
     }
 
     private fun addPolygonInMap() {
+        //开始小区采集
         val centerPoint=mapview_collect.center
         pointPloygon.add(centerPoint)
-
         drawGon(pointPloygon)
-//            val layer=mapview_collect.layers[1]
-//            if (layer is GraphicsLayer){
-//                layer.removeAll()
-//                val polygon=Polygon()
-//
-//            }
-
     }
 
     private fun beginCountryCollect() {
+        //开始村采集
+
         if (currentCode==2&&pointPloygon.size > 2){
             showConfirmDiaolog()
         }else{
@@ -178,6 +214,8 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun beginLouyuCollect() {
+        //开始楼宇采集
+
         if (currentCode==2&&pointPloygon.size > 2){
             showConfirmDiaolog()
         }else{
@@ -188,29 +226,51 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun beginPOICollect() {
+        //开始poi采集
         if (currentCode==2&&pointPloygon.size > 2){
             showConfirmDiaolog()
         }else{
             currentCode=targetCode
             upDateView()
-
         }
     }
 
     private fun upDateView(){
+        tianjia_collect.visibility=View.VISIBLE
         when(currentCode){
-            0,1,3->{
+            0->{
                 linear_tools_collect.visibility=View.INVISIBLE
-                tianjia_collect.visibility=View.VISIBLE
+                poi_collect.isSelected=true
+                louyu_collect.isSelected=false
+                newploygon_collect.isSelected=false
+                jiaotong_collect.isSelected=false
+
+            }
+            1->{
+                linear_tools_collect.visibility=View.INVISIBLE
+                poi_collect.isSelected=false
+                louyu_collect.isSelected=true
+                newploygon_collect.isSelected=false
+                jiaotong_collect.isSelected=false
             }
             2->{
                 linear_tools_collect.visibility=View.VISIBLE
-                tianjia_collect.visibility=View.VISIBLE
+                poi_collect.isSelected=false
+                louyu_collect.isSelected=false
+                newploygon_collect.isSelected=true
+                jiaotong_collect.isSelected=false
+            }
+            3->{
+                linear_tools_collect.visibility=View.INVISIBLE
+                poi_collect.isSelected=false
+                louyu_collect.isSelected=false
+                newploygon_collect.isSelected=false
+                jiaotong_collect.isSelected=true
             }
         }
     }
 
-    fun showConfirmDiaolog(): AlertDialog {
+    private fun showConfirmDiaolog(): AlertDialog {
         val builder = AlertDialog.Builder(this)
 
         builder.setTitle("提示")
@@ -224,6 +284,7 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
 //            cleanNotSave()
             dialog.dismiss()
             pointPloygon.clear()
+            graphicsLayer.removeGraphic(grahicGonUid)
             currentCode=targetCode
             when(targetCode){
                 0->{
@@ -244,13 +305,13 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
     }
 
 
-    var grahicGonUid: Int=0
-    fun drawGon(pointList: ArrayList<Point>) {
+    private var grahicGonUid: Int=0
+    private fun drawGon(pointList: ArrayList<Point>) {
         if (pointList.size==0){
             return
         }
-        if (pointList.size == 1) {
-            grahicGonUid = addPointInMap(pointList.get(0))
+        grahicGonUid = if (pointList.size == 1) {
+            addPointInMap(pointList[0])
         } else {
             val fillSymbol = SimpleFillSymbol(Color.argb(100, 255, 0, 0))
             val polygon = Polygon()
@@ -260,14 +321,86 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener {
             }
             graphicsLayer.removeGraphic(grahicGonUid)
 
-            grahicGonUid = graphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
+            graphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
         }
     }
 
-    fun addPointInMap(point: Point): Int {
+    private fun addPointInMap(point: Point): Int {
         val simpleMarkerSymbol=SimpleMarkerSymbol(Color.RED,5,SimpleMarkerSymbol.STYLE.CIRCLE)
         val graphic = Graphic(point, simpleMarkerSymbol)
         return graphicsLayer.addGraphic(graphic)
     }
+
+    override fun onSingleTap(v: Float, v1: Float) {
+        singleTapOnCollection(v, v1)
+    }
+
+
+    private fun singleTapOnCollection(v:Float, v1:Float) {
+        when(currentCode){
+            0->{
+
+            }
+            1->{
+
+            }
+            2->{
+
+            }
+            3->{
+
+            }
+            4->{
+            }
+        }
+        getGraphics(v,v1)
+
+    }
+
+    private var tempGraphicID:Int=0
+    private fun getGraphics(v: Float, v1: Float) {
+        val symbol=SimpleMarkerSymbol(Color.parseColor("#50AA0000"),tolerance,SimpleMarkerSymbol.STYLE.CIRCLE)
+        val point=mapview_collect.toMapPoint(v,v1)
+        val graphic=Graphic(point,symbol)
+        tempGraphicID=  graphicsLayer.addGraphic(graphic)
+        val uids = graphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
+        if (uids.isEmpty()){
+            graphicsLayer.removeGraphic(tempGraphicID)
+            Toast.makeText(this,"选择范围内没有点",Toast.LENGTH_SHORT).show()
+        }else{
+
+        }
+
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (resultCode==Activity.RESULT_OK){
+            when(requestCode){
+                requestCode_poi->{
+                    val point=Point(data.getDoubleExtra("lat",0.0),data.getDoubleExtra("lng", 0.0))
+                    addPointInMap(point)
+                }
+                requestCode_ploygon->{
+
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onTouch(v: View?, event: MotionEvent): Boolean {
+        if (event.action==MotionEvent.ACTION_DOWN){
+            Log.i("onTouchEvent","down")
+        }
+        if (event.action==MotionEvent.ACTION_UP){
+            Log.i("onTouchEvent","up")
+
+            graphicsLayer.removeGraphic(tempGraphicID)
+
+        }
+        return super.onTouchEvent(event)
+    }
+
 
 }
