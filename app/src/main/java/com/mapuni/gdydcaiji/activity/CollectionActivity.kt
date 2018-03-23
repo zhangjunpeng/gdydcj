@@ -4,13 +4,16 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.text.TextUtils
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
+import android.widget.PopupWindow
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
@@ -25,18 +28,16 @@ import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
-import com.mapuni.gdydcaiji.bean.TBuildingInfo
-import com.mapuni.gdydcaiji.bean.TPoiInfo
-import com.mapuni.gdydcaiji.bean.TSocialInfo
-import com.mapuni.gdydcaiji.bean.TVillageInfo
+import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao
-import com.mapuni.gdydcaiji.utils.ToastUtile
-import com.mapuni.gdydcaiji.utils.ToastUtils
+import com.mapuni.gdydcaiji.utils.*
 import kotlinx.android.synthetic.main.activity_collection.*
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import java.io.File
 import kotlin.collections.ArrayList
 
 
@@ -44,7 +45,7 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
 
 
 
-    var mapfilePath = ""
+//    var mapfilePath = ""
 
     //poi0，楼宇采集1，采集面2，村采集3,
     //除2都是点
@@ -63,6 +64,11 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
     //面跳转请求码
     val requestCode_ploygon:Int=10002
     var tolerance:Int=20
+
+    private var mExitTime: Long = 0
+    private var mapFileName: String? = null
+    private var mapFilePath: String? = null
+
 
     //数据库操作对象
     lateinit var tBuildingInfoDao:TBuildingInfoDao
@@ -87,7 +93,9 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
         setContentView(R.layout.activity_collection)
 
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
-        mapfilePath = Environment.getExternalStorageDirectory().absolutePath+"/map/" + "/layers"
+//        mapfilePath = Environment.getExternalStorageDirectory().absolutePath+"/map/" + "/layers"
+        EventBus.getDefault().register(this)
+
         seek_collect.progress=tolerance
         initMapView()
         initData()
@@ -126,6 +134,10 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
         houtui_collect.setOnClickListener(this)
         chanel_collect.setOnClickListener(this)
 
+        btn_menu.setOnClickListener(this)
+
+
+
 
         seek_collect.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -149,18 +161,26 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
 
     private fun initMapView() {
 
-        val layer = ArcGISLocalTiledLayer(mapfilePath)
-        mapview_collect.addLayer(layer)
-        graphicsLayer = GraphicsLayer()
-        tempGraphicLayer= GraphicsLayer()
-        localGraphicsLayer= GraphicsLayer()
-        mapview_collect.addLayer(graphicsLayer, 1)
-        mapview_collect.addLayer(tempGraphicLayer, 2)
-        mapview_collect.addLayer(localGraphicsLayer, 3)
+
+        mapFileName = SPUtils.getInstance().getString("checkedMap", "")
+        mapFilePath = SPUtils.getInstance().getString("checkedMapPath", "")
+        if (!TextUtils.isEmpty(mapFileName) && !TextUtils.isEmpty(mapFilePath)
+                && File(mapFilePath).exists()) {
+            val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
+            mapview_collect.addLayer(layer)
+            graphicsLayer = GraphicsLayer()
+            tempGraphicLayer= GraphicsLayer()
+            localGraphicsLayer= GraphicsLayer()
+            mapview_collect.addLayer(graphicsLayer, 1)
+            mapview_collect.addLayer(tempGraphicLayer, 2)
+            mapview_collect.addLayer(localGraphicsLayer, 3)
+        } else {
+            // 获取所有地图文件
+            getAllFiles()
+        }
+
 
         mapview_collect.onSingleTapListener = this
-//        mapview_collect.setOnTouchListener(this)
-
         mapview_collect.onZoomListener=this
     }
 
@@ -197,6 +217,10 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
                     graphicsLayer.removeGraphic(grahicGonUid)
                     pointPloygon.clear()
                 }
+                R.id.btn_menu -> {
+                    showMenuPop(v)
+                }
+
             }
         }
 
@@ -525,4 +549,122 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
 
     }
 
+
+    private fun getAllFiles() {
+        ThreadUtils.executeSubThread {
+            val path = PathConstant.UNDO_ZIP_PATH
+            val fileDir = File(path)
+            if (!fileDir.exists()) {
+                fileDir.mkdirs()
+            }
+            // 获得文件夹下所有文件夹和文件的名字
+//            var allDirNames = fileDir.list()
+            // 获得文件夹下所有文件夹和文件
+            var allDirFiles = fileDir.listFiles()
+            // 等待切换fragment动画完成
+            //SystemClock.sleep(1000);
+            ThreadUtils.executeMainThread {
+                if (allDirFiles != null && allDirFiles.size != 0) {
+                    mapview_collect.setVisibility(View.VISIBLE)
+                    // 默认显示数组中的第一个文件      按字母顺序排列
+                    mapFilePath = allDirFiles[0].getAbsolutePath()
+                    // 将选中的地图名字存入sp中
+                    SPUtils.getInstance().put("checkedMap", allDirFiles[0].getName())
+                    SPUtils.getInstance().put("checkedMapPath", allDirFiles[0].getAbsolutePath())
+                    val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
+                    mapview_collect.addLayer(layer)
+                    graphicsLayer = GraphicsLayer()
+                    mapview_collect.addLayer(graphicsLayer, 1)
+
+                } else {
+                    mapview_collect.setVisibility(View.GONE)
+                    showNotHaveMapDialog()
+                }
+            }
+        }
+
+    }
+    /**
+     * 弹出没有地图Dialog
+     */
+    private fun showNotHaveMapDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("无地图文件，请先下载地图")
+        builder.setPositiveButton("确定") { dialog, which -> startActivity(Intent(this, DownloadMapActivity::class.java)) }
+        builder.setNegativeButton("取消", null)
+        builder.show()
+    }
+
+    @Subscribe
+    fun onEventMainThread(eventBean: EventBean) {
+        if ("download".equals(eventBean.beanStr))
+        // 下载成功
+            getAllFiles()
+    }
+
+    private fun showMenuPop(view: View?) {
+        val inflate = LayoutInflater.from(this).inflate(R.layout.ppw_menu, null, false)
+        val tvUploadData = inflate.findViewById<TextView>(R.id.tv_upload)
+        val tvChooseMap = inflate.findViewById<TextView>(R.id.tv_choosemap)
+        val tvCopyDb = inflate.findViewById<TextView>(R.id.tv_copy_bd)
+
+
+        val ppw = PopupWindow(inflate, view!!.getWidth(), 320, true)
+        ppw.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
+        ppw.isOutsideTouchable = true
+        ppw.isTouchable = true
+
+        tvUploadData.setOnClickListener {
+            startActivity(Intent(this, UploadDataActivity::class.java))
+            ppw.dismiss()
+        }
+
+        tvChooseMap.setOnClickListener {
+            startActivity(Intent(this, ChooseMapActivity::class.java))
+            ppw.dismiss()
+        }
+
+        tvCopyDb.setOnClickListener {
+            ppw.dismiss()
+            ThreadUtils.executeSubThread {
+                FileUtils.copyFile2(GdydApplication.getInstances().db.path, PathConstant.DATABASE_PATH + "/sport.db")
+                ThreadUtils.executeMainThread {
+                    ToastUtils.showShort("备份成功")
+                }
+            }
+        }
+
+        //获取点击View的坐标
+        val location = IntArray(2)
+        view.getLocationOnScreen(location)
+        val y = location[1] - ppw.height
+        ppw.showAtLocation(view, Gravity.NO_GRAVITY, location[0], y)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.repeatCount == 0) {
+            exit()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    /**
+     * 点击两次退出
+     *
+     * @return
+     */
+    fun exit() {
+        if (System.currentTimeMillis() - mExitTime > 2000) {
+            ToastUtils.showShort("再点一次退出")
+            mExitTime = System.currentTimeMillis()
+        } else {
+            finish()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
 }

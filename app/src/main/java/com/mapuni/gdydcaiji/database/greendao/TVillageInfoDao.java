@@ -25,26 +25,27 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Bm = new Property(1, String.class, "bm", false, "BM");
-        public final static Property Csbs = new Property(2, String.class, "csbs", false, "CSBS");
-        public final static Property Qxbs = new Property(3, String.class, "qxbs", false, "QXBS");
-        public final static Property Xzbs = new Property(4, String.class, "xzbs", false, "XZBS");
-        public final static Property Gsjd = new Property(5, String.class, "gsjd", false, "GSJD");
-        public final static Property Gsxzc = new Property(6, String.class, "gsxzc", false, "GSXZC");
-        public final static Property Name = new Property(7, String.class, "name", false, "NAME");
-        public final static Property Dz = new Property(8, String.class, "dz", false, "DZ");
-        public final static Property X = new Property(9, Double.class, "x", false, "X");
-        public final static Property Y = new Property(10, Double.class, "y", false, "Y");
-        public final static Property Zrcbj = new Property(11, Double.class, "zrcbj", false, "ZRCBJ");
-        public final static Property Gxsj = new Property(12, java.util.Date.class, "gxsj", false, "GXSJ");
-        public final static Property Czmj = new Property(13, Double.class, "czmj", false, "CZMJ");
-        public final static Property Optuser = new Property(14, String.class, "optuser", false, "OPTUSER");
-        public final static Property Lat = new Property(15, Double.class, "lat", false, "LAT");
-        public final static Property Lng = new Property(16, Double.class, "lng", false, "LNG");
-        public final static Property Opttime = new Property(17, java.util.Date.class, "opttime", false, "OPTTIME");
-        public final static Property Type = new Property(18, String.class, "type", false, "TYPE");
-        public final static Property Img = new Property(19, String.class, "img", false, "IMG");
-        public final static Property Flag = new Property(20, int.class, "flag", false, "FLAG");
+        public final static Property Uid = new Property(1, int.class, "uid", false, "UID");
+        public final static Property Bm = new Property(2, String.class, "bm", false, "BM");
+        public final static Property Csbs = new Property(3, String.class, "csbs", false, "CSBS");
+        public final static Property Qxbs = new Property(4, String.class, "qxbs", false, "QXBS");
+        public final static Property Xzbs = new Property(5, String.class, "xzbs", false, "XZBS");
+        public final static Property Gsjd = new Property(6, String.class, "gsjd", false, "GSJD");
+        public final static Property Gsxzc = new Property(7, String.class, "gsxzc", false, "GSXZC");
+        public final static Property Name = new Property(8, String.class, "name", false, "NAME");
+        public final static Property Dz = new Property(9, String.class, "dz", false, "DZ");
+        public final static Property X = new Property(10, Double.class, "x", false, "X");
+        public final static Property Y = new Property(11, Double.class, "y", false, "Y");
+        public final static Property Zrcbj = new Property(12, String.class, "zrcbj", false, "ZRCBJ");
+        public final static Property Gxsj = new Property(13, java.util.Date.class, "gxsj", false, "GXSJ");
+        public final static Property Czmj = new Property(14, Double.class, "czmj", false, "CZMJ");
+        public final static Property Optuser = new Property(15, String.class, "optuser", false, "OPTUSER");
+        public final static Property Lat = new Property(16, Double.class, "lat", false, "LAT");
+        public final static Property Lng = new Property(17, Double.class, "lng", false, "LNG");
+        public final static Property Opttime = new Property(18, java.util.Date.class, "opttime", false, "OPTTIME");
+        public final static Property Type = new Property(19, String.class, "type", false, "TYPE");
+        public final static Property Img = new Property(20, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(21, int.class, "flag", false, "FLAG");
     }
 
 
@@ -61,26 +62,27 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"TVILLAGE_INFO\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"BM\" TEXT," + // 1: bm
-                "\"CSBS\" TEXT," + // 2: csbs
-                "\"QXBS\" TEXT," + // 3: qxbs
-                "\"XZBS\" TEXT," + // 4: xzbs
-                "\"GSJD\" TEXT," + // 5: gsjd
-                "\"GSXZC\" TEXT," + // 6: gsxzc
-                "\"NAME\" TEXT," + // 7: name
-                "\"DZ\" TEXT," + // 8: dz
-                "\"X\" REAL," + // 9: x
-                "\"Y\" REAL," + // 10: y
-                "\"ZRCBJ\" REAL," + // 11: zrcbj
-                "\"GXSJ\" INTEGER," + // 12: gxsj
-                "\"CZMJ\" REAL," + // 13: czmj
-                "\"OPTUSER\" TEXT," + // 14: optuser
-                "\"LAT\" REAL," + // 15: lat
-                "\"LNG\" REAL," + // 16: lng
-                "\"OPTTIME\" INTEGER," + // 17: opttime
-                "\"TYPE\" TEXT," + // 18: type
-                "\"IMG\" TEXT," + // 19: img
-                "\"FLAG\" INTEGER NOT NULL );"); // 20: flag
+                "\"UID\" INTEGER NOT NULL ," + // 1: uid
+                "\"BM\" TEXT," + // 2: bm
+                "\"CSBS\" TEXT," + // 3: csbs
+                "\"QXBS\" TEXT," + // 4: qxbs
+                "\"XZBS\" TEXT," + // 5: xzbs
+                "\"GSJD\" TEXT," + // 6: gsjd
+                "\"GSXZC\" TEXT," + // 7: gsxzc
+                "\"NAME\" TEXT," + // 8: name
+                "\"DZ\" TEXT," + // 9: dz
+                "\"X\" REAL," + // 10: x
+                "\"Y\" REAL," + // 11: y
+                "\"ZRCBJ\" TEXT," + // 12: zrcbj
+                "\"GXSJ\" INTEGER," + // 13: gxsj
+                "\"CZMJ\" REAL," + // 14: czmj
+                "\"OPTUSER\" TEXT," + // 15: optuser
+                "\"LAT\" REAL," + // 16: lat
+                "\"LNG\" REAL," + // 17: lng
+                "\"OPTTIME\" INTEGER," + // 18: opttime
+                "\"TYPE\" TEXT," + // 19: type
+                "\"IMG\" TEXT," + // 20: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 21: flag
     }
 
     /** Drops the underlying database table. */
@@ -97,102 +99,103 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
+        stmt.bindLong(2, entity.getUid());
  
         String bm = entity.getBm();
         if (bm != null) {
-            stmt.bindString(2, bm);
+            stmt.bindString(3, bm);
         }
  
         String csbs = entity.getCsbs();
         if (csbs != null) {
-            stmt.bindString(3, csbs);
+            stmt.bindString(4, csbs);
         }
  
         String qxbs = entity.getQxbs();
         if (qxbs != null) {
-            stmt.bindString(4, qxbs);
+            stmt.bindString(5, qxbs);
         }
  
         String xzbs = entity.getXzbs();
         if (xzbs != null) {
-            stmt.bindString(5, xzbs);
+            stmt.bindString(6, xzbs);
         }
  
         String gsjd = entity.getGsjd();
         if (gsjd != null) {
-            stmt.bindString(6, gsjd);
+            stmt.bindString(7, gsjd);
         }
  
         String gsxzc = entity.getGsxzc();
         if (gsxzc != null) {
-            stmt.bindString(7, gsxzc);
+            stmt.bindString(8, gsxzc);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(8, name);
+            stmt.bindString(9, name);
         }
  
         String dz = entity.getDz();
         if (dz != null) {
-            stmt.bindString(9, dz);
+            stmt.bindString(10, dz);
         }
  
         Double x = entity.getX();
         if (x != null) {
-            stmt.bindDouble(10, x);
+            stmt.bindDouble(11, x);
         }
  
         Double y = entity.getY();
         if (y != null) {
-            stmt.bindDouble(11, y);
+            stmt.bindDouble(12, y);
         }
  
-        Double zrcbj = entity.getZrcbj();
+        String zrcbj = entity.getZrcbj();
         if (zrcbj != null) {
-            stmt.bindDouble(12, zrcbj);
+            stmt.bindString(13, zrcbj);
         }
  
         java.util.Date gxsj = entity.getGxsj();
         if (gxsj != null) {
-            stmt.bindLong(13, gxsj.getTime());
+            stmt.bindLong(14, gxsj.getTime());
         }
  
         Double czmj = entity.getCzmj();
         if (czmj != null) {
-            stmt.bindDouble(14, czmj);
+            stmt.bindDouble(15, czmj);
         }
  
         String optuser = entity.getOptuser();
         if (optuser != null) {
-            stmt.bindString(15, optuser);
+            stmt.bindString(16, optuser);
         }
  
         Double lat = entity.getLat();
         if (lat != null) {
-            stmt.bindDouble(16, lat);
+            stmt.bindDouble(17, lat);
         }
  
         Double lng = entity.getLng();
         if (lng != null) {
-            stmt.bindDouble(17, lng);
+            stmt.bindDouble(18, lng);
         }
  
         java.util.Date opttime = entity.getOpttime();
         if (opttime != null) {
-            stmt.bindLong(18, opttime.getTime());
+            stmt.bindLong(19, opttime.getTime());
         }
  
         String type = entity.getType();
         if (type != null) {
-            stmt.bindString(19, type);
+            stmt.bindString(20, type);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(20, img);
+            stmt.bindString(21, img);
         }
-        stmt.bindLong(21, entity.getFlag());
+        stmt.bindLong(22, entity.getFlag());
     }
 
     @Override
@@ -203,102 +206,103 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
+        stmt.bindLong(2, entity.getUid());
  
         String bm = entity.getBm();
         if (bm != null) {
-            stmt.bindString(2, bm);
+            stmt.bindString(3, bm);
         }
  
         String csbs = entity.getCsbs();
         if (csbs != null) {
-            stmt.bindString(3, csbs);
+            stmt.bindString(4, csbs);
         }
  
         String qxbs = entity.getQxbs();
         if (qxbs != null) {
-            stmt.bindString(4, qxbs);
+            stmt.bindString(5, qxbs);
         }
  
         String xzbs = entity.getXzbs();
         if (xzbs != null) {
-            stmt.bindString(5, xzbs);
+            stmt.bindString(6, xzbs);
         }
  
         String gsjd = entity.getGsjd();
         if (gsjd != null) {
-            stmt.bindString(6, gsjd);
+            stmt.bindString(7, gsjd);
         }
  
         String gsxzc = entity.getGsxzc();
         if (gsxzc != null) {
-            stmt.bindString(7, gsxzc);
+            stmt.bindString(8, gsxzc);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(8, name);
+            stmt.bindString(9, name);
         }
  
         String dz = entity.getDz();
         if (dz != null) {
-            stmt.bindString(9, dz);
+            stmt.bindString(10, dz);
         }
  
         Double x = entity.getX();
         if (x != null) {
-            stmt.bindDouble(10, x);
+            stmt.bindDouble(11, x);
         }
  
         Double y = entity.getY();
         if (y != null) {
-            stmt.bindDouble(11, y);
+            stmt.bindDouble(12, y);
         }
  
-        Double zrcbj = entity.getZrcbj();
+        String zrcbj = entity.getZrcbj();
         if (zrcbj != null) {
-            stmt.bindDouble(12, zrcbj);
+            stmt.bindString(13, zrcbj);
         }
  
         java.util.Date gxsj = entity.getGxsj();
         if (gxsj != null) {
-            stmt.bindLong(13, gxsj.getTime());
+            stmt.bindLong(14, gxsj.getTime());
         }
  
         Double czmj = entity.getCzmj();
         if (czmj != null) {
-            stmt.bindDouble(14, czmj);
+            stmt.bindDouble(15, czmj);
         }
  
         String optuser = entity.getOptuser();
         if (optuser != null) {
-            stmt.bindString(15, optuser);
+            stmt.bindString(16, optuser);
         }
  
         Double lat = entity.getLat();
         if (lat != null) {
-            stmt.bindDouble(16, lat);
+            stmt.bindDouble(17, lat);
         }
  
         Double lng = entity.getLng();
         if (lng != null) {
-            stmt.bindDouble(17, lng);
+            stmt.bindDouble(18, lng);
         }
  
         java.util.Date opttime = entity.getOpttime();
         if (opttime != null) {
-            stmt.bindLong(18, opttime.getTime());
+            stmt.bindLong(19, opttime.getTime());
         }
  
         String type = entity.getType();
         if (type != null) {
-            stmt.bindString(19, type);
+            stmt.bindString(20, type);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(20, img);
+            stmt.bindString(21, img);
         }
-        stmt.bindLong(21, entity.getFlag());
+        stmt.bindLong(22, entity.getFlag());
     }
 
     @Override
@@ -310,26 +314,27 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
     public TVillageInfo readEntity(Cursor cursor, int offset) {
         TVillageInfo entity = new TVillageInfo( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // bm
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // csbs
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // qxbs
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // xzbs
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // gsjd
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // gsxzc
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // name
-            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // dz
-            cursor.isNull(offset + 9) ? null : cursor.getDouble(offset + 9), // x
-            cursor.isNull(offset + 10) ? null : cursor.getDouble(offset + 10), // y
-            cursor.isNull(offset + 11) ? null : cursor.getDouble(offset + 11), // zrcbj
-            cursor.isNull(offset + 12) ? null : new java.util.Date(cursor.getLong(offset + 12)), // gxsj
-            cursor.isNull(offset + 13) ? null : cursor.getDouble(offset + 13), // czmj
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // optuser
-            cursor.isNull(offset + 15) ? null : cursor.getDouble(offset + 15), // lat
-            cursor.isNull(offset + 16) ? null : cursor.getDouble(offset + 16), // lng
-            cursor.isNull(offset + 17) ? null : new java.util.Date(cursor.getLong(offset + 17)), // opttime
-            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // type
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // img
-            cursor.getInt(offset + 20) // flag
+            cursor.getInt(offset + 1), // uid
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // bm
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // csbs
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // qxbs
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // xzbs
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // gsjd
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // gsxzc
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // name
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // dz
+            cursor.isNull(offset + 10) ? null : cursor.getDouble(offset + 10), // x
+            cursor.isNull(offset + 11) ? null : cursor.getDouble(offset + 11), // y
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // zrcbj
+            cursor.isNull(offset + 13) ? null : new java.util.Date(cursor.getLong(offset + 13)), // gxsj
+            cursor.isNull(offset + 14) ? null : cursor.getDouble(offset + 14), // czmj
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // optuser
+            cursor.isNull(offset + 16) ? null : cursor.getDouble(offset + 16), // lat
+            cursor.isNull(offset + 17) ? null : cursor.getDouble(offset + 17), // lng
+            cursor.isNull(offset + 18) ? null : new java.util.Date(cursor.getLong(offset + 18)), // opttime
+            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // type
+            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // img
+            cursor.getInt(offset + 21) // flag
         );
         return entity;
     }
@@ -337,26 +342,27 @@ public class TVillageInfoDao extends AbstractDao<TVillageInfo, Long> {
     @Override
     public void readEntity(Cursor cursor, TVillageInfo entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setBm(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setCsbs(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setQxbs(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setXzbs(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setGsjd(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setGsxzc(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setName(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setDz(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
-        entity.setX(cursor.isNull(offset + 9) ? null : cursor.getDouble(offset + 9));
-        entity.setY(cursor.isNull(offset + 10) ? null : cursor.getDouble(offset + 10));
-        entity.setZrcbj(cursor.isNull(offset + 11) ? null : cursor.getDouble(offset + 11));
-        entity.setGxsj(cursor.isNull(offset + 12) ? null : new java.util.Date(cursor.getLong(offset + 12)));
-        entity.setCzmj(cursor.isNull(offset + 13) ? null : cursor.getDouble(offset + 13));
-        entity.setOptuser(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setLat(cursor.isNull(offset + 15) ? null : cursor.getDouble(offset + 15));
-        entity.setLng(cursor.isNull(offset + 16) ? null : cursor.getDouble(offset + 16));
-        entity.setOpttime(cursor.isNull(offset + 17) ? null : new java.util.Date(cursor.getLong(offset + 17)));
-        entity.setType(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
-        entity.setImg(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
-        entity.setFlag(cursor.getInt(offset + 20));
+        entity.setUid(cursor.getInt(offset + 1));
+        entity.setBm(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setCsbs(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setQxbs(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setXzbs(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setGsjd(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setGsxzc(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setName(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setDz(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setX(cursor.isNull(offset + 10) ? null : cursor.getDouble(offset + 10));
+        entity.setY(cursor.isNull(offset + 11) ? null : cursor.getDouble(offset + 11));
+        entity.setZrcbj(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setGxsj(cursor.isNull(offset + 13) ? null : new java.util.Date(cursor.getLong(offset + 13)));
+        entity.setCzmj(cursor.isNull(offset + 14) ? null : cursor.getDouble(offset + 14));
+        entity.setOptuser(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setLat(cursor.isNull(offset + 16) ? null : cursor.getDouble(offset + 16));
+        entity.setLng(cursor.isNull(offset + 17) ? null : cursor.getDouble(offset + 17));
+        entity.setOpttime(cursor.isNull(offset + 18) ? null : new java.util.Date(cursor.getLong(offset + 18)));
+        entity.setType(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
+        entity.setImg(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
+        entity.setFlag(cursor.getInt(offset + 21));
      }
     
     @Override

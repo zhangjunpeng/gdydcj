@@ -21,6 +21,8 @@ public class TVillageInfo implements Serializable {
     @Id
     private Long id;
 
+    private int uid;
+
     private String bm;
 
     private String csbs;
@@ -43,7 +45,8 @@ public class TVillageInfo implements Serializable {
 
     private Double y;
 
-    private Double zrcbj;
+    @Expose
+    private String zrcbj;
 
     private Date gxsj;
 
@@ -69,12 +72,14 @@ public class TVillageInfo implements Serializable {
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 619381927)
-    public TVillageInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
-                        String gsjd, String gsxzc, String name, String dz, Double x, Double y,
-                        Double zrcbj, Date gxsj, Double czmj, String optuser, Double lat,
-                        Double lng, Date opttime, String type, String img, int flag) {
+    @Generated(hash = 139386641)
+    public TVillageInfo(Long id, int uid, String bm, String csbs, String qxbs,
+            String xzbs, String gsjd, String gsxzc, String name, String dz,
+            Double x, Double y, String zrcbj, Date gxsj, Double czmj,
+            String optuser, Double lat, Double lng, Date opttime, String type,
+            String img, int flag) {
         this.id = id;
+        this.uid = uid;
         this.bm = bm;
         this.csbs = csbs;
         this.qxbs = qxbs;
@@ -101,72 +106,88 @@ public class TVillageInfo implements Serializable {
     public TVillageInfo() {
     }
 
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getUid() {
+        return this.uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
     public String getBm() {
-        return bm;
+        return this.bm;
     }
 
     public void setBm(String bm) {
-        this.bm = bm == null ? null : bm.trim();
+        this.bm = bm;
     }
 
     public String getCsbs() {
-        return csbs;
+        return this.csbs;
     }
 
     public void setCsbs(String csbs) {
-        this.csbs = csbs == null ? null : csbs.trim();
+        this.csbs = csbs;
     }
 
     public String getQxbs() {
-        return qxbs;
+        return this.qxbs;
     }
 
     public void setQxbs(String qxbs) {
-        this.qxbs = qxbs == null ? null : qxbs.trim();
+        this.qxbs = qxbs;
     }
 
     public String getXzbs() {
-        return xzbs;
+        return this.xzbs;
     }
 
     public void setXzbs(String xzbs) {
-        this.xzbs = xzbs == null ? null : xzbs.trim();
+        this.xzbs = xzbs;
     }
 
     public String getGsjd() {
-        return gsjd;
+        return this.gsjd;
     }
 
     public void setGsjd(String gsjd) {
-        this.gsjd = gsjd == null ? null : gsjd.trim();
+        this.gsjd = gsjd;
     }
 
     public String getGsxzc() {
-        return gsxzc;
+        return this.gsxzc;
     }
 
     public void setGsxzc(String gsxzc) {
-        this.gsxzc = gsxzc == null ? null : gsxzc.trim();
+        this.gsxzc = gsxzc;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getDz() {
-        return dz;
+        return this.dz;
     }
 
     public void setDz(String dz) {
-        this.dz = dz == null ? null : dz.trim();
+        this.dz = dz;
     }
 
     public Double getX() {
-        return x;
+        return this.x;
     }
 
     public void setX(Double x) {
@@ -174,23 +195,23 @@ public class TVillageInfo implements Serializable {
     }
 
     public Double getY() {
-        return y;
+        return this.y;
     }
 
     public void setY(Double y) {
         this.y = y;
     }
 
-    public Double getZrcbj() {
-        return zrcbj;
+    public String getZrcbj() {
+        return this.zrcbj;
     }
 
-    public void setZrcbj(Double zrcbj) {
+    public void setZrcbj(String zrcbj) {
         this.zrcbj = zrcbj;
     }
 
     public Date getGxsj() {
-        return gxsj;
+        return this.gxsj;
     }
 
     public void setGxsj(Date gxsj) {
@@ -198,7 +219,7 @@ public class TVillageInfo implements Serializable {
     }
 
     public Double getCzmj() {
-        return czmj;
+        return this.czmj;
     }
 
     public void setCzmj(Double czmj) {
@@ -206,15 +227,15 @@ public class TVillageInfo implements Serializable {
     }
 
     public String getOptuser() {
-        return optuser;
+        return this.optuser;
     }
 
     public void setOptuser(String optuser) {
-        this.optuser = optuser == null ? null : optuser.trim();
+        this.optuser = optuser;
     }
 
     public Double getLat() {
-        return lat;
+        return this.lat;
     }
 
     public void setLat(Double lat) {
@@ -222,7 +243,7 @@ public class TVillageInfo implements Serializable {
     }
 
     public Double getLng() {
-        return lng;
+        return this.lng;
     }
 
     public void setLng(Double lng) {
@@ -230,7 +251,7 @@ public class TVillageInfo implements Serializable {
     }
 
     public Date getOpttime() {
-        return opttime;
+        return this.opttime;
     }
 
     public void setOpttime(Date opttime) {
@@ -238,27 +259,19 @@ public class TVillageInfo implements Serializable {
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(String type) {
-        this.type = type == null ? null : type.trim();
+        this.type = type;
     }
 
     public String getImg() {
-        return img;
+        return this.img;
     }
 
     public void setImg(String img) {
-        this.img = img == null ? null : img.trim();
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.img = img;
     }
 
     public int getFlag() {
@@ -268,4 +281,5 @@ public class TVillageInfo implements Serializable {
     public void setFlag(int flag) {
         this.flag = flag;
     }
+
 }

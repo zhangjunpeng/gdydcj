@@ -1,7 +1,9 @@
 package com.mapuni.gdydcaiji;
 
 import android.app.Application;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.multidex.MultiDex;
 
 import com.mapuni.gdydcaiji.database.greendao.DaoMaster;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
@@ -52,5 +54,11 @@ public class GdydApplication extends Application {
 
     public SQLiteDatabase getDb() {
         return db;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }  

@@ -1,7 +1,10 @@
 package com.mapuni.gdydcaiji.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +25,8 @@ import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
+import com.mapuni.gdydcaiji.net.RetrofitFactory;
+import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.DateUtil;
 import com.mapuni.gdydcaiji.utils.FileUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
@@ -29,15 +34,26 @@ import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.Observable;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by yf on 2018/3/22.
@@ -70,7 +86,7 @@ public class UploadDataActivity extends BaseActivity {
     /**
      * 上传数据
      */
-    private void uploadData() {
+    private void createFiles() {
         final String startTime = etStartTime.getText().toString().trim();
         final String stopTime = etStopTime.getText().toString().trim();
         if (TextUtils.isEmpty(startTime)) {
@@ -122,17 +138,85 @@ public class UploadDataActivity extends BaseActivity {
                         .build().list();
                 String villageJson = gson.toJson(villageInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_village_info.txt", villageJson);
-                
+
                 ThreadUtils.executeMainThread(new Runnable() {
                     @Override
                     public void run() {
                         //联网上传
-                        
+                        uploadData();
                     }
                 });
             }
         });
 
+
+    }
+
+    private void uploadData() {
+        Map<String, RequestBody> map = new HashMap<>();
+
+        List<String> filePaths = new ArrayList<>();
+        filePaths.add("/t_building_info.txt");
+        filePaths.add("/t_poi_info.txt");
+        filePaths.add("/t_social_info.txt");
+        filePaths.add("/t_village_info.txt");
+
+        File file;
+        for (int i = 0; i < filePaths.size(); i++) {
+            file = new File(PathConstant.UPLOAD_DATA + filePaths.get(i));
+            if (file.exists() && file.length() > 10) {
+                RequestBody build = RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), file);
+                map.put("file\"; filename=\"" + file.getName(), build);
+            }
+        }
+
+        if (map.size() == 0) {
+            ToastUtils.showShort("没有新数据");
+            return;
+        }
+
+        final Call<RequestBody> call = RetrofitFactory.create(RetrofitService.class).upload(map);
+        // Dialog
+        final ProgressDialog pd = new ProgressDialog(mContext);
+        pd.setMessage("正在上传...");
+        // 点击对话框以外的地方无法取消
+        pd.setCanceledOnTouchOutside(false);
+        // 点击返回按钮无法取消
+        pd.setCancelable(false);
+        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                call.cancel();
+            }
+        });
+        pd.show();
+
+        call.enqueue(new Callback<RequestBody>() {
+            @Override
+            public void onResponse(@NonNull Call<RequestBody> call, @NonNull Response<RequestBody> response) {
+                // LogUtils.d("onResponse" + response.body());
+                if (pd.isShowing()) {
+                    pd.dismiss();
+                }
+                ToastUtils.showShort("上传成功");
+            }
+
+            @Override
+            public void onFailure(Call<RequestBody> call, Throwable t) {
+                t.printStackTrace();
+                if (!call.isCanceled()) {
+                    // 非点击取消
+                    //LogUtils.d(t.getMessage());
+                    if (pd.isShowing()) {
+                        pd.dismiss();
+                    }
+                    ToastUtils.showShort("网络错误");
+                } else {
+                    ToastUtils.showShort("上传取消");
+                }
+
+            }
+        });
 
     }
 
@@ -148,7 +232,7 @@ public class UploadDataActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.btn_save:
-                uploadData();
+                createFiles();
                 break;
             case R.id.et_start_time:
                 showDatePickerDialog(etStartTime);
