@@ -20,6 +20,8 @@ public class TBuildingInfo implements Serializable{
     private static final long serialVersionUID = 1L;
     @Id
     private Long id;
+    
+    private int uid;
 
     private String bm;
 
@@ -105,14 +107,15 @@ public class TBuildingInfo implements Serializable{
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 224011539)
-    public TBuildingInfo(Long id, String bm, String csbs, String qxbs, String xzbs, String gsjd,
-            String lygs, String lytype, String lyxz, String lyfl, String xqid, String xqmc, String name,
-            String firstad, String secondad, String thirdad, String forthad, String fifad, String sixad,
-            String lydz, String lycs, String lydscs, Double x, Double y, Double lydbx, Date gxsj,
-            String bz, Double lymj, String optuser, Double lat, Double lng, Date opttime, String lygd,
-            String lyzhs, String img, int flag) {
+    @Generated(hash = 155712552)
+    public TBuildingInfo(Long id, int uid, String bm, String csbs, String qxbs, String xzbs,
+            String gsjd, String lygs, String lytype, String lyxz, String lyfl, String xqid, String xqmc,
+            String name, String firstad, String secondad, String thirdad, String forthad, String fifad,
+            String sixad, String lydz, String lycs, String lydscs, Double x, Double y, Double lydbx,
+            Date gxsj, String bz, Double lymj, String optuser, Double lat, Double lng, Date opttime,
+            String lygd, String lyzhs, String img, int flag) {
         this.id = id;
+        this.uid = uid;
         this.bm = bm;
         this.csbs = csbs;
         this.qxbs = qxbs;
@@ -440,5 +443,13 @@ public class TBuildingInfo implements Serializable{
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    public int getUid() {
+        return this.uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }

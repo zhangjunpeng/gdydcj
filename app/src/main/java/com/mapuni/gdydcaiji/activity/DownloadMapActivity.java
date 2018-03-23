@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.bean.MapBean;
 import com.mapuni.gdydcaiji.download.DownloadObserver;
 import com.mapuni.gdydcaiji.net.RetrofitFactory;
@@ -86,7 +87,8 @@ public class DownloadMapActivity extends BaseActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        RetrofitFactory.create(RetrofitService.class).getMapList()
+        String username = SPUtils.getInstance().getString("username");
+        RetrofitFactory.create(RetrofitService.class).getMapList(username)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<MapBean>() {
@@ -98,8 +100,11 @@ public class DownloadMapActivity extends BaseActivity {
                     @Override
                     public void onNext(MapBean mapBean) {
 
-                        List<MapBean.SlicesBean> slices = mapBean.getSlices();
-                        mapBeanList.addAll(slices);
+                        if (mapBean != null) {
+                            List<MapBean.SlicesBean> slices = mapBean.getSlices();
+                            mapBeanList.addAll(slices);
+                        }
+
                         adapter.notifyDataSetChanged();
                         progressDialog.dismiss();
                     }
@@ -140,7 +145,7 @@ public class DownloadMapActivity extends BaseActivity {
                 }
             }
         });
-        
+
         adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
@@ -180,7 +185,7 @@ public class DownloadMapActivity extends BaseActivity {
 
                             autoUndoZipFile(new File(filePath));
                         }
-                        
+
                     }
                 });
     }
@@ -205,7 +210,7 @@ public class DownloadMapActivity extends BaseActivity {
                         @Override
                         public void run() {
                             undoZipDialog.dismiss();
-                            EventBus.getDefault().post(new SuccessEvent(1));
+                            EventBus.getDefault().post(new EventBean("download"));
                             ToastUtils.showShort("解压完成");
                         }
                     });
@@ -238,7 +243,7 @@ public class DownloadMapActivity extends BaseActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ProgressDialogFactory.getProgressDialog(mContext, ProgressDialog.STYLE_SPINNER,
-                        null, -1, "正在删除...", true, true,null);
+                        null, -1, "正在删除...", true, true, null);
                 ThreadUtils.executeSubThread(new Runnable() {
                     @Override
                     public void run() {
@@ -298,12 +303,4 @@ public class DownloadMapActivity extends BaseActivity {
         }
     }
 
-    public class SuccessEvent {
-        // 1 下载成功  -1 下载失败
-        public int downloadStatus;
-
-        public SuccessEvent(int downloadStatus) {
-            this.downloadStatus = downloadStatus;
-        }
-    }
 }

@@ -1,5 +1,8 @@
 package com.mapuni.gdydcaiji.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -12,11 +15,21 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.LoginBean;
+import com.mapuni.gdydcaiji.net.RetrofitFactory;
+import com.mapuni.gdydcaiji.net.RetrofitService;
+import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.SPUtils;
+import com.mapuni.gdydcaiji.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.annotations.NonNull;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -90,78 +103,76 @@ public class LoginActivity extends AppCompatActivity {
      * @param username
      * @param password
      */
-    private void login(String username, String password) {
-//        final Call<LoginBean> call = RetrofitFactory.create(RetrofitService.class)
-//                .login(username, password);
-//        // Dialog
-//        final ProgressDialog pd = new ProgressDialog(this);
-//        pd.setMessage("正在登录...");
-//        // 点击对话框以外的地方无法取消
-//        pd.setCanceledOnTouchOutside(false);
-//        // 点击返回按钮无法取消
-//        pd.setCancelable(false);
-//        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                call.cancel();
-//            }
-//        });
-//        pd.show();
-//        call.enqueue(new Callback<LoginBean>() {
-//            @Override
-//            public void onResponse(@NonNull Call<LoginBean> call, @NonNull Response<LoginBean> response) {
-////                LogUtils.d("onResponse" + response.body());
-//                if (pd.isShowing()) {
-//                    pd.dismiss();
-//                }
-//                LoginBean loginBean = response.body();
-////                assert loginBean != null;
-//                if (loginBean != null) {
-//                    if (loginBean.isFlag()) {
-//                        ToastUtils.showShort("登录成功");
-//                        // 保存信息
-//                        SPUtils.getInstance().put("policeId", loginBean.getUser().getPoliceId());
-//                        SPUtils.getInstance().put("roleType", loginBean.getUser().getRoleType());
-//                        SPUtils.getInstance().put("userId", loginBean.getUser().getUserId() + "");
-//                        boolean isChecked = cbRemember.isChecked();
-//                        if (isChecked) {
-//                            // 记住密码
-//                            SPUtils.getInstance().put("isRemember", isChecked);
-//                            SPUtils.getInstance().put("username", loginBean.getUser().getUserName());
-//                            SPUtils.getInstance().put("password", loginBean.getUser().getPassword());
-//                        } else {
-//                            // 不记住密码
-//                            SPUtils.getInstance().put("isRemember", isChecked);
-//                            SPUtils.getInstance().put("username", "");
-//                            SPUtils.getInstance().put("password", "");
-//                        }
-//                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//                        finish();
-//                    } else {
-//                        ToastUtils.showShort(loginBean.getMsg());
-//                    }
-//                } else {
-//                    ToastUtils.showShort("服务器忙，请稍后重试");
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<LoginBean> call, Throwable t) {
-//                t.printStackTrace();
-//                if (!call.isCanceled()) {
-//                    // 非点击取消
-//                    LogUtils.d(t.getMessage());
-//                    if (pd.isShowing()) {
-//                        pd.dismiss();
-//                    }
-//                    ToastUtils.showShort("登录失败");
-////                    BillInfo.deleteAuthorizeBill(LoginActivity.this);
-//                } else {
-//                    ToastUtils.showShort("取消登录");
-//                }
-//
-//            }
-//        });
+    private void login(final String username, final String password) {
+        final Call<LoginBean> call = RetrofitFactory.create(RetrofitService.class)
+                .login(username, password);
+        // Dialog
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("正在登录...");
+        // 点击对话框以外的地方无法取消
+        pd.setCanceledOnTouchOutside(false);
+        // 点击返回按钮无法取消
+        pd.setCancelable(false);
+        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                call.cancel();
+            }
+        });
+        pd.show();
+        call.enqueue(new Callback<LoginBean>() {
+            
+            @Override
+            public void onResponse(@NonNull Call<LoginBean> call, @NonNull Response<LoginBean> response) {
+//                LogUtils.d("onResponse" + response.body());
+                if (pd.isShowing()) {
+                    pd.dismiss();
+                }
+                LoginBean loginBean = response.body();
+//                assert loginBean != null;
+                if (loginBean != null) {
+                    if ("登录成功".equals(loginBean.getMsg())) {
+                        ToastUtils.showShort("登录成功");
+                        // 保存信息
+                        boolean isChecked = cbRemember.isChecked();
+                        if (isChecked) {
+                            // 记住密码
+                            SPUtils.getInstance().put("isRemember", isChecked);
+                            SPUtils.getInstance().put("username", username);
+                            SPUtils.getInstance().put("password", password);
+                        } else {
+                            // 不记住密码
+                            SPUtils.getInstance().put("isRemember", isChecked);
+                            SPUtils.getInstance().put("username", "");
+                            SPUtils.getInstance().put("password", "");
+                        }
+                        startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
+                        finish();
+                    } else {
+                        ToastUtils.showShort(loginBean.getMsg());
+                    }
+                } else {
+                    ToastUtils.showShort("服务器忙，请稍后重试");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginBean> call, Throwable t) {
+                t.printStackTrace();
+                if (!call.isCanceled()) {
+                    // 非点击取消
+                    LogUtils.d(t.getMessage());
+                    if (pd.isShowing()) {
+                        pd.dismiss();
+                    }
+                    ToastUtils.showShort("登录失败");
+//                    BillInfo.deleteAuthorizeBill(LoginActivity.this);
+                } else {
+                    ToastUtils.showShort("取消登录");
+                }
+
+            }
+        });
 
 
     }

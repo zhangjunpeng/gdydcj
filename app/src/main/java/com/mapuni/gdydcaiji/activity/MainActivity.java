@@ -5,9 +5,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
@@ -25,11 +32,13 @@ import com.esri.core.symbol.SimpleFillSymbol;
 import com.esri.core.symbol.SimpleLineSymbol;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
 import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
+import com.mapuni.gdydcaiji.utils.FileUtils;
 import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.PermissionUtils;
@@ -47,10 +56,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity implements OnLongPressListener, OnSingleTapListener {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.mapview)
     MapView mapview;
+    @BindView(R.id.btn_menu)
+    Button btnMenu;
     private long mExitTime;
     private GraphicsLayer graphicsLayer;
     private String mapFileName;
@@ -58,16 +69,6 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
     private String[] allDirNames;
     private File[] allDirFiles;
     public int statue_code;
-    public static final int COLLECT_POINT_STATE = 100;
-    public static final int COLLECT_LINE_STATE = 101;
-    public static final int COLLECT_GON_STATE = 102;
-    //线
-    List<Point> linePoint;
-    public int graphicLineUid;
-
-    //面
-    List<Point> gonPoint;
-    public int grahicGonUid;
 
     @Override
     protected int getLayoutResId() {
@@ -102,8 +103,6 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
 
     @Override
     protected void initListener() {
-        mapview.setOnLongPressListener(this);
-        mapview.setOnSingleTapListener(this);
         mapview.setOnPanListener(new MyPanListener());
         mapview.setOnPinchListener(new MyPanclListener());
 
@@ -167,7 +166,7 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
         builder.show();
     }
 
-    @OnClick({R.id.btn_periphery, R.id.btn_create_poi, R.id.btn_create_line, R.id.btn_create_gon, R.id.btn_upload_data, R.id.btn_marker_setting})
+    @OnClick({R.id.btn_periphery, R.id.btn_create_poi, R.id.btn_create_line, R.id.btn_create_gon, R.id.btn_upload_data, R.id.btn_marker_setting, R.id.btn_menu})
     public void onViewClick(View view) {
         switch (view.getId()) {
             case R.id.btn_periphery:
@@ -185,192 +184,61 @@ public class MainActivity extends BaseActivity implements OnLongPressListener, O
                 startActivity(intent);
                 break;
             case R.id.btn_marker_setting:
+                //备份
+                copyDatabase();
+                break;
+            case R.id.btn_menu:
+
+                View inflate = LayoutInflater.from(mContext).inflate(R.layout.ppw_menu, null, false);
+                TextView tvChooseMap = inflate.findViewById(R.id.tv_choosemap);
+                TextView tvCopyDb = inflate.findViewById(R.id.tv_copy_bd);
+
+                tvChooseMap.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        openActivity(mContext, ChooseMapActivity.class);
+                    }
+                });
+
+                PopupWindow ppw = new PopupWindow(inflate, view.getWidth(), 320, true);
+                ppw.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                ppw.setOutsideTouchable(true);
+                ppw.setTouchable(true);
+
+                //获取点击View的坐标
+                int[] location = new int[2];
+                view.getLocationOnScreen(location);
+                int y = location[1] - ppw.getHeight();
+                ppw.showAtLocation(view, Gravity.NO_GRAVITY, location[0], y);
+
                 break;
         }
     }
 
+    private void copyDatabase() {
+        ThreadUtils.executeSubThread(new Runnable() {
+            @Override
+            public void run() {
+                FileUtils.copyFile2(GdydApplication.getInstances().getDb().getPath(), PathConstant.DATABASE_PATH + "/sport.db");
 
-    @Override
-    public boolean onLongPress(float v, float v1) {
-        return false;
-    }
-
-    public void onSingleTap(float v, float v1) {
-//        if (callout != null && callout.isShowing()) {
-//            callout.hide();
-//        }
-        if (statue_code == COLLECT_POINT_STATE) {
-            //选点，线，面状态
-            int[] uids = getGraphicsLayer().getGraphicIDs(v, v1, 10, 1);
-            if (uids.length > 0) {
-                Graphic graphic = getGraphicsLayer().getGraphic(uids[0]);
-                Geometry geometry = graphic.getGeometry();
-
-//                if (Geometry.isPoint(geometry.getType().value())) {
-//                    //如果是点
-//                    final PointInfo pointInfo = pointInfoMap.get(uids[0]);
-//                    Point point = (Point) geometry;
-//                    LinearLayout linearLayout = new LinearLayout(this);
-//                    if (pointInfo == null) {
-//                        return;
-//                    }
-//                    if (TextUtils.isEmpty(pointInfo.getName())) {
-//                        //如果没有设置详情
-//                        TextView textView = new TextView(this);
-//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-//                        String date_str = simpleDateFormat.format(new Date(Long.parseLong(pointInfo.getUpdata())));
-//                        textView.setText(date_str);
-//                        //textView.setBackgroundColor(Color.BLACK);
-//                        //textView.setTextColor(Color.WHITE);
-//                        textView.setGravity(Gravity.CENTER);
-//                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                        linearLayout.addView(textView, params);
-//                        linearLayout.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                Intent intent = new Intent(MainActivity.this, SaveInfoActivity.class);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putSerializable("pointinfo", pointInfo);
-//                                bundle.putInt("type", model);
-//                                intent.putExtra("object", bundle);
-//                                startActivityForResult(intent, SAVEINFO_CODE);
-//                                mapview_collection.getCallout().hide();
-//
-//                            }
-//                        });
-//
-//                    } else if (pointInfo.getType().equals("起始符")
-//                            || pointInfo.getType().equals("终止符")) {
-//                        TextView textView = new TextView(this);
-//                        textView.setText(pointInfo.getName() + pointInfo.getType());
-//                        textView.setBackgroundColor(Color.BLACK);
-//                        textView.setTextColor(Color.WHITE);
-//                        textView.setGravity(Gravity.CENTER);
-//                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                        linearLayout.addView(textView, params);
-//                    } else {
-//                        //如果设置详情
-//                        TextView textView = new TextView(this);
-//                        textView.setText(pointInfo.getName());
-//                        // textView.setBackgroundColor(Color.BLACK);
-//                        // textView.setTextColor(Color.WHITE);
-//                        textView.setGravity(Gravity.CENTER);
-//                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                        linearLayout.addView(textView, params);
-//                        linearLayout.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                Intent intent = new Intent(MainActivity.this, SaveInfoActivity.class);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putSerializable("pointinfo", pointInfo);
-//                                bundle.putInt("type", model);
-//                                intent.putExtra("object", bundle);
-//                                startActivityForResult(intent, SAVEINFO_CODE);
-//                                mapview_collection.getCallout().hide();
-//                            }
-//                        });
-//
-//                    }
-//
-//                    callout = mapview_collection.getCallout();
-//                    callout.setContent(linearLayout);
-//                    callout.setOffset(0, 75);
-//                    callout.show(point);
-//
-//                } else if (geometry.getType().value() == Geometry.Type.POLYLINE.value()) {
-//                    LineInfo lineInfo = lineInfoMap.get(uids[0]);
-//                    Intent intent = new Intent(MainActivity.this, SaveLineInfoActivity.class);
-//                    intent.putExtra("lineinfo", lineInfo);
-//                    startActivityForResult(intent, SAVEINFO_CODE);
-//                } else if (geometry.getType().value() == Geometry.Type.POLYGON.value()) {
-//                    GonInfo gonInfo = gonInfoMap.get(uids[0]);
-////                    Intent intent = new Intent(CollectionActivity.this, SaveGonInfoActivity.class);
-////                    intent.putExtra("goninfo", gonInfo);
-////                    startActivityForResult(intent, SAVEGON_CODE);
-//                    Intent intent = new Intent(this, TestSaveGonActivity.class);
-//                    intent.putExtra("goninfo", gonInfo);
-//                    startActivityForResult(intent, SAVEGON_CODE);
-//                }
+                ThreadUtils.executeMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtils.showShort("备份成功");
+                    }
+                });
             }
-        } else if (statue_code == COLLECT_LINE_STATE) {
-            //画线状态
-            Point point = new Point(v, v1);
 
-            linePoint.add(mapview.toMapPoint(point));
-            try {
-                getGraphicsLayer().removeGraphic(graphicLineUid);
-            } catch (Exception e) {
-                LogUtils.i(e.toString());
-            }
-            drawLine(linePoint);
-
-        } else if (statue_code == COLLECT_GON_STATE) {
-            //画面状态
-
-            Point point = new Point(v, v1);
-            gonPoint.add(mapview.toMapPoint(point));
-            try {
-                getGraphicsLayer().removeGraphic(grahicGonUid);
-            } catch (Exception e) {
-                LogUtils.i(e.toString());
-            }
-            drawGon(gonPoint);
-        }
-    }
-
-    public void drawLine(List<Point> linePoint) {
-
-        if (linePoint.size() == 1) {
-            graphicLineUid = addPointInMap(linePoint.get(0));
-        } else if (linePoint.size() > 1) {
-            Polyline polyline = new Polyline();
-            polyline.startPath(linePoint.get(0));
-            for (int i = 1; i < linePoint.size(); i++) {
-                polyline.lineTo(linePoint.get(i));
-            }
-            getGraphicsLayer().removeGraphic(graphicLineUid);
-            SimpleLineSymbol simpleLineSymbol = new SimpleLineSymbol(Color.RED, 2);
-            graphicLineUid = getGraphicsLayer().addGraphic(new Graphic(polyline, simpleLineSymbol));
-        }
-
+        });
 
     }
 
-    public void drawGon(List<Point> pointList) {
-        if (gonPoint.size() == 1) {
-            grahicGonUid = addPointInMap(gonPoint.get(0));
-        } else if (gonPoint.size() >= 2) {
-            SimpleFillSymbol fillSymbol = new SimpleFillSymbol(Color.argb(100, 255, 0, 0));
-            Polygon polygon = new Polygon();
-            polygon.startPath(pointList.get(0));
-            for (int i = 1; i < pointList.size(); i++) {
-                polygon.lineTo(pointList.get(i));
-            }
-            getGraphicsLayer().removeGraphic(grahicGonUid);
-
-            grahicGonUid = getGraphicsLayer().addGraphic(new Graphic(polygon, fillSymbol));
-        }
-    }
-
-
-    public int addPointInMap(Point point) {
-        BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.mipmap.ic_launcher);
-        BitmapDrawable drawable_new = (BitmapDrawable) setNewScaleDrable(drawable, ScreenUtils.dp2px(mContext, 75), ScreenUtils.dp2px(mContext, 75));
-
-        PictureMarkerSymbol pictureMarkerSymbol = new PictureMarkerSymbol(this, drawable_new);
-        Graphic graphic = new Graphic(point, pictureMarkerSymbol);
-        return getGraphicsLayer().addGraphic(graphic);
-    }
-
-    public GraphicsLayer getGraphicsLayer() {
-        return (GraphicsLayer) mapview.getLayer(1);
-    }
-
-    @Subscribe
-    public void onEventMainThread(DownloadMapActivity.SuccessEvent successEvent) {
-        // 下载成功
-        getAllFiles();
-    }
+//    @Subscribe
+//    public void onEventMainThread(EventBean eventBean) {
+//        if ("download".equals(eventBean))
+//            // 下载成功
+//            getAllFiles();
+//    }
 
     /**
      * @param keyCode

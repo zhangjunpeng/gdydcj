@@ -12,6 +12,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     greendao {
@@ -64,6 +65,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
+    implementation 'com.android.support:multidex:1.0.3'
 }
 
 repositories {

@@ -54,9 +54,7 @@ public class ImageActivity extends AppCompatActivity {
                 DialogUtils.showWarningDialog(this, "确定要删除照片吗", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EventBean event = new EventBean();
-                        event.beanStr = "deleteImg";
-                        EventBus.getDefault().post(event);
+                        EventBus.getDefault().post(new EventBean("deleteImg"));
                         finish();
                     }
                 });

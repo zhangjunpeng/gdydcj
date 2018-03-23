@@ -6,4 +6,8 @@ package com.mapuni.gdydcaiji.bean;
 
 public class EventBean {
     public String beanStr;
+
+    public EventBean(String beanStr) {
+        this.beanStr = beanStr;
+    }
 }
