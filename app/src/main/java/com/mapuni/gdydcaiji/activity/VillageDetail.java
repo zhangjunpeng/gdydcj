@@ -10,6 +10,8 @@ import com.mapuni.gdydcaiji.bean.TVillageInfo;
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
+import java.util.Date;
+
 import butterknife.BindView;
 
 /**
@@ -61,7 +63,10 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
 
         resultBean.setName(getTextByView(etName));
         resultBean.setDz(getTextByView(etAddress));
-        resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        if (imgUrl != null && imgUrl.length > 0) {
+            resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        }
+        resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 
         if (isInsert)

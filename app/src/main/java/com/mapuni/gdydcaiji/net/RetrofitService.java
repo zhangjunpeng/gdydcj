@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.net;
 
 import com.mapuni.gdydcaiji.bean.LoginBean;
 import com.mapuni.gdydcaiji.bean.MapBean;
+import com.mapuni.gdydcaiji.bean.UploadBean;
 
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public interface RetrofitService {
     // 上传数据
     @Multipart
     @POST("building/importData")
-    Call<RequestBody> upload(@PartMap Map<String, RequestBody> files);
+    Call<UploadBean> upload(@PartMap Map<String, RequestBody> files);
 }
 
 

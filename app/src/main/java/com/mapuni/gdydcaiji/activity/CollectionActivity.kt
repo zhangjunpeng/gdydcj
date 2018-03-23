@@ -91,10 +91,12 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
+        PermissionUtils.requestAllPermission(this)
 
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
 //        mapfilePath = Environment.getExternalStorageDirectory().absolutePath+"/map/" + "/layers"
         EventBus.getDefault().register(this)
+        
 
         seek_collect.progress=tolerance
         initMapView()

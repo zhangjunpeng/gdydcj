@@ -97,7 +97,9 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         resultBean.setSixad(getTextByView(etSixAd));
         resultBean.setLycs(getTextByView(etLycs));
         resultBean.setLyzhs(getTextByView(etLyzhs));
-        resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        if (imgUrl != null && imgUrl.length > 0) {
+            resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        }
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 

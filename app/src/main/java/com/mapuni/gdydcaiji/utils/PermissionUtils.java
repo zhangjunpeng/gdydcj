@@ -30,7 +30,9 @@ public class PermissionUtils {
                 .permission(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.INTERNET
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.CAMERA
+
 
                 )
                 .rationale(new RationaleListener() {
