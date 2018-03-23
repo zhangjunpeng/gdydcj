@@ -10,11 +10,13 @@ import android.os.Environment
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.SeekBar
 import android.widget.Toast
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
 import com.esri.android.map.event.OnSingleTapListener
+import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
 import com.esri.core.geometry.Point
 import com.esri.core.geometry.Polygon
@@ -23,16 +25,22 @@ import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
+import com.mapuni.gdydcaiji.bean.TBuildingInfo
+import com.mapuni.gdydcaiji.bean.TPoiInfo
+import com.mapuni.gdydcaiji.bean.TSocialInfo
+import com.mapuni.gdydcaiji.bean.TVillageInfo
 import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao
+import com.mapuni.gdydcaiji.utils.ToastUtile
+import com.mapuni.gdydcaiji.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_collection.*
 import org.greenrobot.eventbus.EventBus
 import kotlin.collections.ArrayList
 
 
-class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapListener,View.OnTouchListener {
+class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapListener,View.OnTouchListener, OnZoomListener {
 
 
 
@@ -46,14 +54,15 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
 
     val pointPloygon=ArrayList<Point>()
     lateinit var graphicsLayer: GraphicsLayer
+    lateinit var tempGraphicLayer:GraphicsLayer
+    lateinit var localGraphicsLayer:GraphicsLayer
     lateinit  var alertDialog:AlertDialog
 
     //poi跳转请求码
     private val requestCode_poi:Int=10001
     //面跳转请求码
     val requestCode_ploygon:Int=10002
-
-    var tolerance:Int=100
+    var tolerance:Int=20
 
     //数据库操作对象
     lateinit var tBuildingInfoDao:TBuildingInfoDao
@@ -61,14 +70,27 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
     lateinit var tSocialInfoDao: TSocialInfoDao
     lateinit var tVillageInfoDao: TVillageInfoDao
 
+    //显示的点线面
+    private lateinit var buildingInfoList:List<TBuildingInfo>
+    private lateinit var pointInfoList:List<TPoiInfo>
+    private lateinit var socialInfoList:List<TSocialInfo>
+    private lateinit var villageInfoList:List<TVillageInfo>
+
+    //选中的点线面
+    lateinit var buildingInfoList_select:List<TBuildingInfo>
+    lateinit var pointInfoList_select:List<TPoiInfo>
+    lateinit var socialInfoList_select:List<TSocialInfo>
+    lateinit var villageInfoList_select:List<TVillageInfo>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
 
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
         mapfilePath = Environment.getExternalStorageDirectory().absolutePath+"/map/" + "/layers"
-        initData()
+        seek_collect.progress=tolerance
         initMapView()
+        initData()
         initListener()
         upDateView()
 
@@ -80,6 +102,12 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
         tPoiInfoDao=GdydApplication.instances.daoSession.tPoiInfoDao
         tSocialInfoDao=GdydApplication.instances.daoSession.tSocialInfoDao
         tVillageInfoDao=GdydApplication.instances.daoSession.tVillageInfoDao
+
+        buildingInfoList=tBuildingInfoDao.loadAll()
+        pointInfoList=tPoiInfoDao.loadAll()
+        socialInfoList=tSocialInfoDao.loadAll()
+        villageInfoList=tVillageInfoDao.loadAll()
+
     }
 
     private fun initListener() {
@@ -98,6 +126,25 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
         houtui_collect.setOnClickListener(this)
         chanel_collect.setOnClickListener(this)
 
+
+        seek_collect.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+//                val toast= Toast.makeText(this@CollectionActivity,progress.toString(),Toast.LENGTH_SHORT)
+//                toast.cancel()
+//                toast.show()
+
+                ToastUtile.showText(this@CollectionActivity,progress.toString())
+                tolerance=progress
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+
+        })
+
     }
 
     private fun initMapView() {
@@ -105,9 +152,16 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
         val layer = ArcGISLocalTiledLayer(mapfilePath)
         mapview_collect.addLayer(layer)
         graphicsLayer = GraphicsLayer()
+        tempGraphicLayer= GraphicsLayer()
+        localGraphicsLayer= GraphicsLayer()
         mapview_collect.addLayer(graphicsLayer, 1)
+        mapview_collect.addLayer(tempGraphicLayer, 2)
+        mapview_collect.addLayer(localGraphicsLayer, 3)
+
         mapview_collect.onSingleTapListener = this
 //        mapview_collect.setOnTouchListener(this)
+
+        mapview_collect.onZoomListener=this
     }
 
     override fun onClick(v: View?) {
@@ -244,7 +298,7 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
                 louyu_collect.isSelected=false
                 newploygon_collect.isSelected=false
                 jiaotong_collect.isSelected=false
-
+                seek_collect.visibility=View.INVISIBLE
             }
             1->{
                 linear_tools_collect.visibility=View.INVISIBLE
@@ -252,6 +306,8 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
                 louyu_collect.isSelected=true
                 newploygon_collect.isSelected=false
                 jiaotong_collect.isSelected=false
+                seek_collect.visibility=View.INVISIBLE
+
             }
             2->{
                 linear_tools_collect.visibility=View.VISIBLE
@@ -259,6 +315,8 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
                 louyu_collect.isSelected=false
                 newploygon_collect.isSelected=true
                 jiaotong_collect.isSelected=false
+                seek_collect.visibility=View.INVISIBLE
+
             }
             3->{
                 linear_tools_collect.visibility=View.INVISIBLE
@@ -266,6 +324,18 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
                 louyu_collect.isSelected=false
                 newploygon_collect.isSelected=false
                 jiaotong_collect.isSelected=true
+                seek_collect.visibility=View.INVISIBLE
+
+            }
+            4->{
+                linear_tools_collect.visibility=View.INVISIBLE
+                poi_collect.isSelected=false
+                louyu_collect.isSelected=false
+                newploygon_collect.isSelected=false
+                jiaotong_collect.isSelected=false
+                selectpoint_collect.isSelected=true
+                seek_collect.visibility=View.VISIBLE
+
             }
         }
     }
@@ -351,9 +421,9 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
 
             }
             4->{
+                getGraphics(v,v1)
             }
         }
-        getGraphics(v,v1)
 
     }
 
@@ -362,13 +432,13 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
         val symbol=SimpleMarkerSymbol(Color.parseColor("#50AA0000"),tolerance,SimpleMarkerSymbol.STYLE.CIRCLE)
         val point=mapview_collect.toMapPoint(v,v1)
         val graphic=Graphic(point,symbol)
-        tempGraphicID=  graphicsLayer.addGraphic(graphic)
+        tempGraphicID=  tempGraphicLayer.addGraphic(graphic)
         val uids = graphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
         if (uids.isEmpty()){
-            graphicsLayer.removeGraphic(tempGraphicID)
             Toast.makeText(this,"选择范围内没有点",Toast.LENGTH_SHORT).show()
+            tempGraphicLayer.removeGraphic(tempGraphicID)
         }else{
-
+//            pointInfoList_select=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties)
         }
 
     }
@@ -402,5 +472,57 @@ class CollectionActivity : AppCompatActivity(),View.OnClickListener,OnSingleTapL
         return super.onTouchEvent(event)
     }
 
+    override fun preAction(p0: Float, p1: Float, p2: Double) {
+        localGraphicsLayer.removeAll()
+
+    }
+
+    override fun postAction(p0: Float, p1: Float, p2: Double) {
+        val currentPloygon=mapview_collect.extent
+        val leftTopP= currentPloygon.getPoint(0)
+        val rightTopP= currentPloygon.getPoint(1)
+        val leftBottomP= currentPloygon.getPoint(2)
+
+        buildingInfoList=tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.between(leftTopP.x,rightTopP.x)
+                ,TBuildingInfoDao.Properties.Lat.between(leftTopP.y,leftBottomP.y)).list()
+        pointInfoList=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.between(leftTopP.x,rightTopP.x)
+                ,TPoiInfoDao.Properties.Lat.between(leftTopP.y,leftBottomP.y)).list()
+        socialInfoList=tSocialInfoDao.queryBuilder().where(TSocialInfoDao.Properties.Lng.between(leftTopP.x,rightTopP.x)
+                ,TSocialInfoDao.Properties.Lat.between(leftTopP.y,leftBottomP.y)).list()
+        villageInfoList=tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.between(leftTopP.x,rightTopP.x)
+                ,TVillageInfoDao.Properties.Lat.between(leftTopP.y,leftBottomP.y)).list()
+
+        updateGraphicInLocal()
+
+
+    }
+
+    private fun updateGraphicInLocal() {
+        for (info:TBuildingInfo in buildingInfoList){
+            val point=Point(info.x,info.y)
+            val simpleMarkerSymbol=SimpleMarkerSymbol(Color.RED,5,SimpleMarkerSymbol.STYLE.CIRCLE)
+            val graphic = Graphic(point, simpleMarkerSymbol)
+            localGraphicsLayer.addGraphic(graphic)
+        }
+        for (info:TVillageInfo in villageInfoList){
+            val point=Point(info.x,info.y)
+            val simpleMarkerSymbol=SimpleMarkerSymbol(Color.RED,5,SimpleMarkerSymbol.STYLE.CIRCLE)
+            val graphic = Graphic(point, simpleMarkerSymbol)
+            localGraphicsLayer.addGraphic(graphic)
+        }
+        for (info:TSocialInfo in socialInfoList){
+            val point=Point(info.x,info.y)
+            val simpleMarkerSymbol=SimpleMarkerSymbol(Color.RED,5,SimpleMarkerSymbol.STYLE.CIRCLE)
+            val graphic = Graphic(point, simpleMarkerSymbol)
+            localGraphicsLayer.addGraphic(graphic)
+        }
+        for (info:TPoiInfo in pointInfoList){
+            val point=Point(info.x,info.y)
+            val simpleMarkerSymbol=SimpleMarkerSymbol(Color.RED,5,SimpleMarkerSymbol.STYLE.CIRCLE)
+            val graphic = Graphic(point, simpleMarkerSymbol)
+            localGraphicsLayer.addGraphic(graphic)
+        }
+
+    }
 
 }
