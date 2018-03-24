@@ -1,8 +1,6 @@
 package com.mapuni.gdydcaiji.net;
 
 
-import com.mapuni.gdydcaiji.utils.LogUtils;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -49,7 +47,7 @@ public class RetrofitFactory {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                LogUtils.d("request:" + message);
+//                LogUtils.d("request:" + message);
             }
         });
         //日志显示级别

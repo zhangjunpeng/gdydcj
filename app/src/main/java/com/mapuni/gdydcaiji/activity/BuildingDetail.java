@@ -12,7 +12,6 @@ import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.TBuildingInfo;
 import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
-import com.mapuni.gdydcaiji.utils.ToastUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import java.util.Arrays;

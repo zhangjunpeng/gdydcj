@@ -8,15 +8,18 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.*
+import android.widget.PopupWindow
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
@@ -29,7 +32,6 @@ import com.esri.core.map.Graphic
 import com.esri.core.symbol.PictureMarkerSymbol
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
-import com.esri.core.symbol.TextSymbol
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.GraphicListAdapter
 import com.mapuni.gdydcaiji.R
@@ -45,12 +47,11 @@ import org.greenrobot.eventbus.Subscribe
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import kotlin.collections.ArrayList
 
 
 class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, View.OnTouchListener, OnZoomListener, OnPanListener {
     override fun postPointerMove(p0: Float, p1: Float, p2: Float, p3: Float) {
-        if (localGraphicsLayer!=null) {
+        if (localGraphicsLayer != null) {
             localGraphicsLayer.removeAll()
         }
         graphicName.removeAll()
@@ -80,8 +81,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     val pointPloygon = ArrayList<Point>()
     lateinit var graphicsLayer: GraphicsLayer
     lateinit var tempGraphicLayer: GraphicsLayer
-    var localGraphicsLayer: GraphicsLayer= GraphicsLayer()
-    var graphicName:GraphicsLayer= GraphicsLayer()
+    var localGraphicsLayer: GraphicsLayer = GraphicsLayer()
+    var graphicName: GraphicsLayer = GraphicsLayer()
     lateinit var alertDialog: AlertDialog
 
     //poi跳转请求码
@@ -146,7 +147,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         tSocialInfoDao = GdydApplication.instances.daoSession.tSocialInfoDao
         tVillageInfoDao = GdydApplication.instances.daoSession.tVillageInfoDao
 
-        infoMap= HashMap()
+        infoMap = HashMap()
     }
 
 
@@ -215,7 +216,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
         mapview_collect.onSingleTapListener = this
         mapview_collect.onZoomListener = this
-        mapview_collect.onPanListener=this
+        mapview_collect.onPanListener = this
     }
 
     override fun onClick(v: View?) {
@@ -254,7 +255,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                         jsonArray.put(jsonObject1)
                     }
                     intent1.putExtra("bj", jsonArray.toString())
-                    startActivityForResult(intent1,requestCode_ploygon)
+                    startActivityForResult(intent1, requestCode_ploygon)
                 }
                 R.id.cancel_action -> {
                     graphicsLayer.removeGraphic(grahicGonUid)
@@ -282,13 +283,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
 
-                startActivityForResult(intent1,requestCode_poi)
+                startActivityForResult(intent1, requestCode_poi)
             }
             1 -> {
                 val intent1 = Intent(this, BuildingDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivityForResult(intent1,requestCode_poi)
+                startActivityForResult(intent1, requestCode_poi)
 
             }
             2 -> {
@@ -298,7 +299,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 val intent1 = Intent(this, VillageDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivityForResult(intent1,requestCode_poi)
+                startActivityForResult(intent1, requestCode_poi)
 
             }
         }
@@ -528,14 +529,14 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private var tempGraphicID: Int = 0
     private fun getGraphics(v: Float, v1: Float) {
 
-        infoList= ArrayList()
+        infoList = ArrayList()
         val symbol = SimpleMarkerSymbol(Color.parseColor("#50AA0000"), tolerance, SimpleMarkerSymbol.STYLE.CIRCLE)
         val point = mapview_collect.toMapPoint(v, v1)
         val graphic = Graphic(point, symbol)
         tempGraphicID = tempGraphicLayer.addGraphic(graphic)
         val uids_local = localGraphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
 
-        if ( uids_local.isEmpty()) {
+        if (uids_local.isEmpty()) {
             Toast.makeText(this, "选择范围内没有点", Toast.LENGTH_SHORT).show()
             tempGraphicLayer.removeGraphic(tempGraphicID)
         } else {
@@ -571,16 +572,16 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 //            }
             for (uid in uids_local) {
                 val map = HashMap<String, Any>()
-                val info=infoMap[uid]
-                when(info){
-                    is TVillageInfo->{
-                        map["obj"]=info
+                val info = infoMap[uid]
+                when (info) {
+                    is TVillageInfo -> {
+                        map["obj"] = info
                     }
-                    is TBuildingInfo->{
-                        map["obj"]=info
+                    is TBuildingInfo -> {
+                        map["obj"] = info
                     }
-                    is TPoiInfo->{
-                        map["obj"]=info
+                    is TPoiInfo -> {
+                        map["obj"] = info
                     }
                 }
                 infoList.add(map)
@@ -601,29 +602,29 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 requestCode_poi -> {
-                    if (data is Intent){
-                        val obj=data.getSerializableExtra("obj")
+                    if (data is Intent) {
+                        val obj = data.getSerializableExtra("obj")
                         var point = Point()
-                        var name=""
-                        when(obj){
-                            is TPoiInfo->{
-                                point = Point(obj.lng,obj.lat)
-                                name=obj.name
+                        var name = ""
+                        when (obj) {
+                            is TPoiInfo -> {
+                                point = Point(obj.lng, obj.lat)
+                                name = obj.name
                             }
-                            is TBuildingInfo->{
-                                point = Point(obj.lng,obj.lat)
-                                name=obj.name
+                            is TBuildingInfo -> {
+                                point = Point(obj.lng, obj.lat)
+                                name = obj.name
 
                             }
-                            is TVillageInfo->{
-                                point = Point(obj.lng,obj.lat)
-                                name=obj.name
+                            is TVillageInfo -> {
+                                point = Point(obj.lng, obj.lat)
+                                name = obj.name
 
                             }
                         }
-                        val uid= addPointInMap(point)
-                        infoMap[uid]=obj
-                        addNameInMap(point,name)
+                        val uid = addPointInMap(point)
+                        infoMap[uid] = obj
+                        addNameInMap(point, name)
                     }
 
                 }
@@ -638,21 +639,21 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private fun addNameInMap(point: Point, name: String) {
 
         val tv = TextView(this)
-        if (name.isEmpty()){
+        if (name.isEmpty()) {
             return
         }
         tv.text = name
-        tv.textSize=10f
+        tv.textSize = 10f
         tv.setTextColor(Color.WHITE)
         tv.isDrawingCacheEnabled = true
         tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
         tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
         val bitmap = Bitmap.createBitmap(tv.drawingCache)
         //千万别忘最后一步
-         tv.destroyDrawingCache()
-        val picturSymbol=PictureMarkerSymbol(BitmapDrawable(resources,bitmap))
-        picturSymbol.offsetY=10f
-        val nameGraphic=Graphic(point,picturSymbol)
+        tv.destroyDrawingCache()
+        val picturSymbol = PictureMarkerSymbol(BitmapDrawable(resources, bitmap))
+        picturSymbol.offsetY = 10f
+        val nameGraphic = Graphic(point, picturSymbol)
         graphicName.addGraphic(nameGraphic)
     }
 
@@ -674,13 +675,14 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     override fun postAction(p0: Float, p1: Float, p2: Double) {
-        if (localGraphicsLayer!=null) {
+        if (localGraphicsLayer != null) {
             localGraphicsLayer.removeAll()
         }
         graphicName.removeAll()
         upDateGraphic()
     }
-    private fun upDateGraphic(){
+
+    private fun upDateGraphic() {
         val currentPloygon = mapview_collect.extent
         val leftTopP = currentPloygon.getPoint(0)
         val rightTopP = currentPloygon.getPoint(1)
@@ -703,17 +705,17 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             val point = Point(info.lng, info.lat)
             val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
-            val uid= localGraphicsLayer.addGraphic(graphic)
-            infoMap[uid]=info
-            addNameInMap(point,info.name)
+            val uid = localGraphicsLayer.addGraphic(graphic)
+            infoMap[uid] = info
+            addNameInMap(point, info.name)
         }
         for (info: TVillageInfo in villageInfoList) {
             val point = Point(info.lng, info.lat)
             val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
-            val uid= localGraphicsLayer.addGraphic(graphic)
-            infoMap[uid]=info
-            addNameInMap(point,info.name)
+            val uid = localGraphicsLayer.addGraphic(graphic)
+            infoMap[uid] = info
+            addNameInMap(point, info.name)
 
         }
         for (info: TSocialInfo in socialInfoList) {
@@ -733,13 +735,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 polygon.lineTo(tempPointList[i])
             }
 
-            if (GeometryEngine.contains(currentPloygon,polygon,SpatialReference.create(SpatialReference.WKID_WGS84))){
-                val uid= localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
-                infoMap[uid]=info
+            if (GeometryEngine.contains(currentPloygon, polygon, SpatialReference.create(SpatialReference.WKID_WGS84))) {
+                val uid = localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
+                infoMap[uid] = info
                 val tEnvelope = Envelope()
                 polygon.queryEnvelope(tEnvelope)
                 val tPoint = tEnvelope.center
-                addNameInMap(tPoint,info.name)
+                addNameInMap(tPoint, info.name)
             }
 
 
@@ -748,9 +750,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             val point = Point(info.lng, info.lat)
             val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
-            val uid= localGraphicsLayer.addGraphic(graphic)
-            infoMap[uid]=info
-            addNameInMap(point,info.name)
+            val uid = localGraphicsLayer.addGraphic(graphic)
+            infoMap[uid] = info
+            addNameInMap(point, info.name)
 
         }
 
@@ -885,7 +887,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         showGrahipcListDialog.setCanceledOnTouchOutside(false)
         recyclerView = contentView.findViewById(R.id.recycler_dialog)
 
-        recyclerView.layoutManager=LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         showGrahipcListDialog.setTitle("名称")
 
