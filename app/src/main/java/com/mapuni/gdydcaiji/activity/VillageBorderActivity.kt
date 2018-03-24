@@ -1,5 +1,6 @@
 package com.mapuni.gdydcaiji.activity
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
@@ -9,8 +10,7 @@ import android.text.TextUtils
 import android.view.View
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
-import com.esri.core.geometry.Point
-import com.esri.core.geometry.Polygon
+import com.esri.core.geometry.*
 import com.esri.core.map.Graphic
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
@@ -19,6 +19,8 @@ import com.mapuni.gdydcaiji.utils.PathConstant
 import com.mapuni.gdydcaiji.utils.SPUtils
 import com.mapuni.gdydcaiji.utils.ThreadUtils
 import kotlinx.android.synthetic.main.activity_village_border.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 
 class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
@@ -33,6 +35,26 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
         baocun_collect.setOnClickListener(this)
         houtui_collect.setOnClickListener(this)
         chanel_collect.setOnClickListener(this)
+        initData()
+    }
+
+    private fun initData(){
+        val bj = intent.getStringExtra("bj")
+        val jsonArray = JSONArray(bj)
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray[i] as JSONObject
+            val point = Point(jsonObject.getString("lng").toDouble(), jsonObject.getString("lat").toDouble())
+            pointPloygon.add(point)
+        }
+
+        val fillSymbol = SimpleFillSymbol(Color.argb(100, 255, 0, 0))
+        val polygon = Polygon()
+        polygon.startPath(pointPloygon[0])
+        for (i in 1 until pointPloygon.size) {
+            polygon.lineTo(pointPloygon[i])
+        }
+
+        grahicGonUid=graphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
     }
 
     private lateinit var mapFileName: String
@@ -118,6 +140,19 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
                 ploygonBack()
             }
             R.id.baocun_collect -> {
+                if (pointPloygon.size>2){
+                    val intent1 = Intent()
+                    val jsonArray = JSONArray()
+                    for (point in pointPloygon) {
+                        val jsonObject1 = JSONObject()
+                        jsonObject1.put("lng", point.x)
+                        jsonObject1.put("lat", point.y)
+                        jsonArray.put(jsonObject1)
+                    }
+                    intent1.putExtra("bj", jsonArray.toString())
+                    setResult(Activity.RESULT_OK,intent1)
+                }
+
 
             }
             R.id.cancel_action -> {

@@ -45,6 +45,7 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         title.setText("行政村、自然村采集");
         setSpinnerData(R.array.village_type, spFl);
         tVillageInfoDao = GdydApplication.getInstances().getDaoSession().getTVillageInfoDao();
+
     }
 
     @Override

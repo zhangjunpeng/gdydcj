@@ -20,6 +20,7 @@ import android.widget.*
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
+import com.esri.android.map.event.OnPanListener
 import com.esri.android.map.event.OnSingleTapListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
@@ -47,7 +48,25 @@ import java.io.File
 import kotlin.collections.ArrayList
 
 
-class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, View.OnTouchListener, OnZoomListener {
+class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, View.OnTouchListener, OnZoomListener, OnPanListener {
+    override fun postPointerMove(p0: Float, p1: Float, p2: Float, p3: Float) {
+        if (localGraphicsLayer!=null) {
+            localGraphicsLayer.removeAll()
+        }
+        graphicName.removeAll()
+        upDateGraphic()
+
+    }
+
+    override fun prePointerMove(p0: Float, p1: Float, p2: Float, p3: Float) {
+
+    }
+
+    override fun prePointerUp(p0: Float, p1: Float, p2: Float, p3: Float) {
+    }
+
+    override fun postPointerUp(p0: Float, p1: Float, p2: Float, p3: Float) {
+    }
 
 
 //    var mapfilePath = ""
@@ -196,6 +215,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
         mapview_collect.onSingleTapListener = this
         mapview_collect.onZoomListener = this
+        mapview_collect.onPanListener=this
     }
 
     override fun onClick(v: View?) {
@@ -487,6 +507,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
             }
             2 -> {
+                getPloygon(v, v1)
 
             }
             3 -> {
@@ -495,7 +516,12 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             4 -> {
                 getGraphics(v, v1)
             }
+
         }
+
+    }
+
+    private fun getPloygon(v: Float, v1: Float) {
 
     }
 
@@ -603,7 +629,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 }
                 requestCode_ploygon -> {
                     pointPloygon.clear()
-
                 }
             }
         }
@@ -613,8 +638,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private fun addNameInMap(point: Point, name: String) {
 
         val tv = TextView(this)
+        if (name.isEmpty()){
+            return
+        }
         tv.text = name
-        tv.textSize=5f
+        tv.textSize=10f
         tv.setTextColor(Color.WHITE)
         tv.isDrawingCacheEnabled = true
         tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
@@ -642,13 +670,17 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     override fun preAction(p0: Float, p1: Float, p2: Double) {
-        if (localGraphicsLayer!=null) {
-            localGraphicsLayer.removeAll()
-        }
 
     }
 
     override fun postAction(p0: Float, p1: Float, p2: Double) {
+        if (localGraphicsLayer!=null) {
+            localGraphicsLayer.removeAll()
+        }
+        graphicName.removeAll()
+        upDateGraphic()
+    }
+    private fun upDateGraphic(){
         val currentPloygon = mapview_collect.extent
         val leftTopP = currentPloygon.getPoint(0)
         val rightTopP = currentPloygon.getPoint(1)
@@ -662,11 +694,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         socialInfoList = tSocialInfoDao.loadAll()
         villageInfoList = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
                 , TVillageInfoDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
-
-
-
         updateGraphicInLocal(currentPloygon)
-
 
     }
 
