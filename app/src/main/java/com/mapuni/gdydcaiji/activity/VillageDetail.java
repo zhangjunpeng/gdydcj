@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -13,9 +14,14 @@ import android.widget.TextView;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.EventBJ;
+import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.bean.TVillageInfo;
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
 import com.mapuni.gdydcaiji.view.ClearEditText;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Date;
 
@@ -41,6 +47,7 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
     LinearLayout llBjcaiji;
     private TVillageInfoDao tVillageInfoDao;
 
+    int requesCode=1001;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_village_detail;
@@ -52,7 +59,6 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         title.setText("行政村、自然村采集");
         setSpinnerData(R.array.village_type, spFl);
         tVillageInfoDao = GdydApplication.getInstances().getDaoSession().getTVillageInfoDao();
-
     }
 
     @Override
@@ -82,9 +88,23 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         llBjcaiji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+                Intent intent=new Intent(VillageDetail.this,VillageBorderActivity.class);
+                if (resultBean!=null){
+                    intent.putExtra("bj",resultBean.getZrcbj());
+                }
+                startActivity(intent);
             }
         });
+    }
+
+    @Subscribe
+    public void update(EventBJ eventBJ){
+        Log.i("Eventbus","update");
+        String bj=eventBJ.beanStr;
+        if (resultBean == null) {
+            resultBean = new TVillageInfo();
+            resultBean.setZrcbj(bj);
+        }
     }
 
     @Override
@@ -102,10 +122,9 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
     protected void submit() {
         if (resultBean == null) {
             resultBean = new TVillageInfo();
-            resultBean.setLat(lat);
-            resultBean.setLng(lng);
         }
-
+        resultBean.setLat(lat);
+        resultBean.setLng(lng);
         resultBean.setName(getTextByView(etName));
         resultBean.setDz(getTextByView(etAddress));
         resultBean.setType(spFl.getSelectedItemPosition() + "");
@@ -125,5 +144,6 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         finish();
 
     }
-    
+
+
 }

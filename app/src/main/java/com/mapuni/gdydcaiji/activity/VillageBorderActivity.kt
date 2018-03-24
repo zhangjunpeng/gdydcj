@@ -15,10 +15,13 @@ import com.esri.core.map.Graphic
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
 import com.mapuni.gdydcaiji.R
+import com.mapuni.gdydcaiji.bean.EventBJ
 import com.mapuni.gdydcaiji.utils.PathConstant
 import com.mapuni.gdydcaiji.utils.SPUtils
 import com.mapuni.gdydcaiji.utils.ThreadUtils
+import com.mapuni.gdydcaiji.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_village_border.*
+import org.greenrobot.eventbus.EventBus
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -39,11 +42,15 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
     }
 
     private fun initData(){
-        val bj = intent.getStringExtra("bj")
-        val jsonArray = JSONArray(bj)
-        for (i in 0 until jsonArray.length()) {
-            val jsonObject = jsonArray[i] as JSONObject
-            val point = Point(jsonObject.getString("lng").toDouble(), jsonObject.getString("lat").toDouble())
+        val bj = intent.getStringExtra("bj") ?: return
+        val points_array=bj.split(",")
+        for (i in 0 until points_array.size) {
+            val item=points_array[i]
+            if (item.isEmpty()){
+                continue
+            }
+            val points=item.split(":")
+            val point = Point(points[0].toDouble(), points[1].toDouble())
             pointPloygon.add(point)
         }
 
@@ -102,7 +109,7 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
                 if (allDirFiles != null && allDirFiles.size != 0) {
                     mapview_collect.setVisibility(View.VISIBLE)
                     // 默认显示数组中的第一个文件      按字母顺序排列
-                    mapFilePath = allDirFiles[0].getAbsolutePath()
+                    mapFilePath = allDirFiles[0].absolutePath
                     // 将选中的地图名字存入sp中
                     SPUtils.getInstance().put("checkedMap", allDirFiles[0].getName())
                     SPUtils.getInstance().put("checkedMapPath", allDirFiles[0].getAbsolutePath())
@@ -112,7 +119,7 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
                     mapview_collect.addLayer(graphicsLayer, 1)
 
                 } else {
-                    mapview_collect.setVisibility(View.GONE)
+                    mapview_collect.visibility = View.GONE
                     showNotHaveMapDialog()
                 }
             }
@@ -140,19 +147,14 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
                 ploygonBack()
             }
             R.id.baocun_collect -> {
-                if (pointPloygon.size>2){
-                    val intent1 = Intent()
-                    val jsonArray = JSONArray()
+                    var bj=""
                     for (point in pointPloygon) {
-                        val jsonObject1 = JSONObject()
-                        jsonObject1.put("lng", point.x)
-                        jsonObject1.put("lat", point.y)
-                        jsonArray.put(jsonObject1)
+                        bj=bj+point.x.toString()+":"+point.y.toString()+","
                     }
-                    intent1.putExtra("bj", jsonArray.toString())
-                    setResult(Activity.RESULT_OK,intent1)
-                }
-
+                    bj.dropLast(1)
+                    val eventBJ=EventBJ(bj)
+                    EventBus.getDefault().post(eventBJ)
+                    finish()
 
             }
             R.id.cancel_action -> {
@@ -196,7 +198,7 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
     private fun ploygonBack() {
         graphicsLayer.removeGraphic(grahicGonUid)
         if (pointPloygon.size > 0) {
-            pointPloygon.remove(pointPloygon.last())
+            pointPloygon.dropLast(1)
             drawGon(pointPloygon)
         }
     }

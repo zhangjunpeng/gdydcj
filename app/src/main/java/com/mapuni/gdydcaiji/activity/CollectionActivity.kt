@@ -246,16 +246,19 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     ploygonBack()
                 }
                 R.id.baocun_collect -> {
-                    val intent1 = Intent(this, SocialDetail::class.java)
-                    val jsonArray = JSONArray()
-                    for (point in pointPloygon) {
-                        val jsonObject1 = JSONObject()
-                        jsonObject1.put("lng", point.x)
-                        jsonObject1.put("lat", point.y)
-                        jsonArray.put(jsonObject1)
+                    if(pointPloygon.size>2){
+                        var bj=""
+                        for (point in pointPloygon) {
+                            bj=bj+point.x.toString()+":"+point.y.toString()+","
+                        }
+                        bj.dropLast(1)
+                        val intent1 = Intent(this@CollectionActivity,SocialDetail::class.java)
+                        intent1.putExtra("bj",bj)
+                        startActivityForResult(intent1,requestCode_ploygon)
+                    }else{
+                        ToastUtils.showShort("请在地图上选择点")
                     }
-                    intent1.putExtra("bj", jsonArray.toString())
-                    startActivityForResult(intent1, requestCode_ploygon)
+
                 }
                 R.id.cancel_action -> {
                     graphicsLayer.removeGraphic(grahicGonUid)
@@ -643,7 +646,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             return
         }
         tv.text = name
-        tv.textSize = 10f
+
+        tv.textSize=8f
         tv.setTextColor(Color.WHITE)
         tv.isDrawingCacheEnabled = true
         tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
@@ -720,11 +724,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         }
         for (info: TSocialInfo in socialInfoList) {
             val bj = info.bj
-            val jsonArray = JSONArray(bj)
             val tempPointList = ArrayList<Point>()
-            for (i in 0 until jsonArray.length()) {
-                val jsonObject = jsonArray[i] as JSONObject
-                val point = Point(jsonObject.getString("lng").toDouble(), jsonObject.getString("lat").toDouble())
+            val points_array=bj.split(",")
+            for (i in 0 until points_array.size) {
+                val item=points_array[i]
+                if (item.isEmpty()){
+                    continue
+                }
+                val points=item.split(":")
+                val point = Point(points[0].toDouble(), points[1].toDouble())
                 tempPointList.add(point)
             }
 
