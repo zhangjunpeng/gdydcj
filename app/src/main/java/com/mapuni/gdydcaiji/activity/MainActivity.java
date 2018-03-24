@@ -3,15 +3,12 @@ package com.mapuni.gdydcaiji.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -19,39 +16,17 @@ import android.widget.TextView;
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapView;
 import com.esri.android.map.ags.ArcGISLocalTiledLayer;
-import com.esri.android.map.event.OnLongPressListener;
-import com.esri.android.map.event.OnSingleTapListener;
 import com.esri.android.runtime.ArcGISRuntime;
-import com.esri.core.geometry.Geometry;
-import com.esri.core.geometry.Point;
-import com.esri.core.geometry.Polygon;
-import com.esri.core.geometry.Polyline;
-import com.esri.core.map.Graphic;
-import com.esri.core.symbol.PictureMarkerSymbol;
-import com.esri.core.symbol.SimpleFillSymbol;
-import com.esri.core.symbol.SimpleLineSymbol;
-import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
-import com.mapuni.gdydcaiji.bean.EventBean;
-import com.mapuni.gdydcaiji.database.greendao.DaoSession;
-import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
-import com.mapuni.gdydcaiji.utils.FileUtils;
-import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.PermissionUtils;
 import com.mapuni.gdydcaiji.utils.SPUtils;
-import com.mapuni.gdydcaiji.utils.ScreenUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -105,7 +80,7 @@ public class MainActivity extends BaseActivity {
     protected void initListener() {
         mapview.setOnPanListener(new MyPanListener());
         mapview.setOnPinchListener(new MyPanclListener());
-
+        
     }
 
     private void getAllFiles() {
@@ -219,7 +194,7 @@ public class MainActivity extends BaseActivity {
         ThreadUtils.executeSubThread(new Runnable() {
             @Override
             public void run() {
-                FileUtils.copyFile2(GdydApplication.getInstances().getDb().getPath(), PathConstant.DATABASE_PATH + "/sport.db");
+//                FileUtils.copyFile2(GdydApplication.getInstances().getDb().getPath(), PathConstant.DATABASE_PATH + "/sport.db");
 
                 ThreadUtils.executeMainThread(new Runnable() {
                     @Override
