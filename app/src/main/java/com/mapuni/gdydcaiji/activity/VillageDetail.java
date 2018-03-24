@@ -45,9 +45,12 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
     Spinner spFl;
     @BindView(R.id.ll_bjcaiji)
     LinearLayout llBjcaiji;
+    @BindView(R.id.tv_collect_status)
+    TextView tvCollectStatus;
     private TVillageInfoDao tVillageInfoDao;
 
-    int requesCode=1001;
+    int requesCode = 1001;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_village_detail;
@@ -84,13 +87,13 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
 
             }
         });
-        
+
         llBjcaiji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(VillageDetail.this,VillageBorderActivity.class);
-                if (resultBean!=null){
-                    intent.putExtra("bj",resultBean.getZrcbj());
+                Intent intent = new Intent(VillageDetail.this, VillageBorderActivity.class);
+                if (resultBean != null) {
+                    intent.putExtra("bj", resultBean.getZrcbj());
                 }
                 startActivity(intent);
             }
@@ -98,13 +101,15 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
     }
 
     @Subscribe
-    public void update(EventBJ eventBJ){
-        Log.i("Eventbus","update");
-        String bj=eventBJ.beanStr;
+    public void update(EventBJ eventBJ) {
+        Log.i("Eventbus", "update");
+        String bj = eventBJ.beanStr;
         if (resultBean == null) {
             resultBean = new TVillageInfo();
             resultBean.setZrcbj(bj);
         }
+        tvCollectStatus.setText("已采集");
+
     }
 
     @Override
@@ -112,6 +117,12 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         etName.setText(resultBean.getName());
         etAddress.setText(resultBean.getDz());
         spFl.setSelection(Integer.parseInt(resultBean.getType()));
+        if (TextUtils.isEmpty(resultBean.getZrcbj())) {
+            tvCollectStatus.setText("未采集");
+        } else {
+            tvCollectStatus.setText("已采集");
+        }
+
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
         }
@@ -131,6 +142,9 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         if (imgUrl != null && imgUrl.length > 0) {
             resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
         }
+        if (spFl.getSelectedItemPosition() == 1) {
+            resultBean.setZrcbj("");
+        }
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 
@@ -144,6 +158,5 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         finish();
 
     }
-
 
 }
