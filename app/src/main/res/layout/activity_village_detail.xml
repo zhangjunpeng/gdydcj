@@ -69,10 +69,15 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="自然村边界采集"/>
+                        android:text="边界"/>
+
+                    <TextView
+                        android:id="@+id/tv_collect_status"
+                        style="@style/HintText"
+                        android:layout_weight="7"
+                        android:text="未采集"/>
 
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
