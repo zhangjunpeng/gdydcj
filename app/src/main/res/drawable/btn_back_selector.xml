@@ -4,5 +4,5 @@
     <item android:drawable="@color/mapbtnNormal" android:state_pressed="true" /> <!-- pressed -->
     <item android:drawable="@color/mapbtnNormal" android:state_focused="true" /> <!-- focused -->
     <item android:drawable="@color/mapbtnNormal" android:state_selected="true" /> <!-- focused -->
-    <item android:drawable="@color/themeColor" /> <!-- default -->
+    <item android:drawable="@color/color_deep_sky_blue" /> <!-- default -->
 </selector>

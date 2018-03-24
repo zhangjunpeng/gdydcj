@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
 
-    <include layout="@layout/layout_title" />
+    <include layout="@layout/layout_title"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -31,11 +31,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="楼宇类型" />
+                        android:text="楼宇类型"/>
 
                     <Spinner
                         android:id="@+id/sp_lyType"
-                        style="@style/CustomSpinner" />
+                        style="@style/CustomSpinner"/>
 
                 </LinearLayout>
 
@@ -43,11 +43,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="楼宇性质" />
+                        android:text="楼宇性质"/>
 
                     <Spinner
                         android:id="@+id/sp_lyxz"
-                        style="@style/CustomSpinner" />
+                        style="@style/CustomSpinner"/>
 
                 </LinearLayout>
 
@@ -55,11 +55,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="楼宇分类" />
+                        android:text="楼宇分类"/>
 
                     <Spinner
                         android:id="@+id/sp_lyfl"
-                        style="@style/CustomSpinner" />
+                        style="@style/CustomSpinner"/>
 
                 </LinearLayout>
 
@@ -67,11 +67,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="楼宇名称" />
+                        android:text="楼宇名称"/>
 
                     <com.mapuni.gdydcaiji.view.ClearEditText
                         android:id="@+id/et_lyName"
-                        style="@style/CollectEditText" />
+                        style="@style/CollectEditText"/>
 
                 </LinearLayout>
 
@@ -79,11 +79,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="第四级" />
+                        android:text="第四级"/>
 
                     <com.mapuni.gdydcaiji.view.ClearEditText
                         android:id="@+id/et_forthAd"
-                        style="@style/CollectEditText" />
+                        style="@style/CollectEditText"/>
 
                 </LinearLayout>
 
@@ -91,11 +91,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="第五级" />
+                        android:text="第五级"/>
 
                     <com.mapuni.gdydcaiji.view.ClearEditText
                         android:id="@+id/et_fifAd"
-                        style="@style/CollectEditText" />
+                        style="@style/CollectEditText"/>
 
                 </LinearLayout>
 
@@ -103,11 +103,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="第六级" />
+                        android:text="第六级"/>
 
                     <com.mapuni.gdydcaiji.view.ClearEditText
                         android:id="@+id/et_sixAd"
-                        style="@style/CollectEditText" />
+                        style="@style/CollectEditText"/>
 
                 </LinearLayout>
 
@@ -115,11 +115,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="楼宇层数" />
+                        android:text="楼宇层数"/>
 
                     <com.mapuni.gdydcaiji.view.ClearEditText
                         android:id="@+id/et_lycs"
-                        style="@style/CollectEditText" />
+                        style="@style/CollectEditText"/>
 
                 </LinearLayout>
 
@@ -127,11 +127,11 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="楼宇住户数" />
+                        android:text="楼宇住户数"/>
 
                     <com.mapuni.gdydcaiji.view.ClearEditText
                         android:id="@+id/et_lyzhs"
-                        style="@style/CollectEditText" />
+                        style="@style/CollectEditText"/>
 
                 </LinearLayout>
 
@@ -142,15 +142,27 @@
 
                     <TextView
                         style="@style/HintText"
-                        android:text="图片" />
+                        android:text="图片"/>
 
-                    <ImageView
-                        android:id="@+id/iv_image"
+                    <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="96dp"
-                        android:layout_weight="7"
-                        android:src="@drawable/selector_camera" />
+                        android:layout_weight="7">
 
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="96dp"
+                            android:layout_weight="7">
+
+                            <ImageView
+                                android:id="@+id/iv_image"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/selector_camera"/>
+                        </RelativeLayout>
+
+                    </RelativeLayout>
                 </LinearLayout>
 
                 <Button
@@ -161,7 +173,7 @@
                     android:layout_margin="16dp"
                     android:background="@drawable/selector_login_btn"
                     android:text="保存"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"/>
 
             </android.support.v7.widget.LinearLayoutCompat>
 
@@ -170,7 +182,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:clickable="true" />
+                android:clickable="true"/>
 
         </RelativeLayout>
     </ScrollView>
