@@ -43,13 +43,13 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
 
     private fun initData(){
         val bj = intent.getStringExtra("bj") ?: return
-        val points_array=bj.split(",")
+        val points_array=bj.split(";")
         for (i in 0 until points_array.size) {
             val item=points_array[i]
             if (item.isEmpty()){
                 continue
             }
-            val points=item.split(":")
+            val points=item.split(",")
             val point = Point(points[0].toDouble(), points[1].toDouble())
             pointPloygon.add(point)
         }
@@ -149,7 +149,7 @@ class VillageBorderActivity : AppCompatActivity() ,View.OnClickListener{
             R.id.baocun_collect -> {
                     var bj=""
                     for (point in pointPloygon) {
-                        bj=bj+point.x.toString()+":"+point.y.toString()+","
+                        bj=bj+point.x.toString()+","+point.y.toString()+";"
                     }
                     bj.dropLast(1)
                     val eventBJ=EventBJ(bj)

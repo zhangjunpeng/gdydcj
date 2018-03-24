@@ -28,6 +28,7 @@ import com.esri.android.map.event.OnSingleTapListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
 import com.esri.core.geometry.*
+import com.esri.core.internal.tasks.ags.v
 import com.esri.core.map.Graphic
 import com.esri.core.symbol.PictureMarkerSymbol
 import com.esri.core.symbol.SimpleFillSymbol
@@ -50,24 +51,50 @@ import java.io.File
 
 
 class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, View.OnTouchListener, OnZoomListener, OnPanListener {
-    override fun postPointerMove(p0: Float, p1: Float, p2: Float, p3: Float) {
-        if (localGraphicsLayer != null) {
-            localGraphicsLayer.removeAll()
-        }
-        graphicName.removeAll()
-        upDateGraphic()
+    private var mIsLoading: Boolean=false
+
+    override fun postPointerMove(v: Float, v1: Float, v2: Float, v3: Float) {
+
+
 
     }
 
+    private var mStartX: Float=0f
+    private var mStartY: Float=0f
+
+
     override fun prePointerMove(p0: Float, p1: Float, p2: Float, p3: Float) {
+
+          if (mStartX == 0f && mStartY == 0f) {
+                    mStartX = p0
+                    mStartY = p1
+          }
 
     }
 
     override fun prePointerUp(p0: Float, p1: Float, p2: Float, p3: Float) {
     }
 
-    override fun postPointerUp(p0: Float, p1: Float, p2: Float, p3: Float) {
+    override fun postPointerUp(v: Float, v1: Float, v2: Float, v3: Float) {
+
+        val distance = Math.sqrt(((v2 - mStartX) * (v2 - mStartX) +
+                (v3 - mStartY) * (v3 - mStartY)).toDouble())
+        if (distance < 150) {
+            mStartX = 0f
+            mStartY = 0f
+            return
+        }
+        mStartX = 0f
+        mStartY = 0f
+        if (!mIsLoading) {
+            mIsLoading=true
+            localGraphicsLayer.removeAll()
+            graphicName.removeAll()
+            upDateGraphic()
+        }
     }
+
+
 
 
 //    var mapfilePath = ""
@@ -249,7 +276,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     if(pointPloygon.size>2){
                         var bj=""
                         for (point in pointPloygon) {
-                            bj=bj+point.x.toString()+":"+point.y.toString()+","
+                            bj=bj+point.x.toString()+","+point.y.toString()+";"
                         }
                         bj.dropLast(1)
                         val intent1 = Intent(this@CollectionActivity,SocialDetail::class.java)
@@ -725,13 +752,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         for (info: TSocialInfo in socialInfoList) {
             val bj = info.bj
             val tempPointList = ArrayList<Point>()
-            val points_array=bj.split(",")
+            val points_array=bj.split(";")
             for (i in 0 until points_array.size) {
                 val item=points_array[i]
                 if (item.isEmpty()){
                     continue
                 }
-                val points=item.split(":")
+                val points=item.split(",")
                 val point = Point(points[0].toDouble(), points[1].toDouble())
                 tempPointList.add(point)
             }
@@ -763,7 +790,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             addNameInMap(point, info.name)
 
         }
-
+        mIsLoading=false
     }
 
 

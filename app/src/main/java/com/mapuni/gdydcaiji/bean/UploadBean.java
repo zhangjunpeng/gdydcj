@@ -19,4 +19,11 @@ public class UploadBean {
     public void setResult(boolean result) {
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        return "UploadBean{" +
+                "result=" + result +
+                '}';
+    }
 }
