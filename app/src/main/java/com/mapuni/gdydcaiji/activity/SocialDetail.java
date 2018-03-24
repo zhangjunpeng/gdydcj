@@ -36,6 +36,8 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
     ClearEditText etLxdh;
     private TSocialInfoDao tSocialInfoDao;
 
+    private String bj;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_social_detail;
@@ -47,6 +49,8 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         title.setText("小区、学校、医院采集");
         tSocialInfoDao = GdydApplication.getInstances().getDaoSession().getTSocialInfoDao();
         setSpinnerData(R.array.social_type, spFl);
+
+        bj=getIntent().getStringExtra("bj");
     }
 
     @Override
@@ -79,6 +83,7 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         resultBean.setLxdh(getTextByView(etLxdh));
         resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
         resultBean.setFlag(0);
+        resultBean.setBj(bj);
 
         if (isInsert)
             tSocialInfoDao.insert(resultBean);

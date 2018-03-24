@@ -89,6 +89,7 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
         else
             tPoiInfoDao.update(resultBean);
 
+        finish();
     }
 
 }
