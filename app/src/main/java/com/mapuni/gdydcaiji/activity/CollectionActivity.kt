@@ -3,13 +3,11 @@ package com.mapuni.gdydcaiji.activity
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -23,12 +21,11 @@ import com.esri.android.map.ags.ArcGISLocalTiledLayer
 import com.esri.android.map.event.OnSingleTapListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
-import com.esri.core.geometry.Geometry
-import com.esri.core.geometry.Point
-import com.esri.core.geometry.Polygon
+import com.esri.core.geometry.*
 import com.esri.core.map.Graphic
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
+import com.esri.core.symbol.TextSymbol
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.GraphicListAdapter
 import com.mapuni.gdydcaiji.R
@@ -468,7 +465,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun addPointInMap(point: Point): Int {
-        val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 5, SimpleMarkerSymbol.STYLE.CIRCLE)
+        val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
         val graphic = Graphic(point, simpleMarkerSymbol)
         return graphicsLayer.addGraphic(graphic)
     }
@@ -577,21 +574,26 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 requestCode_poi -> {
                     val obj=data.getSerializableExtra("obj")
                     var point = Point()
+                    var name=""
                     when(obj){
                         is TPoiInfo->{
                              point = Point(obj.lng,obj.lat)
-
+                            name=obj.name
                         }
                         is TBuildingInfo->{
                             point = Point(obj.lng,obj.lat)
+                            name=obj.name
+
                         }
                         is TVillageInfo->{
                             point = Point(obj.lng,obj.lat)
+                            name=obj.name
+
                         }
                     }
                     val uid= addPointInMap(point)
                     infoMap[uid]=obj
-
+                    addNameInMap(point,name)
                 }
                 requestCode_ploygon -> {
 
@@ -599,6 +601,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun addNameInMap(point: Point, name: String) {
+        val textSymbol=TextSymbol(20,name,Color.WHITE)
+        textSymbol.offsetY=10f
+        val nameGraphic=Graphic(point,textSymbol)
+        graphicName.addGraphic(nameGraphic)
     }
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
@@ -645,17 +654,20 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private fun updateGraphicInLocal() {
         for (info: TBuildingInfo in buildingInfoList) {
             val point = Point(info.lng, info.lat)
-            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 5, SimpleMarkerSymbol.STYLE.CIRCLE)
+            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
             val uid= localGraphicsLayer.addGraphic(graphic)
             infoMap[uid]=info
+            addNameInMap(point,info.name)
         }
         for (info: TVillageInfo in villageInfoList) {
             val point = Point(info.lng, info.lat)
-            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 5, SimpleMarkerSymbol.STYLE.CIRCLE)
+            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
             val uid= localGraphicsLayer.addGraphic(graphic)
             infoMap[uid]=info
+            addNameInMap(point,info.name)
+
         }
         for (info: TSocialInfo in socialInfoList) {
             val bj = info.bj
@@ -675,13 +687,20 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             }
             val uid= localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
             infoMap[uid]=info
+            val tEnvelope = Envelope()
+            polygon.queryEnvelope(tEnvelope)
+            val tPoint = tEnvelope.center
+            addNameInMap(tPoint,info.name)
+
         }
         for (info: TPoiInfo in pointInfoList) {
             val point = Point(info.lng, info.lat)
-            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 5, SimpleMarkerSymbol.STYLE.CIRCLE)
+            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
             val uid= localGraphicsLayer.addGraphic(graphic)
             infoMap[uid]=info
+            addNameInMap(point,info.name)
+
         }
 
     }
