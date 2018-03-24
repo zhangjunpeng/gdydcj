@@ -4,7 +4,9 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +25,7 @@ import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
 import com.esri.core.geometry.*
 import com.esri.core.map.Graphic
+import com.esri.core.symbol.PictureMarkerSymbol
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
 import com.esri.core.symbol.TextSymbol
@@ -224,14 +227,14 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 R.id.baocun_collect -> {
                     val intent1 = Intent(this, SocialDetail::class.java)
                     val jsonArray = JSONArray()
-                    for (point in pointInfoList) {
+                    for (point in pointPloygon) {
                         val jsonObject1 = JSONObject()
                         jsonObject1.put("lng", point.x)
                         jsonObject1.put("lat", point.y)
                         jsonArray.put(jsonObject1)
                     }
                     intent1.putExtra("bj", jsonArray.toString())
-                    startActivity(intent1)
+                    startActivityForResult(intent1,requestCode_ploygon)
                 }
                 R.id.cancel_action -> {
                     graphicsLayer.removeGraphic(grahicGonUid)
@@ -568,34 +571,38 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 requestCode_poi -> {
-                    val obj=data.getSerializableExtra("obj")
-                    var point = Point()
-                    var name=""
-                    when(obj){
-                        is TPoiInfo->{
-                             point = Point(obj.lng,obj.lat)
-                            name=obj.name
-                        }
-                        is TBuildingInfo->{
-                            point = Point(obj.lng,obj.lat)
-                            name=obj.name
+                    if (data is Intent){
+                        val obj=data.getSerializableExtra("obj")
+                        var point = Point()
+                        var name=""
+                        when(obj){
+                            is TPoiInfo->{
+                                point = Point(obj.lng,obj.lat)
+                                name=obj.name
+                            }
+                            is TBuildingInfo->{
+                                point = Point(obj.lng,obj.lat)
+                                name=obj.name
 
-                        }
-                        is TVillageInfo->{
-                            point = Point(obj.lng,obj.lat)
-                            name=obj.name
+                            }
+                            is TVillageInfo->{
+                                point = Point(obj.lng,obj.lat)
+                                name=obj.name
 
+                            }
                         }
+                        val uid= addPointInMap(point)
+                        infoMap[uid]=obj
+                        addNameInMap(point,name)
                     }
-                    val uid= addPointInMap(point)
-                    infoMap[uid]=obj
-                    addNameInMap(point,name)
+
                 }
                 requestCode_ploygon -> {
+                    pointPloygon.clear()
 
                 }
             }
@@ -604,9 +611,20 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun addNameInMap(point: Point, name: String) {
-        val textSymbol=TextSymbol(20,name,Color.WHITE)
-        textSymbol.offsetY=10f
-        val nameGraphic=Graphic(point,textSymbol)
+
+        val tv = TextView(this)
+        tv.text = name
+        tv.textSize=5f
+        tv.setTextColor(Color.WHITE)
+        tv.isDrawingCacheEnabled = true
+        tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
+        val bitmap = Bitmap.createBitmap(tv.drawingCache)
+        //千万别忘最后一步
+         tv.destroyDrawingCache()
+        val picturSymbol=PictureMarkerSymbol(BitmapDrawable(resources,bitmap))
+        picturSymbol.offsetY=10f
+        val nameGraphic=Graphic(point,picturSymbol)
         graphicName.addGraphic(nameGraphic)
     }
 
@@ -640,18 +658,19 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 , TBuildingInfoDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
         pointInfoList = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
                 , TPoiInfoDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
-        LogUtils.d(pointInfoList[0].lat.toString()+"---"+pointInfoList[0].lng.toString())
-        socialInfoList = tSocialInfoDao.queryBuilder().where(TSocialInfoDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
-                , TSocialInfoDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
+//        LogUtils.d(pointInfoList[0].lat.toString()+"---"+pointInfoList[0].lng.toString())
+        socialInfoList = tSocialInfoDao.loadAll()
         villageInfoList = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
                 , TVillageInfoDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
 
-        updateGraphicInLocal()
+
+
+        updateGraphicInLocal(currentPloygon)
 
 
     }
 
-    private fun updateGraphicInLocal() {
+    private fun updateGraphicInLocal(currentPloygon: Polygon) {
         for (info: TBuildingInfo in buildingInfoList) {
             val point = Point(info.lng, info.lat)
             val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
@@ -673,7 +692,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             val bj = info.bj
             val jsonArray = JSONArray(bj)
             val tempPointList = ArrayList<Point>()
-            for (i in 1 until jsonArray.length()) {
+            for (i in 0 until jsonArray.length()) {
                 val jsonObject = jsonArray[i] as JSONObject
                 val point = Point(jsonObject.getString("lng").toDouble(), jsonObject.getString("lat").toDouble())
                 tempPointList.add(point)
@@ -685,12 +704,16 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             for (i in 1 until tempPointList.size) {
                 polygon.lineTo(tempPointList[i])
             }
-            val uid= localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
-            infoMap[uid]=info
-            val tEnvelope = Envelope()
-            polygon.queryEnvelope(tEnvelope)
-            val tPoint = tEnvelope.center
-            addNameInMap(tPoint,info.name)
+
+            if (GeometryEngine.contains(currentPloygon,polygon,SpatialReference.create(SpatialReference.WKID_WGS84))){
+                val uid= localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
+                infoMap[uid]=info
+                val tEnvelope = Envelope()
+                polygon.queryEnvelope(tEnvelope)
+                val tPoint = tEnvelope.center
+                addNameInMap(tPoint,info.name)
+            }
+
 
         }
         for (info: TPoiInfo in pointInfoList) {
