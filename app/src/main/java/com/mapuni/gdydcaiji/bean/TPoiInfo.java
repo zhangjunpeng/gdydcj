@@ -20,8 +20,6 @@ public class TPoiInfo implements Serializable{
     @Id
     private Long id;
 
-    private int uid;
-    
     private String bm;
 
     private String csbs;
@@ -91,15 +89,14 @@ public class TPoiInfo implements Serializable{
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 743950680)
-    public TPoiInfo(Long id, int uid, String bm, String csbs, String qxbs,
-            String xzbs, String gsjd, String name, String firstad, String secondad,
+    @Generated(hash = 1969789401)
+    public TPoiInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
+            String gsjd, String name, String firstad, String secondad,
             String thirdad, String forthad, String fifad, String sixad,
             String sevenad, String lydz, String fl, String mjdj, String sslc,
             String sslymc, Double x, Double y, Date gxsj, String bz, String optuser,
             Double lat, Double lng, Date opttime, String img, int flag) {
         this.id = id;
-        this.uid = uid;
         this.bm = bm;
         this.csbs = csbs;
         this.qxbs = qxbs;
@@ -366,11 +363,4 @@ public class TPoiInfo implements Serializable{
         this.flag = flag;
     }
 
-    public int getUid() {
-        return this.uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
 }

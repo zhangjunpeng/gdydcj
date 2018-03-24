@@ -21,8 +21,6 @@ public class TVillageInfo implements Serializable {
     @Id
     private Long id;
 
-    private int uid;
-
     private String bm;
 
     private String csbs;
@@ -72,14 +70,12 @@ public class TVillageInfo implements Serializable {
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 139386641)
-    public TVillageInfo(Long id, int uid, String bm, String csbs, String qxbs,
-            String xzbs, String gsjd, String gsxzc, String name, String dz,
-            Double x, Double y, String zrcbj, Date gxsj, Double czmj,
-            String optuser, Double lat, Double lng, Date opttime, String type,
-            String img, int flag) {
+    @Generated(hash = 586932351)
+    public TVillageInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
+            String gsjd, String gsxzc, String name, String dz, Double x, Double y,
+            String zrcbj, Date gxsj, Double czmj, String optuser, Double lat,
+            Double lng, Date opttime, String type, String img, int flag) {
         this.id = id;
-        this.uid = uid;
         this.bm = bm;
         this.csbs = csbs;
         this.qxbs = qxbs;
@@ -112,14 +108,6 @@ public class TVillageInfo implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getUid() {
-        return this.uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
     }
 
     public String getBm() {

@@ -20,8 +20,6 @@ public class TSocialInfo implements Serializable{
     @Id
     private Long id;
 
-    private int uid;
-    
     private String bm;
 
     private String csbs;
@@ -97,16 +95,14 @@ public class TSocialInfo implements Serializable{
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 356909982)
-    public TSocialInfo(Long id, int uid, String bm, String csbs, String qxbs,
-            String xzbs, String gsjd, String xqid, String name, String firstad,
-            String secondad, String thirdad, String forthad, String fifad,
-            String xqdz, Double x, Double y, Date gxsj, String wyxx, String lxdh,
-            String glgx, Double xqmj, String optuser, Double lat, Double lng,
-            Date opttime, String type, String lysl, String zhs, String lds,
-            String bj, String img, int flag) {
+    @Generated(hash = 1485449167)
+    public TSocialInfo(Long id, String bm, String csbs, String qxbs, String xzbs,
+            String gsjd, String xqid, String name, String firstad, String secondad,
+            String thirdad, String forthad, String fifad, String xqdz, Double x,
+            Double y, Date gxsj, String wyxx, String lxdh, String glgx, Double xqmj,
+            String optuser, Double lat, Double lng, Date opttime, String type,
+            String lysl, String zhs, String lds, String bj, String img, int flag) {
         this.id = id;
-        this.uid = uid;
         this.bm = bm;
         this.csbs = csbs;
         this.qxbs = qxbs;
@@ -390,14 +386,6 @@ public class TSocialInfo implements Serializable{
 
     public void setFlag(int flag) {
         this.flag = flag;
-    }
-
-    public int getUid() {
-        return this.uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
     }
 
     public String getBj() {
