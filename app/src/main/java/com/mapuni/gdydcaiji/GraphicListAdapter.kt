@@ -1,11 +1,15 @@
 package com.mapuni.gdydcaiji
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.mapuni.gdydcaiji.activity.BuildingDetail
+import com.mapuni.gdydcaiji.activity.PoiDetail
+import com.mapuni.gdydcaiji.activity.VillageDetail
 import com.mapuni.gdydcaiji.bean.TBuildingInfo
 import com.mapuni.gdydcaiji.bean.TPoiInfo
 import com.mapuni.gdydcaiji.bean.TVillageInfo
@@ -40,6 +44,24 @@ class GraphicListAdapter(context:Context,list:List<Map<String,Any>>): RecyclerVi
             is TVillageInfo->{
                 holder.name.text= obj.name
             }
+        }
+        holder.itemView.setOnClickListener {
+            val intent=Intent()
+            when(obj){
+                is TBuildingInfo->{
+                    intent.setClass(context,BuildingDetail::class.java)
+                    intent.putExtra("resultBean",obj)
+                }
+                is TPoiInfo->{
+                    intent.setClass(context,PoiDetail::class.java)
+                    intent.putExtra("resultBean",obj)
+                }
+                is TVillageInfo->{
+                    intent.setClass(context,VillageDetail::class.java)
+                    intent.putExtra("resultBean",obj)
+                }
+            }
+            context.startActivity(intent)
         }
     }
 

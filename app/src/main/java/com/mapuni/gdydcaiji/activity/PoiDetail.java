@@ -1,5 +1,7 @@
 package com.mapuni.gdydcaiji.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Base64;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -94,6 +96,9 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
         else
             tPoiInfoDao.update(resultBean);
 
+        Intent data=new Intent();
+        data.putExtra("obj",resultBean);
+        setResult(Activity.RESULT_OK,data);
         finish();
     }
 

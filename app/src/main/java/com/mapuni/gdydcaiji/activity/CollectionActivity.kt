@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.util.DisplayMetrics
@@ -60,7 +61,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     val pointPloygon = ArrayList<Point>()
     lateinit var graphicsLayer: GraphicsLayer
     lateinit var tempGraphicLayer: GraphicsLayer
-    lateinit var localGraphicsLayer: GraphicsLayer
+    var localGraphicsLayer: GraphicsLayer= GraphicsLayer()
+    var graphicName:GraphicsLayer= GraphicsLayer()
     lateinit var alertDialog: AlertDialog
 
     //poi跳转请求码
@@ -86,11 +88,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private lateinit var socialInfoList: List<TSocialInfo>
     private lateinit var villageInfoList: List<TVillageInfo>
 
-    //选中的点线面
-    lateinit var buildingInfoList_select: ArrayList<TBuildingInfo>
-    lateinit var pointInfoList_select: ArrayList<TPoiInfo>
-    lateinit var socialInfoList_select: ArrayList<TSocialInfo>
-    lateinit var villageInfoList_select: ArrayList<TVillageInfo>
 
     lateinit var infoList: ArrayList<Map<String, Any>>
     lateinit var infoMap: HashMap<Int, Any>
@@ -130,13 +127,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         tSocialInfoDao = GdydApplication.instances.daoSession.tSocialInfoDao
         tVillageInfoDao = GdydApplication.instances.daoSession.tVillageInfoDao
 
-//        buildingInfoList=tBuildingInfoDao.loadAll()
-//        pointInfoList=tPoiInfoDao.loadAll()
-//        socialInfoList=tSocialInfoDao.loadAll()
-//        villageInfoList=tVillageInfoDao.loadAll()
-
-
+        infoMap= HashMap()
     }
+
 
     private fun initListener() {
         dingwei_collect.setOnClickListener {
@@ -191,10 +184,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             mapview_collect.addLayer(layer)
             graphicsLayer = GraphicsLayer()
             tempGraphicLayer = GraphicsLayer()
-            localGraphicsLayer = GraphicsLayer()
             mapview_collect.addLayer(graphicsLayer, 1)
             mapview_collect.addLayer(tempGraphicLayer, 2)
             mapview_collect.addLayer(localGraphicsLayer, 3)
+            mapview_collect.addLayer(graphicName, 4)
+
         } else {
             // 获取所有地图文件
             getAllFiles()
@@ -268,13 +262,14 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
 
-                startActivity(intent1)
+                startActivityForResult(intent1,requestCode_poi)
             }
             1 -> {
                 val intent1 = Intent(this, BuildingDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivity(intent1)
+                startActivityForResult(intent1,requestCode_poi)
+
             }
             2 -> {
                 addPolygonInMap()
@@ -283,7 +278,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 val intent1 = Intent(this, VillageDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivity(intent1)
+                startActivityForResult(intent1,requestCode_poi)
+
             }
         }
 
@@ -505,79 +501,70 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private var tempGraphicID: Int = 0
     private fun getGraphics(v: Float, v1: Float) {
+
+        infoList= ArrayList()
         val symbol = SimpleMarkerSymbol(Color.parseColor("#50AA0000"), tolerance, SimpleMarkerSymbol.STYLE.CIRCLE)
         val point = mapview_collect.toMapPoint(v, v1)
         val graphic = Graphic(point, symbol)
         tempGraphicID = tempGraphicLayer.addGraphic(graphic)
-        val uids_graphic = graphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
         val uids_local = localGraphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
 
-        if (uids_graphic.isEmpty() && uids_local.isEmpty()) {
+        if ( uids_local.isEmpty()) {
             Toast.makeText(this, "选择范围内没有点", Toast.LENGTH_SHORT).show()
             tempGraphicLayer.removeGraphic(tempGraphicID)
         } else {
 //            pointInfoList_select=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties)
-            for (uid in uids_graphic) {
-                val graphic = graphicsLayer.getGraphic(uid)
-                if (graphic.geometry.type == Geometry.Type.POINT) {
-                    val point = graphic.geometry as Point
-                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).list()
-                    if (mutableList_poi.size > 0) {
-                        pointInfoList_select.add(mutableList_poi[0])
-                        val map = HashMap<String, Any>()
-                        map["obj"] = mutableList_poi[0]
-                        infoList.add(map)
-                    }
-                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
-                    if (mutableList_build.size > 0) {
-                        buildingInfoList_select.add(mutableList_build[0])
-                        val map = HashMap<String, Any>()
-                        map["obj"] = mutableList_build[0]
-                        infoList.add(map)
-                    }
-                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
-                    if (mutableList_village.size > 0) {
-                        villageInfoList_select.add(mutableList_village[0])
-                        val map = HashMap<String, Any>()
-                        map["obj"] = mutableList_village[0]
-                        infoList.add(map)
-                    }
-                }
-            }
+//            for (uid in uids_graphic) {
+
+
+//                val graphic = graphicsLayer.getGraphic(uid)
+//                if (graphic.geometry.type == Geometry.Type.POINT) {
+//                    val point = graphic.geometry as Point
+//                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).list()
+//                    if (mutableList_poi.size > 0) {
+//                        pointInfoList_select.add(mutableList_poi[0])
+//                        val map = HashMap<String, Any>()
+//                        map["obj"] = mutableList_poi[0]
+//                        infoList.add(map)
+//                    }
+//                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
+//                    if (mutableList_build.size > 0) {
+//                        buildingInfoList_select.add(mutableList_build[0])
+//                        val map = HashMap<String, Any>()
+//                        map["obj"] = mutableList_build[0]
+//                        infoList.add(map)
+//                    }
+//                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
+//                    if (mutableList_village.size > 0) {
+//                        villageInfoList_select.add(mutableList_village[0])
+//                        val map = HashMap<String, Any>()
+//                        map["obj"] = mutableList_village[0]
+//                        infoList.add(map)
+//                    }
+//                }
+//            }
             for (uid in uids_local) {
-                val graphic = localGraphicsLayer.getGraphic(uid)
-                if (graphic.geometry.type == Geometry.Type.POINT) {
-                    val point = graphic.geometry as Point
-                    val lat = point.y
-                    val lng = point.x
-                    LogUtils.d(point.y.toString() + "---" + point.x)
-                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).build().list()
-                    LogUtils.d(""+mutableList_poi.size.toString())
-                    if (mutableList_poi.size > 0) {
-                        pointInfoList_select.add(mutableList_poi[0])
-                        val map = HashMap<String, Any>()
-                        map["obj"] = mutableList_poi[0]
-                        infoList.add(map)
+                val map = HashMap<String, Any>()
+                val info=infoMap[uid]
+                when(info){
+                    is TVillageInfo->{
+                        map["obj"]=info
                     }
-                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
-                    if (mutableList_build.size > 0) {
-                        buildingInfoList_select.add(mutableList_build[0])
-                        val map = HashMap<String, Any>()
-                        map["obj"] = mutableList_build[0]
-                        infoList.add(map)
+                    is TBuildingInfo->{
+                        map["obj"]=info
                     }
-                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
-                    if (mutableList_village.size > 0) {
-                        villageInfoList_select.add(mutableList_village[0])
-                        val map = HashMap<String, Any>()
-                        map["obj"] = mutableList_village[0]
-                        infoList.add(map)
+                    is TPoiInfo->{
+                        map["obj"]=info
                     }
                 }
+                infoList.add(map)
+
             }
 
-            graphicListAdtaper.notifyDataSetChanged()
+            graphicListAdtaper = GraphicListAdapter(instance, infoList)
+            recyclerView.adapter = graphicListAdtaper
             showGrahipcListDialog.show()
+            tempGraphicLayer.removeGraphic(tempGraphicID)
 
         }
 
@@ -588,8 +575,23 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 requestCode_poi -> {
-                    val point = Point(data.getDoubleExtra("lat", 0.0), data.getDoubleExtra("lng", 0.0))
-                    addPointInMap(point)
+                    val obj=data.getSerializableExtra("obj")
+                    var point = Point()
+                    when(obj){
+                        is TPoiInfo->{
+                             point = Point(obj.lng,obj.lat)
+
+                        }
+                        is TBuildingInfo->{
+                            point = Point(obj.lng,obj.lat)
+                        }
+                        is TVillageInfo->{
+                            point = Point(obj.lng,obj.lat)
+                        }
+                    }
+                    val uid= addPointInMap(point)
+                    infoMap[uid]=obj
+
                 }
                 requestCode_ploygon -> {
 
@@ -613,7 +615,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     override fun preAction(p0: Float, p1: Float, p2: Double) {
-        localGraphicsLayer.removeAll()
+        if (localGraphicsLayer!=null) {
+            localGraphicsLayer.removeAll()
+        }
 
     }
 
@@ -643,13 +647,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             val point = Point(info.lng, info.lat)
             val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 5, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
-            localGraphicsLayer.addGraphic(graphic)
+            val uid= localGraphicsLayer.addGraphic(graphic)
+            infoMap[uid]=info
         }
         for (info: TVillageInfo in villageInfoList) {
             val point = Point(info.lng, info.lat)
             val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 5, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
-            localGraphicsLayer.addGraphic(graphic)
+            val uid= localGraphicsLayer.addGraphic(graphic)
+            infoMap[uid]=info
         }
         for (info: TSocialInfo in socialInfoList) {
             val bj = info.bj
@@ -667,13 +673,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             for (i in 1 until tempPointList.size) {
                 polygon.lineTo(tempPointList[i])
             }
-            localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
+            val uid= localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
+            infoMap[uid]=info
         }
         for (info: TPoiInfo in pointInfoList) {
             val point = Point(info.lng, info.lat)
             val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 5, SimpleMarkerSymbol.STYLE.CIRCLE)
             val graphic = Graphic(point, simpleMarkerSymbol)
-            localGraphicsLayer.addGraphic(graphic)
+            val uid= localGraphicsLayer.addGraphic(graphic)
+            infoMap[uid]=info
         }
 
     }
@@ -801,16 +809,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private fun initShowGraphicDialog() {
         showGrahipcListDialog = Dialog(instance)
-        showGrahipcListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        showGrahipcListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         val contentView = LayoutInflater.from(instance).inflate(R.layout.dialog_showgraphicinfo, null, false)
         showGrahipcListDialog.setContentView(contentView)
         showGrahipcListDialog.setCanceledOnTouchOutside(false)
         recyclerView = contentView.findViewById(R.id.recycler_dialog)
 
-        infoList = ArrayList()
-        graphicListAdtaper = GraphicListAdapter(instance, infoList)
-        recyclerView.adapter = graphicListAdtaper
+        recyclerView.layoutManager=LinearLayoutManager(this)
 
+        showGrahipcListDialog.setTitle("名称")
 
     }
 
@@ -829,8 +836,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
         val dm = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(dm)
-        lp.height = LinearLayout.LayoutParams.WRAP_CONTENT
-        lp.width = (dm.widthPixels * 0.75).toInt(); // 宽度设置为屏幕的0.65
+        lp.height = (dm.widthPixels * 0.75).toInt()
+        lp.width = (dm.widthPixels * 0.75).toInt()// 宽度设置为屏幕的0.65
         dialogWindow.attributes = lp
     }
 

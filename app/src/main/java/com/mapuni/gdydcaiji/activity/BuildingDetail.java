@@ -1,5 +1,7 @@
 package com.mapuni.gdydcaiji.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Base64;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -109,7 +111,11 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         else
             tBuildingInfoDao.update(resultBean);
 
-        ToastUtils.showShort(tBuildingInfoDao.count() + "");
+        Intent data=new Intent();
+        data.putExtra("obj",resultBean);
+
+        setResult(Activity.RESULT_OK,data);
+        finish();
 
     }
 
