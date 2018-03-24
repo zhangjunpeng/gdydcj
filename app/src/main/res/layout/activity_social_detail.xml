@@ -125,7 +125,8 @@
                         android:id="@+id/iv_image"
                         android:layout_width="0dp"
                         android:layout_height="96dp"
-                        android:layout_weight="7" />
+                        android:layout_weight="7"
+                        android:src="@drawable/selector_camera"/>
 
                 </LinearLayout>
 

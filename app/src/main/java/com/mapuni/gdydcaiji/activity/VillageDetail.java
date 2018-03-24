@@ -2,8 +2,12 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -16,6 +20,7 @@ import com.mapuni.gdydcaiji.view.ClearEditText;
 import java.util.Date;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/3/21.
@@ -32,6 +37,8 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
     ClearEditText etAddress;
     @BindView(R.id.sp_fl)
     Spinner spFl;
+    @BindView(R.id.ll_bjcaiji)
+    LinearLayout llBjcaiji;
     private TVillageInfoDao tVillageInfoDao;
 
     @Override
@@ -46,6 +53,38 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         setSpinnerData(R.array.village_type, spFl);
         tVillageInfoDao = GdydApplication.getInstances().getDaoSession().getTVillageInfoDao();
 
+    }
+
+    @Override
+    protected void initListener() {
+        super.initListener();
+        spFl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i) {
+                    case 0:
+                        //自然村
+                        llBjcaiji.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        //行政村
+                        llBjcaiji.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        
+        llBjcaiji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                
+            }
+        });
     }
 
     @Override
@@ -86,5 +125,5 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         finish();
 
     }
-
+    
 }
