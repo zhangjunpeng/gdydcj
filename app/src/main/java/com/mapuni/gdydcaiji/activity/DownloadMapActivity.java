@@ -170,6 +170,8 @@ public class DownloadMapActivity extends BaseActivity {
 
                     @Override
                     protected void onError(String errorMsg) {
+                        ToastUtils.showShort(errorMsg);
+                        dialog.dismiss();
                     }
 
                     @Override

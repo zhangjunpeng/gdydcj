@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -50,8 +51,10 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
     protected void showData() {
         etName.setText(resultBean.getName());
         etAddress.setText(resultBean.getDz());
-        spFl.setSelection(getSelectPosition(R.array.village_type, resultBean.getType()));
-        imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        spFl.setSelection(Integer.parseInt(resultBean.getType()));
+        if (!TextUtils.isEmpty(resultBean.getImg())) {
+            imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        }
         super.showData();
     }
 
@@ -65,6 +68,7 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
 
         resultBean.setName(getTextByView(etName));
         resultBean.setDz(getTextByView(etAddress));
+        resultBean.setType(spFl.getSelectedItemPosition() + "");
         if (imgUrl != null && imgUrl.length > 0) {
             resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
         }
@@ -75,9 +79,9 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
             tVillageInfoDao.insert(resultBean);
         else
             tVillageInfoDao.update(resultBean);
-        Intent data=new Intent();
-        data.putExtra("obj",resultBean);
-        setResult(Activity.RESULT_OK,data);
+        Intent data = new Intent();
+        data.putExtra("obj", resultBean);
+        setResult(Activity.RESULT_OK, data);
         finish();
 
     }

@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -78,7 +79,9 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         etSixAd.setText(resultBean.getSixad());
         etLycs.setText(resultBean.getLycs());
         etLyzhs.setText(resultBean.getLyzhs());
-        imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        if (!TextUtils.isEmpty(resultBean.getImg())) {
+            imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        }
         super.showData();
     }
 
@@ -111,10 +114,10 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         else
             tBuildingInfoDao.update(resultBean);
 
-        Intent data=new Intent();
-        data.putExtra("obj",resultBean);
+        Intent data = new Intent();
+        data.putExtra("obj", resultBean);
 
-        setResult(Activity.RESULT_OK,data);
+        setResult(Activity.RESULT_OK, data);
         finish();
 
     }

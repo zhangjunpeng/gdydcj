@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -54,7 +55,7 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         tSocialInfoDao = GdydApplication.getInstances().getDaoSession().getTSocialInfoDao();
         setSpinnerData(R.array.social_type, spFl);
 
-        bj=getIntent().getStringExtra("bj");
+        bj = getIntent().getStringExtra("bj");
     }
 
     @Override
@@ -63,10 +64,12 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         etForthAd.setText(resultBean.getForthad());
         etFifAd.setText(resultBean.getFifad());
         etAddress.setText(resultBean.getXqdz());
-        spFl.setSelection(getSelectPosition(R.array.social_type, resultBean.getType()));
+        spFl.setSelection(Integer.parseInt(resultBean.getType()));
         etWyxx.setText(resultBean.getWyxx());
         etLxdh.setText(resultBean.getLxdh());
-        imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        if (!TextUtils.isEmpty(resultBean.getImg())) {
+            imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        }
         super.showData();
     }
 
@@ -82,7 +85,7 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         resultBean.setForthad(getTextByView(etForthAd));
         resultBean.setFifad(getTextByView(etFifAd));
         resultBean.setXqdz(getTextByView(etAddress));
-        resultBean.setType(getResources().getStringArray(R.array.social_type)[spFl.getSelectedItemPosition()]);
+        resultBean.setType(spFl.getSelectedItemPosition() + "");
         resultBean.setWyxx(getTextByView(etWyxx));
         resultBean.setLxdh(getTextByView(etLxdh));
         if (imgUrl != null && imgUrl.length > 0) {

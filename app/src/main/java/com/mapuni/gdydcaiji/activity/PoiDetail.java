@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -65,7 +66,9 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
         spFl.setSelection(getSelectPosition(R.array.building_fl, resultBean.getFl()));
         etMjdj.setText(resultBean.getMjdj());
         etSslymc.setText(resultBean.getSslymc());
-        imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        if (!TextUtils.isEmpty(resultBean.getImg())) {
+            imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+        }
         super.showData();
     }
 

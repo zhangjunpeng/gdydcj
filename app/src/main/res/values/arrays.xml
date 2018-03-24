@@ -17,11 +17,12 @@
         <item>小区</item>
         <item>学校</item>
         <item>医院</item>
+        <item>其他</item>
     </string-array>
 
     <string-array name="village_type">
-        <item>行政村</item>
         <item>自然村</item>
+        <item>行政村</item>
     </string-array>
 
     <string-array name="building_fl">
