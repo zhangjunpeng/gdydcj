@@ -10,6 +10,8 @@ import com.mapuni.gdydcaiji.bean.TPoiInfo;
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
+import java.util.Date;
+
 import butterknife.BindView;
 
 /**
@@ -81,7 +83,10 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
         resultBean.setFl(getResources().getStringArray(R.array.building_fl)[spFl.getSelectedItemPosition()]);
         resultBean.setMjdj(getTextByView(etMjdj));
         resultBean.setSslymc(getTextByView(etSslymc));
-        resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        if (imgUrl != null && imgUrl.length > 0) {
+            resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        }
+        resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 
         if (isInsert)

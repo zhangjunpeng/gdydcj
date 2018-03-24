@@ -2,8 +2,6 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,6 +18,7 @@ import com.mapuni.gdydcaiji.bean.TBuildingInfo;
 import com.mapuni.gdydcaiji.bean.TPoiInfo;
 import com.mapuni.gdydcaiji.bean.TSocialInfo;
 import com.mapuni.gdydcaiji.bean.TVillageInfo;
+import com.mapuni.gdydcaiji.bean.UploadBean;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
 import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
@@ -29,15 +28,13 @@ import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.DateUtil;
 import com.mapuni.gdydcaiji.utils.FileUtils;
+import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +45,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.Observable;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -66,6 +62,14 @@ public class UploadDataActivity extends BaseActivity {
     TextView etStartTime;
     @BindView(R.id.et_stop_time)
     TextView etStopTime;
+    private List<TBuildingInfo> buildingInfos = new ArrayList<>();
+    private List<TPoiInfo> poiInfos;
+    private List<TSocialInfo> socialInfos;
+    private List<TVillageInfo> villageInfos;
+    private TBuildingInfoDao tBuildingInfoDao;
+    private TPoiInfoDao tPoiInfoDao;
+    private TSocialInfoDao tSocialInfoDao;
+    private TVillageInfoDao tVillageInfoDao;
 
     @Override
     protected int getLayoutResId() {
@@ -81,6 +85,11 @@ public class UploadDataActivity extends BaseActivity {
     @Override
     protected void initData() {
 
+        DaoSession daoSession = GdydApplication.getInstances().getDaoSession();
+        tBuildingInfoDao = daoSession.getTBuildingInfoDao();
+        tPoiInfoDao = daoSession.getTPoiInfoDao();
+        tSocialInfoDao = daoSession.getTSocialInfoDao();
+        tVillageInfoDao = daoSession.getTVillageInfoDao();
     }
 
     /**
@@ -100,39 +109,34 @@ public class UploadDataActivity extends BaseActivity {
             return;
         }
 
-        DaoSession daoSession = GdydApplication.getInstances().getDaoSession();
-        final TBuildingInfoDao tBuildingInfoDao = daoSession.getTBuildingInfoDao();
-        final TPoiInfoDao tPoiInfoDao = daoSession.getTPoiInfoDao();
-        final TSocialInfoDao tSocialInfoDao = daoSession.getTSocialInfoDao();
-        final TVillageInfoDao tVillageInfoDao = daoSession.getTVillageInfoDao();
-
         ThreadUtils.executeSubThread(new Runnable() {
             @Override
             public void run() {
                 //生成文件
                 Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-                final List<TBuildingInfo> buildingInfos = tBuildingInfoDao.queryBuilder()
+                //未上传
+                buildingInfos = tBuildingInfoDao.queryBuilder()
                         .where(TBuildingInfoDao.Properties.Flag.eq(0),  //未上传
                                 TBuildingInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .build().list();
                 String buildingJson = gson.toJson(buildingInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_building_info.txt", buildingJson);
 
-                List<TPoiInfo> poiInfos = tPoiInfoDao.queryBuilder()
+                poiInfos = tPoiInfoDao.queryBuilder()
                         .where(TPoiInfoDao.Properties.Flag.eq(0)
                                 , TPoiInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .build().list();
                 String poiJson = gson.toJson(poiInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_poi_info.txt", poiJson);
 
-                List<TSocialInfo> socialInfos = tSocialInfoDao.queryBuilder()
+                socialInfos = tSocialInfoDao.queryBuilder()
                         .where(TSocialInfoDao.Properties.Flag.eq(0)
                                 , TSocialInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .build().list();
                 String socialJson = gson.toJson(socialInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_social_info.txt", socialJson);
 
-                List<TVillageInfo> villageInfos = tVillageInfoDao.queryBuilder()
+                villageInfos = tVillageInfoDao.queryBuilder()
                         .where(TVillageInfoDao.Properties.Flag.eq(0)
                                 , TVillageInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .build().list();
@@ -175,7 +179,7 @@ public class UploadDataActivity extends BaseActivity {
             return;
         }
 
-        final Call<RequestBody> call = RetrofitFactory.create(RetrofitService.class).upload(map);
+        final Call<UploadBean> call = RetrofitFactory.create(RetrofitService.class).upload(map);
         // Dialog
         final ProgressDialog pd = new ProgressDialog(mContext);
         pd.setMessage("正在上传...");
@@ -191,18 +195,33 @@ public class UploadDataActivity extends BaseActivity {
         });
         pd.show();
 
-        call.enqueue(new Callback<RequestBody>() {
+        call.enqueue(new Callback<UploadBean>() {
             @Override
-            public void onResponse(@NonNull Call<RequestBody> call, @NonNull Response<RequestBody> response) {
-                // LogUtils.d("onResponse" + response.body());
+            public void onResponse(@NonNull Call<UploadBean> call, @NonNull Response<UploadBean> response) {
+                LogUtils.d("onResponse" + response.body());
+
                 if (pd.isShowing()) {
                     pd.dismiss();
                 }
-                ToastUtils.showShort("上传成功");
+                UploadBean body = response.body();
+                if (body != null && body.isResult()) {
+                    ToastUtils.showShort("上传成功");
+                    ThreadUtils.executeSubThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateData();
+                        }
+                    });
+
+                }else{
+                    ToastUtils.showShort("上传失败");
+                }
+
+
             }
 
             @Override
-            public void onFailure(Call<RequestBody> call, Throwable t) {
+            public void onFailure(Call<UploadBean> call, Throwable t) {
                 t.printStackTrace();
                 if (!call.isCanceled()) {
                     // 非点击取消
@@ -218,6 +237,36 @@ public class UploadDataActivity extends BaseActivity {
             }
         });
 
+    }
+
+    /**
+     * 将flag标记为1
+     */
+    private void updateData() {
+        if (buildingInfos != null && buildingInfos.size() > 0) {
+            for (int i = 0; i < buildingInfos.size(); i++) {
+                buildingInfos.get(i).setFlag(1);
+            }
+            tBuildingInfoDao.updateInTx(buildingInfos);
+        }
+        if (poiInfos != null && poiInfos.size() > 0) {
+            for (int i = 0; i < poiInfos.size(); i++) {
+                poiInfos.get(i).setFlag(1);
+            }
+            tPoiInfoDao.updateInTx(poiInfos);
+        }
+        if (socialInfos != null && socialInfos.size() > 0) {
+            for (int i = 0; i < socialInfos.size(); i++) {
+                socialInfos.get(i).setFlag(1);
+            }
+            tSocialInfoDao.updateInTx(socialInfos);
+        }
+        if (villageInfos != null && villageInfos.size() > 0) {
+            for (int i = 0; i < villageInfos.size(); i++) {
+                villageInfos.get(i).setFlag(1);
+            }
+            tVillageInfoDao.updateInTx(villageInfos);
+        }
     }
 
     @Override

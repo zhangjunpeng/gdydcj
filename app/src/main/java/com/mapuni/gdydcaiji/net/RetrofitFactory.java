@@ -26,7 +26,7 @@ public class RetrofitFactory {
     /**
      * 请求超时时间
      */
-    private static final int DEFAULT_TIMEOUT = 10000;
+    private static final int DEFAULT_TIMEOUT = 120000;
 
 
     public static RetrofitService create(Class<RetrofitService> service) {

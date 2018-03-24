@@ -10,6 +10,8 @@ import com.mapuni.gdydcaiji.bean.TSocialInfo;
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
+import java.util.Date;
+
 import butterknife.BindView;
 
 /**
@@ -81,7 +83,10 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         resultBean.setType(getResources().getStringArray(R.array.social_type)[spFl.getSelectedItemPosition()]);
         resultBean.setWyxx(getTextByView(etWyxx));
         resultBean.setLxdh(getTextByView(etLxdh));
-        resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        if (imgUrl != null && imgUrl.length > 0) {
+            resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        }
+        resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
         resultBean.setBj(bj);
 

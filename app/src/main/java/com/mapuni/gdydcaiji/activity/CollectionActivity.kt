@@ -102,19 +102,22 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     lateinit var instance: Activity
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
         instance = this
+        PermissionUtils.requestAllPermission(this)
+
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
 //        mapfilePath = Environment.getExternalStorageDirectory().absolutePath+"/map/" + "/layers"
         EventBus.getDefault().register(this)
+
 
         seek_collect.progress = tolerance
         initMapView()
         initShowGraphicDialog()
         initData()
-//        updateGraphicInLocal()
         initListener()
         upDateView()
 
@@ -131,6 +134,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 //        pointInfoList=tPoiInfoDao.loadAll()
 //        socialInfoList=tSocialInfoDao.loadAll()
 //        villageInfoList=tVillageInfoDao.loadAll()
+
 
     }
 
@@ -263,6 +267,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 val intent1 = Intent(this, PoiDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
+
                 startActivity(intent1)
             }
             1 -> {
@@ -506,7 +511,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         tempGraphicID = tempGraphicLayer.addGraphic(graphic)
         val uids_graphic = graphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
         val uids_local = localGraphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
-
 
         if (uids_graphic.isEmpty() && uids_local.isEmpty()) {
             Toast.makeText(this, "选择范围内没有点", Toast.LENGTH_SHORT).show()
@@ -753,7 +757,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         tvCopyDb.setOnClickListener {
             ppw.dismiss()
             ThreadUtils.executeSubThread {
-                FileUtils.copyFile2(GdydApplication.getInstances().db.path, PathConstant.DATABASE_PATH + "/sport.db")
+                FileUtils.copyFile(GdydApplication.getInstances().db.path, PathConstant.DATABASE_PATH + "/sport.db") { true }
                 ThreadUtils.executeMainThread {
                     ToastUtils.showShort("备份成功")
                 }
