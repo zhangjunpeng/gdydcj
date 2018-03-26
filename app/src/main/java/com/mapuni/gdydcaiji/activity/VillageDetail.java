@@ -16,6 +16,7 @@ import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventBJ;
 import com.mapuni.gdydcaiji.bean.EventBean;
+import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TVillageInfo;
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
 import com.mapuni.gdydcaiji.view.ClearEditText;
@@ -152,9 +153,11 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
             tVillageInfoDao.insert(resultBean);
         else
             tVillageInfoDao.update(resultBean);
-        Intent data = new Intent();
-        data.putExtra("obj", resultBean);
-        setResult(Activity.RESULT_OK, data);
+//        Intent data = new Intent();
+//        data.putExtra("obj", resultBean);
+//        setResult(Activity.RESULT_OK, data);
+        EvevtUpdate evevtUpdate=new EvevtUpdate();
+        EventBus.getDefault().post(evevtUpdate);
         finish();
 
     }

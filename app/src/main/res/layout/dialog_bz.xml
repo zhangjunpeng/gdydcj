@@ -18,6 +18,15 @@
         android:layout_height="1px"
         android:background="#0e0e0e"
         />
+    <Spinner
+        android:id="@+id/spinener_bz_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Spinner>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#0e0e0e"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_dialog_bz"
         android:layout_width="match_parent"

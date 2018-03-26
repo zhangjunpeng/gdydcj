@@ -9,9 +9,12 @@ import android.widget.TextView;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TPoiInfo;
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
 import com.mapuni.gdydcaiji.view.ClearEditText;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Date;
 
@@ -99,9 +102,11 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
         else
             tPoiInfoDao.update(resultBean);
 
-        Intent data=new Intent();
-        data.putExtra("obj",resultBean);
-        setResult(Activity.RESULT_OK,data);
+//        Intent data=new Intent();
+//        data.putExtra("obj",resultBean);
+//        setResult(Activity.RESULT_OK,data);
+        EvevtUpdate evevtUpdate=new EvevtUpdate();
+        EventBus.getDefault().post(evevtUpdate);
         finish();
     }
 

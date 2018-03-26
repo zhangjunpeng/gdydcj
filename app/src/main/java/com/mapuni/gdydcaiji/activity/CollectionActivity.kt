@@ -29,6 +29,8 @@ import com.esri.core.map.Graphic
 import com.esri.core.symbol.PictureMarkerSymbol
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
+import com.google.gson.annotations.Until
+import com.mapuni.gdydcaiji.BZRecyAdapter
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.GraphicListAdapter
 import com.mapuni.gdydcaiji.R
@@ -43,6 +45,7 @@ import kotlinx.android.synthetic.main.activity_collection.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
+import java.util.*
 
 
 class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, View.OnTouchListener, OnZoomListener, OnPanListener {
@@ -174,6 +177,29 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         tVillageInfoDao = GdydApplication.instances.daoSession.tVillageInfoDao
 
         infoMap = HashMap()
+
+        for (i in 0 until 7){
+            poi_bz_array.add(false)
+        }
+        poi_bz_array[0]=true
+        for (i in 0 until 9){
+            building_bz_array.add(false)
+
+        }
+        for (i in 0 until 6){
+            social_bz_array.add(false)
+
+        }
+        for (i in 0 until 2){
+            village_bz_array.add(false)
+
+        }
+        poi_bz_array[0]=true
+        building_bz_array[0]=true
+        social_bz_array[0]=true
+        village_bz_array[0]=true
+
+
     }
 
 
@@ -664,17 +690,18 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                         when (obj) {
                             is TPoiInfo -> {
                                 point = Point(obj.lng, obj.lat)
-                                name = obj.name
+//                                name = obj.name
+                                name=getPOIShowName(obj)
                             }
                             is TBuildingInfo -> {
                                 point = Point(obj.lng, obj.lat)
-                                name = obj.name
-
+//                                name = obj.name
+                                name=getBuildingShowName(obj)
                             }
                             is TVillageInfo -> {
                                 point = Point(obj.lng, obj.lat)
-                                name = obj.name
-
+//                                name = obj.name
+                                name=getVillageShowName(obj)
                             }
                         }
                         val uid = addPointInMap(point)
@@ -768,7 +795,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             val graphic = Graphic(point, simpleMarkerSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
             infoMap[uid] = info
-            addNameInMap(point, info.name)
+            val name=getBuildingShowName(info)
+            addNameInMap(point, name)
         }
         for (info: TVillageInfo in villageInfoList) {
             val point = Point(info.lng, info.lat)
@@ -776,7 +804,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             val graphic = Graphic(point, simpleMarkerSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
             infoMap[uid] = info
-            addNameInMap(point, info.name)
+            val name=getVillageShowName(info)
+            addNameInMap(point, name)
 
         }
         for (info: TSocialInfo in socialInfoList) {
@@ -806,7 +835,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 val tEnvelope = Envelope()
                 polygon.queryEnvelope(tEnvelope)
                 val tPoint = tEnvelope.center
-                addNameInMap(tPoint, info.name)
+                val name=getSocialShowName(info)
+                addNameInMap(tPoint, name)
             }
 
 
@@ -817,7 +847,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             val graphic = Graphic(point, simpleMarkerSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
             infoMap[uid] = info
-            addNameInMap(point, info.name)
+            val name=getPOIShowName(info)
+            addNameInMap(point, name)
 
         }
         mIsLoading = false
@@ -912,6 +943,12 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             ppw.dismiss()
 
             bzDialog.show()
+            bzRecyAdapter_poi=BZRecyAdapter(this,0,poi_bz_array)
+            bzRecyAdapter_building=BZRecyAdapter(this,1,building_bz_array)
+            bzRecyAdapter_social=BZRecyAdapter(this,2,social_bz_array)
+            bzRecyAdapter_village=BZRecyAdapter(this,3,village_bz_array)
+
+            recyclerView_bz.adapter=bzRecyAdapter_poi
         }
 
         //获取点击View的坐标
@@ -920,6 +957,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         val y = location[1] - ppw.height
         ppw.showAtLocation(view, Gravity.NO_GRAVITY, location[0], y)
     }
+    private lateinit var bzRecyAdapter_poi: BZRecyAdapter
+    private lateinit var bzRecyAdapter_building: BZRecyAdapter
+    private lateinit var bzRecyAdapter_social: BZRecyAdapter
+    private lateinit var bzRecyAdapter_village: BZRecyAdapter
 
 
     private fun initBZDialog() {
@@ -929,6 +970,37 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         bzDialog.setContentView(contentView)
         bzDialog.setCanceledOnTouchOutside(false)
         recyclerView_bz = contentView.findViewById(R.id.recycler_dialog_bz)
+        val spinner:Spinner=contentView.findViewById(R.id.spinener_bz_dialog)
+        val mItems = listOf("POI标注","建筑物标注","小区等标注","村庄标注")
+        val adapter = ArrayAdapter(this, R.layout.item_spinner_dialog, R.id.tv_type, mItems)
+        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener=object :AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position){
+                    0->{
+                        recyclerView_bz.adapter=bzRecyAdapter_poi
+                        bzRecyAdapter_poi.notifyDataSetChanged()
+                    }
+                    1->{
+                        recyclerView_bz.adapter=bzRecyAdapter_building
+                        bzRecyAdapter_building.notifyDataSetChanged()
+                    }
+                    2->{
+                        recyclerView_bz.adapter=bzRecyAdapter_social
+                        bzRecyAdapter_social.notifyDataSetChanged()
+                    }
+                    3->{
+                        recyclerView_bz.adapter=bzRecyAdapter_village
+                        bzRecyAdapter_village.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
 
         recyclerView_bz.layoutManager = LinearLayoutManager(this)
 
@@ -1027,6 +1099,86 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         graphicName.removeAll()
         upDateGraphic()
         showGrahipcListDialog.dismiss()
+    }
+
+    private var poi_bz_array= ArrayList<Boolean>()
+    private var building_bz_array= ArrayList<Boolean>()
+    private var social_bz_array=ArrayList<Boolean>()
+    private var village_bz_array=ArrayList<Boolean>()
+
+    @Subscribe
+    fun onCompleteBZ(eventBZ: EventBZ) {
+        when(eventBZ.type){
+            0->{
+                poi_bz_array=eventBZ.booleanArrayList
+            }
+            1->{
+                building_bz_array=eventBZ.booleanArrayList
+            }
+            2->{
+                social_bz_array=eventBZ.booleanArrayList
+            }
+            3->{
+                village_bz_array=eventBZ.booleanArrayList
+            }else->{
+
+            }
+        }
+        graphicName.removeAll()
+        localGraphicsLayer.removeAll()
+        graphicsLayer.removeAll()
+        upDateGraphic()
+        bzDialog.dismiss()
+    }
+
+    private fun getPOIShowName(poiInfo: TPoiInfo):String{
+        var name=""
+        val string_poi= listOf(poiInfo.name,poiInfo.forthad,poiInfo.fifad,poiInfo.sixad,poiInfo.sevenad,poiInfo.mjdj,poiInfo.sslymc)
+        for (i in 0 until poi_bz_array.size){
+            if (poi_bz_array[i]&&string_poi[i].isNotEmpty()){
+                name += string_poi[i]+"/"
+            }
+        }
+        return name.dropLast(1)
+
+    }
+    private fun getBuildingShowName(info: TBuildingInfo):String{
+        var name=""
+        val string_poi= listOf(info.name,info.forthad,info.fifad,info.sixad,info.lytype,info.lyxz,info.lyfl,info.lycs,info.lyzhs)
+        for (i in 0 until building_bz_array.size){
+            if (building_bz_array[i]&&string_poi[i].isNotEmpty()){
+                name += string_poi[i]+"/"
+            }
+        }
+        return name.dropLast(1)
+    }
+    private fun getSocialShowName(info: TSocialInfo):String{
+        var name=""
+        val string_poi= listOf(info.name,info.forthad,info.fifad,info.xqdz,info.wyxx,info.lxdh)
+        for (i in 0 until social_bz_array.size){
+            if (social_bz_array[i]&&string_poi[i].isNotEmpty()){
+                name += string_poi[i]+"/"
+            }
+        }
+        return name.dropLast(1)
+    }
+    private fun getVillageShowName(info: TVillageInfo):String{
+        var name=""
+        val string_poi= listOf(info.name,info.dz)
+        for (i in 0 until social_bz_array.size){
+            if (social_bz_array[i]&&string_poi[i].isNotEmpty()){
+                name += string_poi[i]+"/"
+            }
+        }
+        return name.dropLast(1)
+    }
+
+    @Subscribe
+    fun onUPDataGraphic(eventUpdate: EvevtUpdate) {
+        graphicName.removeAll()
+        localGraphicsLayer.removeAll()
+        graphicsLayer.removeAll()
+        upDateGraphic()
     }
 
 }
