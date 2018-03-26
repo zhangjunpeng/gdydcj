@@ -79,6 +79,7 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
             resultBean = new TSocialInfo();
             resultBean.setLat(lat);
             resultBean.setLng(lng);
+            resultBean.setBj(bj);
         }
 
         resultBean.setName(getTextByView(etName));
@@ -93,7 +94,7 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         }
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
-        resultBean.setBj(bj);
+        
 
         if (isInsert)
             tSocialInfoDao.insert(resultBean);

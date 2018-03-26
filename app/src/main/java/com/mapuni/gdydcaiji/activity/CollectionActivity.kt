@@ -51,24 +51,23 @@ import java.io.File
 
 
 class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, View.OnTouchListener, OnZoomListener, OnPanListener {
-    private var mIsLoading: Boolean=false
+    private var mIsLoading: Boolean = false
 
     override fun postPointerMove(v: Float, v1: Float, v2: Float, v3: Float) {
 
 
-
     }
 
-    private var mStartX: Float=0f
-    private var mStartY: Float=0f
+    private var mStartX: Float = 0f
+    private var mStartY: Float = 0f
 
 
     override fun prePointerMove(p0: Float, p1: Float, p2: Float, p3: Float) {
 
-          if (mStartX == 0f && mStartY == 0f) {
-                    mStartX = p0
-                    mStartY = p1
-          }
+        if (mStartX == 0f && mStartY == 0f) {
+            mStartX = p0
+            mStartY = p1
+        }
 
     }
 
@@ -87,14 +86,12 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mStartX = 0f
         mStartY = 0f
         if (!mIsLoading) {
-            mIsLoading=true
+            mIsLoading = true
             localGraphicsLayer.removeAll()
             graphicName.removeAll()
             upDateGraphic()
         }
     }
-
-
 
 
 //    var mapfilePath = ""
@@ -273,21 +270,21 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     ploygonBack()
                 }
                 R.id.baocun_collect -> {
-                    if(pointPloygon.size>2){
-                        var bj=""
+                    if (pointPloygon.size > 2) {
+                        var bj = ""
                         for (point in pointPloygon) {
-                            bj=bj+point.x.toString()+","+point.y.toString()+";"
+                            bj = bj + point.x.toString() + "," + point.y.toString() + ";"
                         }
                         bj.dropLast(1)
-                        val intent1 = Intent(this@CollectionActivity,SocialDetail::class.java)
-                        intent1.putExtra("bj",bj)
-                        startActivityForResult(intent1,requestCode_ploygon)
-                    }else{
+                        val intent1 = Intent(this@CollectionActivity, SocialDetail::class.java)
+                        intent1.putExtra("bj", bj)
+                        startActivityForResult(intent1, requestCode_ploygon)
+                    } else {
                         ToastUtils.showShort("请在地图上选择点")
                     }
 
                 }
-                R.id.cancel_action -> {
+                R.id.chanel_collect -> {
                     graphicsLayer.removeGraphic(grahicGonUid)
                     pointPloygon.clear()
                 }
@@ -570,36 +567,36 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             Toast.makeText(this, "选择范围内没有点", Toast.LENGTH_SHORT).show()
             tempGraphicLayer.removeGraphic(tempGraphicID)
         } else {
-//            pointInfoList_select=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties)
-//            for (uid in uids_graphic) {
-
-
-//                val graphic = graphicsLayer.getGraphic(uid)
-//                if (graphic.geometry.type == Geometry.Type.POINT) {
-//                    val point = graphic.geometry as Point
-//                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).list()
-//                    if (mutableList_poi.size > 0) {
-//                        pointInfoList_select.add(mutableList_poi[0])
-//                        val map = HashMap<String, Any>()
-//                        map["obj"] = mutableList_poi[0]
-//                        infoList.add(map)
-//                    }
-//                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
-//                    if (mutableList_build.size > 0) {
-//                        buildingInfoList_select.add(mutableList_build[0])
-//                        val map = HashMap<String, Any>()
-//                        map["obj"] = mutableList_build[0]
-//                        infoList.add(map)
-//                    }
-//                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
-//                    if (mutableList_village.size > 0) {
-//                        villageInfoList_select.add(mutableList_village[0])
-//                        val map = HashMap<String, Any>()
-//                        map["obj"] = mutableList_village[0]
-//                        infoList.add(map)
-//                    }
-//                }
-//            }
+    //            pointInfoList_select=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties)
+    //            for (uid in uids_graphic) {
+    
+    
+    //                val graphic = graphicsLayer.getGraphic(uid)
+    //                if (graphic.geometry.type == Geometry.Type.POINT) {
+    //                    val point = graphic.geometry as Point
+    //                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).list()
+    //                    if (mutableList_poi.size > 0) {
+    //                        pointInfoList_select.add(mutableList_poi[0])
+    //                        val map = HashMap<String, Any>()
+    //                        map["obj"] = mutableList_poi[0]
+    //                        infoList.add(map)
+    //                    }
+    //                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
+    //                    if (mutableList_build.size > 0) {
+    //                        buildingInfoList_select.add(mutableList_build[0])
+    //                        val map = HashMap<String, Any>()
+    //                        map["obj"] = mutableList_build[0]
+    //                        infoList.add(map)
+    //                    }
+    //                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
+    //                    if (mutableList_village.size > 0) {
+    //                        villageInfoList_select.add(mutableList_village[0])
+    //                        val map = HashMap<String, Any>()
+    //                        map["obj"] = mutableList_village[0]
+    //                        infoList.add(map)
+    //                    }
+    //                }
+    //            }
             for (uid in uids_local) {
                 val map = HashMap<String, Any>()
                 val info = infoMap[uid]
@@ -613,12 +610,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     is TPoiInfo -> {
                         map["obj"] = info
                     }
+                    is TSocialInfo ->{
+                        map["obj"] = info
+                    }
                 }
                 infoList.add(map)
 
             }
 
-            graphicListAdtaper = GraphicListAdapter(instance, infoList)
+            graphicListAdtaper = GraphicListAdapter(instance, infoList,showGrahipcListDialog)
             recyclerView.adapter = graphicListAdtaper
             showGrahipcListDialog.show()
             tempGraphicLayer.removeGraphic(tempGraphicID)
@@ -674,7 +674,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         }
         tv.text = name
 
-        tv.textSize=8f
+        tv.textSize = 8f
         tv.setTextColor(Color.WHITE)
         tv.isDrawingCacheEnabled = true
         tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
@@ -752,13 +752,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         for (info: TSocialInfo in socialInfoList) {
             val bj = info.bj
             val tempPointList = ArrayList<Point>()
-            val points_array=bj.split(";")
+            val points_array = bj.split(";")
             for (i in 0 until points_array.size) {
-                val item=points_array[i]
-                if (item.isEmpty()){
+                val item = points_array[i]
+                if (item.isEmpty()) {
                     continue
                 }
-                val points=item.split(",")
+                val points = item.split(",")
                 val point = Point(points[0].toDouble(), points[1].toDouble())
                 tempPointList.add(point)
             }
@@ -790,7 +790,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             addNameInMap(point, info.name)
 
         }
-        mIsLoading=false
+        mIsLoading = false
     }
 
 
@@ -854,7 +854,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         val tvCopyDb = inflate.findViewById<TextView>(R.id.tv_copy_bd)
 
 
-        val ppw = PopupWindow(inflate, view!!.getWidth(), 320, true)
+        val ppw = PopupWindow(inflate, view!!.getWidth(), ScreenUtils.dp2px(this, 150F), true)
         ppw.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
         ppw.isOutsideTouchable = true
         ppw.isTouchable = true

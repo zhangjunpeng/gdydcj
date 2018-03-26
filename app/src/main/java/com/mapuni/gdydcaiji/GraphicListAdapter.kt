@@ -1,5 +1,6 @@
 package com.mapuni.gdydcaiji
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -9,22 +10,26 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.mapuni.gdydcaiji.activity.BuildingDetail
 import com.mapuni.gdydcaiji.activity.PoiDetail
+import com.mapuni.gdydcaiji.activity.SocialDetail
 import com.mapuni.gdydcaiji.activity.VillageDetail
 import com.mapuni.gdydcaiji.bean.TBuildingInfo
 import com.mapuni.gdydcaiji.bean.TPoiInfo
+import com.mapuni.gdydcaiji.bean.TSocialInfo
 import com.mapuni.gdydcaiji.bean.TVillageInfo
 
 /**
  * Created by zjp on 2018/3/23.
  * mail:zhangjunpeng92@163.com
  */
-class GraphicListAdapter(context:Context,list:List<Map<String,Any>>): RecyclerView.Adapter<GraphicListAdapter.Viewholder>() {
-    private var infoList:List<Map<String,Any>> = list
+class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog: Dialog) : RecyclerView.Adapter<GraphicListAdapter.Viewholder>() {
+    private var infoList: List<Map<String, Any>> = list
 
-    private val context: Context=context
+    private val context: Context = context
+
+    private val dialog: Dialog = dialog
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Viewholder {
-        val view=LayoutInflater.from(context).inflate(R.layout.item_list_showgraphicinfo,parent,false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_list_showgraphicinfo, parent, false)
         return Viewholder(view)
     }
 
@@ -33,39 +38,49 @@ class GraphicListAdapter(context:Context,list:List<Map<String,Any>>): RecyclerVi
     }
 
     override fun onBindViewHolder(holder: Viewholder, position: Int) {
-         val obj=infoList[position]["obj"]
-        when(obj){
-            is TBuildingInfo->{
-                holder.name.text= obj.name
+        val obj = infoList[position]["obj"]
+        when (obj) {
+            is TBuildingInfo -> {
+                holder.name.text = obj.name
             }
-            is TPoiInfo->{
-                holder.name.text= obj.name
+            is TPoiInfo -> {
+                holder.name.text = obj.name
             }
-            is TVillageInfo->{
-                holder.name.text= obj.name
+            is TVillageInfo -> {
+                holder.name.text = obj.name
+            }
+            is TSocialInfo -> {
+                holder.name.text = obj.name
             }
         }
         holder.itemView.setOnClickListener {
-            val intent=Intent()
-            when(obj){
-                is TBuildingInfo->{
-                    intent.setClass(context,BuildingDetail::class.java)
-                    intent.putExtra("resultBean",obj)
+            val intent = Intent()
+            when (obj) {
+                is TBuildingInfo -> {
+                    intent.setClass(context, BuildingDetail::class.java)
+                    intent.putExtra("resultBean", obj)
                 }
-                is TPoiInfo->{
-                    intent.setClass(context,PoiDetail::class.java)
-                    intent.putExtra("resultBean",obj)
+                is TPoiInfo -> {
+                    intent.setClass(context, PoiDetail::class.java)
+                    intent.putExtra("resultBean", obj)
                 }
-                is TVillageInfo->{
-                    intent.setClass(context,VillageDetail::class.java)
-                    intent.putExtra("resultBean",obj)
+                is TVillageInfo -> {
+                    intent.setClass(context, VillageDetail::class.java)
+                    intent.putExtra("resultBean", obj)
+                }
+                is TSocialInfo -> {
+                    intent.setClass(context, SocialDetail::class.java)
+                    intent.putExtra("resultBean", obj)
                 }
             }
             context.startActivity(intent)
+            if (dialog != null && dialog.isShowing) {
+                dialog.dismiss()
+            }
         }
     }
 
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var name:TextView = itemView.findViewById(R.id.name_item_showgraphic)
+        var name: TextView = itemView.findViewById(R.id.name_item_showgraphic)
     }
 }
