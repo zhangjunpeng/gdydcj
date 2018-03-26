@@ -16,10 +16,7 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.PopupWindow
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
@@ -97,13 +94,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     //poi0，楼宇采集1，采集面2，村采集3,
     //除2都是点
     //4特殊，范围选择点
-    var currentCode = 0
-    var targetCode = -1
+    private var currentCode = 0
+    private var targetCode = -1
 
-    val pointPloygon = ArrayList<Point>()
-    lateinit var graphicsLayer: GraphicsLayer
-    lateinit var tempGraphicLayer: GraphicsLayer
-    var localGraphicsLayer: GraphicsLayer = GraphicsLayer()
+    private val pointPloygon = ArrayList<Point>()
+    private lateinit var graphicsLayer: GraphicsLayer
+    private lateinit var tempGraphicLayer: GraphicsLayer
+    private var localGraphicsLayer: GraphicsLayer = GraphicsLayer()
     var graphicName: GraphicsLayer = GraphicsLayer()
     lateinit var alertDialog: AlertDialog
 
@@ -119,10 +116,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
 
     //数据库操作对象
-    lateinit var tBuildingInfoDao: TBuildingInfoDao
-    lateinit var tPoiInfoDao: TPoiInfoDao
-    lateinit var tSocialInfoDao: TSocialInfoDao
-    lateinit var tVillageInfoDao: TVillageInfoDao
+    private lateinit var tBuildingInfoDao: TBuildingInfoDao
+    private lateinit var tPoiInfoDao: TPoiInfoDao
+    private lateinit var tSocialInfoDao: TSocialInfoDao
+    private lateinit var tVillageInfoDao: TVillageInfoDao
 
     //显示的点线面
     private lateinit var buildingInfoList: List<TBuildingInfo>
@@ -138,6 +135,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private lateinit var showGrahipcListDialog: Dialog
     private lateinit var recyclerView: RecyclerView
+
+    private lateinit var bzDialog: Dialog
+    private lateinit var recyclerView_bz: RecyclerView
 
     lateinit var instance: Activity
 
@@ -158,6 +158,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         seek_collect.progress = tolerance
         initMapView()
         initShowGraphicDialog()
+        initBZDialog()
+
         initData()
         initListener()
         upDateView()
@@ -537,11 +539,20 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
 
     private fun singleTapOnCollection(v: Float, v1: Float) {
+        val center=mapview_collect.toMapPoint(v,v1)
         when (currentCode) {
             0 -> {
+                val intent1 = Intent(this, PoiDetail::class.java)
+                intent1.putExtra("lat", center.y)
+                intent1.putExtra("lng", center.x)
 
+                startActivityForResult(intent1, requestCode_poi)
             }
             1 -> {
+                val intent1 = Intent(this, BuildingDetail::class.java)
+                intent1.putExtra("lat", center.y)
+                intent1.putExtra("lng", center.x)
+                startActivityForResult(intent1, requestCode_poi)
 
             }
             2 -> {
@@ -549,6 +560,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
             }
             3 -> {
+                val intent1 = Intent(this, VillageDetail::class.java)
+                intent1.putExtra("lat", center.y)
+                intent1.putExtra("lng", center.x)
+                startActivityForResult(intent1, requestCode_poi)
 
             }
             4 -> {
@@ -670,6 +685,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 }
                 requestCode_ploygon -> {
                     pointPloygon.clear()
+                    if (localGraphicsLayer != null) {
+                        localGraphicsLayer.removeAll()
+                    }
+                    graphicName.removeAll()
+                    upDateGraphic()
                 }
             }
         }
@@ -862,7 +882,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         val tvUploadData = inflate.findViewById<TextView>(R.id.tv_upload)
         val tvChooseMap = inflate.findViewById<TextView>(R.id.tv_choosemap)
         val tvCopyDb = inflate.findViewById<TextView>(R.id.tv_copy_bd)
-
+        val tv_bz:TextView=inflate.findViewById(R.id.tv_bz)
 
         val ppw = PopupWindow(inflate, view!!.getWidth(), ScreenUtils.dp2px(this, 150F), true)
         ppw.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
@@ -888,12 +908,30 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 }
             }
         }
+        tv_bz.setOnClickListener {
+            ppw.dismiss()
+
+            bzDialog.show()
+        }
 
         //获取点击View的坐标
         val location = IntArray(2)
         view.getLocationOnScreen(location)
         val y = location[1] - ppw.height
         ppw.showAtLocation(view, Gravity.NO_GRAVITY, location[0], y)
+    }
+
+
+    private fun initBZDialog() {
+        bzDialog = Dialog(instance)
+        bzDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val contentView = LayoutInflater.from(instance).inflate(R.layout.dialog_bz, null, false)
+        bzDialog.setContentView(contentView)
+        bzDialog.setCanceledOnTouchOutside(false)
+        recyclerView_bz = contentView.findViewById(R.id.recycler_dialog_bz)
+
+        recyclerView_bz.layoutManager = LinearLayoutManager(this)
+
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -928,7 +966,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private fun initShowGraphicDialog() {
         showGrahipcListDialog = Dialog(instance)
-//        showGrahipcListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        showGrahipcListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         val contentView = LayoutInflater.from(instance).inflate(R.layout.dialog_showgraphicinfo, null, false)
         showGrahipcListDialog.setContentView(contentView)
         showGrahipcListDialog.setCanceledOnTouchOutside(false)
@@ -936,7 +974,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        showGrahipcListDialog.setTitle("名称")
 
     }
 
@@ -948,16 +985,48 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private fun initDialogSize() {
         val dialogWindow = showGrahipcListDialog.window
+        val dialogWindow_bz = bzDialog.window
+
         /*
        * 将对话框的大小按屏幕大小的百分比设置
        */
         val lp = dialogWindow.attributes // 获取对话框当前的参数值
-
+        val lp_bz=dialogWindow_bz.attributes
         val dm = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(dm)
-        lp.height = (dm.widthPixels * 0.75).toInt()
+        lp.height =LinearLayout.LayoutParams.WRAP_CONTENT
         lp.width = (dm.widthPixels * 0.75).toInt()// 宽度设置为屏幕的0.65
+        lp_bz.height =LinearLayout.LayoutParams.WRAP_CONTENT
+        lp_bz.width = (dm.widthPixels * 0.75).toInt()// 宽度设置为屏幕的0.65
         dialogWindow.attributes = lp
+        dialogWindow_bz.attributes = lp_bz
+
+    }
+
+    @Subscribe
+    fun onDeleteInfo(eventDeleteInfo: EventDeleteInfo){
+        for (obj in eventDeleteInfo.deleteList){
+            when(obj){
+                is TPoiInfo->{
+                    tPoiInfoDao.delete(obj)
+                }
+                is TBuildingInfo->{
+                    tBuildingInfoDao.delete(obj)
+                }
+                is TSocialInfo->{
+                    tSocialInfoDao.delete(obj)
+                }
+                is TVillageInfo->{
+                    tVillageInfoDao.delete(obj)
+                }
+
+            }
+        }
+        localGraphicsLayer.removeAll()
+        graphicsLayer.removeAll()
+        graphicName.removeAll()
+        upDateGraphic()
+        showGrahipcListDialog.dismiss()
     }
 
 }

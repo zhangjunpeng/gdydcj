@@ -24,11 +24,18 @@
         android:text="选择地图" />
 
     <TextView
-        android:id="@+id/tv_copy_bd"
+    android:id="@+id/tv_copy_bd"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:gravity="center"
+    android:text="备份" />
+    <TextView
+        android:id="@+id/tv_bz"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="备份" />
+        android:text="标注设置" />
 
 </android.support.v7.widget.LinearLayoutCompat>
