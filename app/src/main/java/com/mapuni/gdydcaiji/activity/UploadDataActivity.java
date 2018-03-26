@@ -1,5 +1,6 @@
 package com.mapuni.gdydcaiji.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
@@ -205,7 +206,8 @@ public class UploadDataActivity extends BaseActivity {
                 }
                 UploadBean body = response.body();
                 if (body != null && body.isResult()) {
-                    ToastUtils.showShort("上传成功");
+                    showResponseDialog("上传成功");
+//                    ToastUtils.showShort();
                     ThreadUtils.executeSubThread(new Runnable() {
                         @Override
                         public void run() {
@@ -213,8 +215,9 @@ public class UploadDataActivity extends BaseActivity {
                         }
                     });
 
-                }else{
-                    ToastUtils.showShort("上传失败");
+                } else {
+                    showResponseDialog("上传失败");
+//                    ToastUtils.showShort("上传失败");
                 }
 
 
@@ -237,6 +240,14 @@ public class UploadDataActivity extends BaseActivity {
             }
         });
 
+    }
+
+    private void showResponseDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("提示")
+                .setMessage(message)
+                .setPositiveButton("确定", null)
+                .show();
     }
 
     /**
@@ -325,7 +336,7 @@ public class UploadDataActivity extends BaseActivity {
 //                .setMaxMillseconds(System.currentTimeMillis() + _100year)//设置最大时间+100年
                 .setMaxMillseconds(System.currentTimeMillis())//设置最大时间是当前时间
                 .setCurrentMillseconds(calendar.getTimeInMillis())//设置当前时间
-                .setThemeColor(getResources().getColor(R.color.timepicker_dialog_bg))
+                .setThemeColor(getResources().getColor(R.color.color_deep_sky_blue))
                 .setType(Type.YEAR_MONTH_DAY)
                 .setWheelItemTextNormalColor(getResources().getColor(R.color.timetimepicker_default_text_color))
                 .setWheelItemTextSelectorColor(getResources().getColor(R.color.timepicker_toolbar_bg))

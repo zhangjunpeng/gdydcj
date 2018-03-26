@@ -28,7 +28,6 @@ import com.esri.android.map.event.OnSingleTapListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
 import com.esri.core.geometry.*
-import com.esri.core.internal.tasks.ags.v
 import com.esri.core.map.Graphic
 import com.esri.core.symbol.PictureMarkerSymbol
 import com.esri.core.symbol.SimpleFillSymbol
@@ -41,12 +40,11 @@ import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao
+import com.mapuni.gdydcaiji.service.CopyService
 import com.mapuni.gdydcaiji.utils.*
 import kotlinx.android.synthetic.main.activity_collection.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 
 
@@ -154,6 +152,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 //        mapfilePath = Environment.getExternalStorageDirectory().absolutePath+"/map/" + "/layers"
         EventBus.getDefault().register(this)
 
+        val intent = Intent(this, CopyService::class.java)
+        startService(intent)
 
         seek_collect.progress = tolerance
         initMapView()
@@ -192,6 +192,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         chanel_collect.setOnClickListener(this)
         selectpoint_collect.setOnClickListener(this)
 
+        iv_amplify.setOnClickListener(this)
+        iv_reduce.setOnClickListener(this)
         btn_menu.setOnClickListener(this)
 
 
@@ -291,6 +293,14 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 R.id.selectpoint_collect -> {
                     targetCode = 4
                     beiginSelectPoint()
+                }
+                R.id.iv_amplify -> {
+                    mapview_collect.zoomin()
+                }
+                R.id.iv_reduce -> {
+                    // 分辨率放大
+                    mapview_collect.zoomout()
+
                 }
                 R.id.btn_menu -> {
                     showMenuPop(v)
@@ -567,36 +577,36 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             Toast.makeText(this, "选择范围内没有点", Toast.LENGTH_SHORT).show()
             tempGraphicLayer.removeGraphic(tempGraphicID)
         } else {
-    //            pointInfoList_select=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties)
-    //            for (uid in uids_graphic) {
-    
-    
-    //                val graphic = graphicsLayer.getGraphic(uid)
-    //                if (graphic.geometry.type == Geometry.Type.POINT) {
-    //                    val point = graphic.geometry as Point
-    //                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).list()
-    //                    if (mutableList_poi.size > 0) {
-    //                        pointInfoList_select.add(mutableList_poi[0])
-    //                        val map = HashMap<String, Any>()
-    //                        map["obj"] = mutableList_poi[0]
-    //                        infoList.add(map)
-    //                    }
-    //                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
-    //                    if (mutableList_build.size > 0) {
-    //                        buildingInfoList_select.add(mutableList_build[0])
-    //                        val map = HashMap<String, Any>()
-    //                        map["obj"] = mutableList_build[0]
-    //                        infoList.add(map)
-    //                    }
-    //                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
-    //                    if (mutableList_village.size > 0) {
-    //                        villageInfoList_select.add(mutableList_village[0])
-    //                        val map = HashMap<String, Any>()
-    //                        map["obj"] = mutableList_village[0]
-    //                        infoList.add(map)
-    //                    }
-    //                }
-    //            }
+            //            pointInfoList_select=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties)
+            //            for (uid in uids_graphic) {
+
+
+            //                val graphic = graphicsLayer.getGraphic(uid)
+            //                if (graphic.geometry.type == Geometry.Type.POINT) {
+            //                    val point = graphic.geometry as Point
+            //                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).list()
+            //                    if (mutableList_poi.size > 0) {
+            //                        pointInfoList_select.add(mutableList_poi[0])
+            //                        val map = HashMap<String, Any>()
+            //                        map["obj"] = mutableList_poi[0]
+            //                        infoList.add(map)
+            //                    }
+            //                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
+            //                    if (mutableList_build.size > 0) {
+            //                        buildingInfoList_select.add(mutableList_build[0])
+            //                        val map = HashMap<String, Any>()
+            //                        map["obj"] = mutableList_build[0]
+            //                        infoList.add(map)
+            //                    }
+            //                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
+            //                    if (mutableList_village.size > 0) {
+            //                        villageInfoList_select.add(mutableList_village[0])
+            //                        val map = HashMap<String, Any>()
+            //                        map["obj"] = mutableList_village[0]
+            //                        infoList.add(map)
+            //                    }
+            //                }
+            //            }
             for (uid in uids_local) {
                 val map = HashMap<String, Any>()
                 val info = infoMap[uid]
@@ -610,7 +620,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     is TPoiInfo -> {
                         map["obj"] = info
                     }
-                    is TSocialInfo ->{
+                    is TSocialInfo -> {
                         map["obj"] = info
                     }
                 }
@@ -618,7 +628,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
             }
 
-            graphicListAdtaper = GraphicListAdapter(instance, infoList,showGrahipcListDialog)
+            graphicListAdtaper = GraphicListAdapter(instance, infoList, showGrahipcListDialog)
             recyclerView.adapter = graphicListAdtaper
             showGrahipcListDialog.show()
             tempGraphicLayer.removeGraphic(tempGraphicID)
@@ -911,6 +921,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
+        val intent = Intent(this, CopyService::class.java)
+        stopService(intent)
     }
 
 

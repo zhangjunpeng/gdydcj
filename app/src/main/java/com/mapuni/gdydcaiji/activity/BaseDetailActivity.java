@@ -1,7 +1,10 @@
 package com.mapuni.gdydcaiji.activity;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
@@ -21,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventBean;
+import com.mapuni.gdydcaiji.service.CopyService;
 import com.mapuni.gdydcaiji.utils.CustomUtils;
 import com.mapuni.gdydcaiji.utils.DialogUtils;
 import com.mapuni.gdydcaiji.utils.FileIOUtils;
@@ -65,6 +69,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
     @Override
     protected void initView() {
+        
         EventBus.getDefault().register(this);
         // 设置覆盖物的高度
         llContainer

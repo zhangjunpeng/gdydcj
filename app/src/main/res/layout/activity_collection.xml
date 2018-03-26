@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,8 +9,7 @@
     <com.esri.android.map.MapView
         android:id="@+id/mapview_collect"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.esri.android.map.MapView>
+        android:layout_height="match_parent"></com.esri.android.map.MapView>
 
     <LinearLayout
         android:id="@+id/linear_button"
@@ -30,7 +28,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_back_selector"
             android:text="POI"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/louyu_collect"
@@ -40,7 +38,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_back_selector"
             android:text="楼宇采集"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/newploygon_collect"
@@ -50,7 +48,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_back_selector"
             android:text="面采集"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/jiaotong_collect"
@@ -60,7 +58,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_back_selector"
             android:text="村采集"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/selectpoint_collect"
@@ -70,18 +68,18 @@
             android:layout_weight="1"
             android:background="@drawable/btn_back_selector"
             android:text="范围选择"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/dingwei_collect"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginBottom="60dp"
         android:layout_marginLeft="14dp"
         android:src="@drawable/dingwei_icon_selector"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <ImageView
         android:layout_width="30dp"
@@ -90,18 +88,41 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageView
         android:id="@+id/tianjia_collect"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginRight="14dp"
         android:src="@drawable/dingdian_icon_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="14dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/dingwei_collect"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_amplify"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/up_icon_selector" />
+
+        <ImageView
+            android:id="@+id/iv_reduce"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/down_icon_selector" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linear_tools_collect"
@@ -117,7 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#878787"
-            android:text="保存"/>
+            android:text="保存" />
 
         <Button
             android:id="@+id/houtui_collect"
@@ -125,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
             android:background="#878787"
-            android:text="后退"/>
+            android:text="后退" />
 
         <Button
             android:id="@+id/chanel_collect"
@@ -133,7 +154,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
             android:background="#878787"
-            android:text="取消"/>
+            android:text="取消" />
     </LinearLayout>
 
 
@@ -147,7 +168,7 @@
         android:text="菜单"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/linear_tools_collect"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
     <SeekBar
         android:id="@+id/seek_collect"
@@ -158,6 +179,6 @@
         android:layout_marginTop="10dp"
         android:max="200"
         android:min="20"
-        app:layout_constraintTop_toBottomOf="@+id/linear_button"/>
+        app:layout_constraintTop_toBottomOf="@+id/linear_button" />
 
 </android.support.constraint.ConstraintLayout>

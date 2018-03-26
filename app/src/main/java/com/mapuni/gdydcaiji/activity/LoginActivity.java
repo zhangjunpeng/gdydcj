@@ -43,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText etPassword;
     @BindView(R.id.cb_remember)
     CheckBox cbRemember;
+    private String spUsername;
+    private String spPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +59,12 @@ public class LoginActivity extends AppCompatActivity {
         // 用户名&密码回显
         boolean isRemember = SPUtils.getInstance().getBoolean("isRemember", false);
         cbRemember.setChecked(isRemember);
+        spUsername = SPUtils.getInstance().getString("username", "");
+        spPassword = SPUtils.getInstance().getString("password", "");
         if (isRemember) {
-            String username = SPUtils.getInstance().getString("username", "");
-            String password = SPUtils.getInstance().getString("password", "");
             //LogUtils.d(password);
-            etUsername.setText(username);
-            etPassword.setText(password);
+            etUsername.setText(spUsername);
+            etPassword.setText(spPassword);
 
         }
 
@@ -104,6 +106,22 @@ public class LoginActivity extends AppCompatActivity {
      * @param password
      */
     private void login(final String username, final String password) {
+        if(username.equals(spUsername) && password.equals(spPassword)){
+            ToastUtils.showShort("登录成功");
+            // 保存信息
+            boolean isChecked = cbRemember.isChecked();
+            if (isChecked) {
+                // 记住密码
+                SPUtils.getInstance().put("isRemember", isChecked);
+            } else {
+                // 不记住密码
+                SPUtils.getInstance().put("isRemember", isChecked);
+            }
+            
+            startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
+            finish();
+            return;
+        }
         final Call<LoginBean> call = RetrofitFactory.create(RetrofitService.class)
                 .login(username, password);
         // Dialog
@@ -138,14 +156,14 @@ public class LoginActivity extends AppCompatActivity {
                         if (isChecked) {
                             // 记住密码
                             SPUtils.getInstance().put("isRemember", isChecked);
-                            SPUtils.getInstance().put("username", username);
-                            SPUtils.getInstance().put("password", password);
                         } else {
                             // 不记住密码
                             SPUtils.getInstance().put("isRemember", isChecked);
-                            SPUtils.getInstance().put("username", "");
-                            SPUtils.getInstance().put("password", "");
+//                            SPUtils.getInstance().put("username", "");
+//                            SPUtils.getInstance().put("password", "");
                         }
+                        SPUtils.getInstance().put("username", username);
+                        SPUtils.getInstance().put("password", password);
                         startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
                         finish();
                     } else {
