@@ -271,6 +271,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mapview_collect.onSingleTapListener = this
         mapview_collect.onZoomListener = this
         mapview_collect.onPanListener = this
+        mapview_collect.isShowMagnifierOnLongPress = true
+        mapview_collect.setAllowMagnifierToPanMap(true)
     }
 
     override fun onClick(v: View?) {

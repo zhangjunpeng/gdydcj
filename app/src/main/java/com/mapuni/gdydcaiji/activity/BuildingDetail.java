@@ -2,6 +2,7 @@ package com.mapuni.gdydcaiji.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/3/21.
@@ -49,6 +51,8 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
     ClearEditText etLycs;
     @BindView(R.id.et_lyzhs)
     ClearEditText etLyzhs;
+    @BindView(R.id.et_tele)
+    ClearEditText etTele;
     private TBuildingInfoDao tBuildingInfoDao;
 
     @Override
@@ -79,6 +83,7 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         etForthAd.setText(resultBean.getForthad());
         etFifAd.setText(resultBean.getFifad());
         etSixAd.setText(resultBean.getSixad());
+        etTele.setText(resultBean.getTele());
         etLycs.setText(resultBean.getLycs());
         etLyzhs.setText(resultBean.getLyzhs());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
@@ -103,6 +108,7 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         resultBean.setForthad(getTextByView(etForthAd));
         resultBean.setFifad(getTextByView(etFifAd));
         resultBean.setSixad(getTextByView(etSixAd));
+        resultBean.setTele(getTextByView(etTele));
         resultBean.setLycs(getTextByView(etLycs));
         resultBean.setLyzhs(getTextByView(etLyzhs));
         if (imgUrl != null && imgUrl.length > 0) {

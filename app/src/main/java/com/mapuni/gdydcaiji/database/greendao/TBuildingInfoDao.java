@@ -57,9 +57,10 @@ public class TBuildingInfoDao extends AbstractDao<TBuildingInfo, Long> {
         public final static Property Lng = new Property(30, Double.class, "lng", false, "LNG");
         public final static Property Opttime = new Property(31, java.util.Date.class, "opttime", false, "OPTTIME");
         public final static Property Lygd = new Property(32, String.class, "lygd", false, "LYGD");
-        public final static Property Lyzhs = new Property(33, String.class, "lyzhs", false, "LYZHS");
-        public final static Property Img = new Property(34, String.class, "img", false, "IMG");
-        public final static Property Flag = new Property(35, int.class, "flag", false, "FLAG");
+        public final static Property Tele = new Property(33, String.class, "tele", false, "TELE");
+        public final static Property Lyzhs = new Property(34, String.class, "lyzhs", false, "LYZHS");
+        public final static Property Img = new Property(35, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(36, int.class, "flag", false, "FLAG");
     }
 
 
@@ -108,9 +109,10 @@ public class TBuildingInfoDao extends AbstractDao<TBuildingInfo, Long> {
                 "\"LNG\" REAL," + // 30: lng
                 "\"OPTTIME\" INTEGER," + // 31: opttime
                 "\"LYGD\" TEXT," + // 32: lygd
-                "\"LYZHS\" TEXT," + // 33: lyzhs
-                "\"IMG\" TEXT," + // 34: img
-                "\"FLAG\" INTEGER NOT NULL );"); // 35: flag
+                "\"TELE\" TEXT," + // 33: tele
+                "\"LYZHS\" TEXT," + // 34: lyzhs
+                "\"IMG\" TEXT," + // 35: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 36: flag
     }
 
     /** Drops the underlying database table. */
@@ -288,16 +290,21 @@ public class TBuildingInfoDao extends AbstractDao<TBuildingInfo, Long> {
             stmt.bindString(33, lygd);
         }
  
+        String tele = entity.getTele();
+        if (tele != null) {
+            stmt.bindString(34, tele);
+        }
+ 
         String lyzhs = entity.getLyzhs();
         if (lyzhs != null) {
-            stmt.bindString(34, lyzhs);
+            stmt.bindString(35, lyzhs);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(35, img);
+            stmt.bindString(36, img);
         }
-        stmt.bindLong(36, entity.getFlag());
+        stmt.bindLong(37, entity.getFlag());
     }
 
     @Override
@@ -469,16 +476,21 @@ public class TBuildingInfoDao extends AbstractDao<TBuildingInfo, Long> {
             stmt.bindString(33, lygd);
         }
  
+        String tele = entity.getTele();
+        if (tele != null) {
+            stmt.bindString(34, tele);
+        }
+ 
         String lyzhs = entity.getLyzhs();
         if (lyzhs != null) {
-            stmt.bindString(34, lyzhs);
+            stmt.bindString(35, lyzhs);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(35, img);
+            stmt.bindString(36, img);
         }
-        stmt.bindLong(36, entity.getFlag());
+        stmt.bindLong(37, entity.getFlag());
     }
 
     @Override
@@ -522,9 +534,10 @@ public class TBuildingInfoDao extends AbstractDao<TBuildingInfo, Long> {
             cursor.isNull(offset + 30) ? null : cursor.getDouble(offset + 30), // lng
             cursor.isNull(offset + 31) ? null : new java.util.Date(cursor.getLong(offset + 31)), // opttime
             cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32), // lygd
-            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33), // lyzhs
-            cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34), // img
-            cursor.getInt(offset + 35) // flag
+            cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33), // tele
+            cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34), // lyzhs
+            cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35), // img
+            cursor.getInt(offset + 36) // flag
         );
         return entity;
     }
@@ -564,9 +577,10 @@ public class TBuildingInfoDao extends AbstractDao<TBuildingInfo, Long> {
         entity.setLng(cursor.isNull(offset + 30) ? null : cursor.getDouble(offset + 30));
         entity.setOpttime(cursor.isNull(offset + 31) ? null : new java.util.Date(cursor.getLong(offset + 31)));
         entity.setLygd(cursor.isNull(offset + 32) ? null : cursor.getString(offset + 32));
-        entity.setLyzhs(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
-        entity.setImg(cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34));
-        entity.setFlag(cursor.getInt(offset + 35));
+        entity.setTele(cursor.isNull(offset + 33) ? null : cursor.getString(offset + 33));
+        entity.setLyzhs(cursor.isNull(offset + 34) ? null : cursor.getString(offset + 34));
+        entity.setImg(cursor.isNull(offset + 35) ? null : cursor.getString(offset + 35));
+        entity.setFlag(cursor.getInt(offset + 36));
      }
     
     @Override

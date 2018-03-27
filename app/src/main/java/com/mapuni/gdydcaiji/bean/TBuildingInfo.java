@@ -98,6 +98,9 @@ public class TBuildingInfo implements Serializable{
     private String lygd;
 
     @Expose
+    private String tele;
+
+    @Expose
     private String lyzhs;
 
     @Expose
@@ -105,13 +108,13 @@ public class TBuildingInfo implements Serializable{
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 224011539)
+    @Generated(hash = 2024546739)
     public TBuildingInfo(Long id, String bm, String csbs, String qxbs, String xzbs, String gsjd,
             String lygs, String lytype, String lyxz, String lyfl, String xqid, String xqmc, String name,
             String firstad, String secondad, String thirdad, String forthad, String fifad, String sixad,
             String lydz, String lycs, String lydscs, Double x, Double y, Double lydbx, Date gxsj,
             String bz, Double lymj, String optuser, Double lat, Double lng, Date opttime, String lygd,
-            String lyzhs, String img, int flag) {
+            String tele, String lyzhs, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.csbs = csbs;
@@ -145,6 +148,7 @@ public class TBuildingInfo implements Serializable{
         this.lng = lng;
         this.opttime = opttime;
         this.lygd = lygd;
+        this.tele = tele;
         this.lyzhs = lyzhs;
         this.img = img;
         this.flag = flag;
@@ -440,6 +444,14 @@ public class TBuildingInfo implements Serializable{
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    public String getTele() {
+        return this.tele;
+    }
+
+    public void setTele(String tele) {
+        this.tele = tele;
     }
 
 }
