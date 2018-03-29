@@ -3,11 +3,16 @@ package com.mapuni.gdydcaiji.activity
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -16,6 +21,8 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import android.widget.*
 import com.esri.android.map.GraphicsLayer
 import com.esri.android.map.LocationDisplayManager
@@ -142,6 +149,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private lateinit var bzDialog: Dialog
     private lateinit var recyclerView_bz: RecyclerView
 
+    private var manager: SensorManager? = null
+    private val listener = SensorListener()
+
     lateinit var instance: Activity
 
 
@@ -157,6 +167,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
         val intent = Intent(this, CopyService::class.java)
         startService(intent)
+
+        //获取系统服务（SENSOR_SERVICE)返回一个SensorManager 对象 
+        manager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         seek_collect.progress = tolerance
         initMapView()
@@ -1053,6 +1066,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     override fun onResume() {
         super.onResume()
+        /**
+         * 获取方向传感器
+         * 通过SensorManager对象获取相应的Sensor类型的对象
+         */
+        val magneticSensor = manager!!.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+        val accelerometerSensor = manager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        manager!!.registerListener(listener, magneticSensor, SensorManager.SENSOR_DELAY_GAME)
+        manager!!.registerListener(listener, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME)
+        
         initDialogSize()
     }
 
@@ -1183,4 +1205,43 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         upDateGraphic()
     }
 
+    override fun onPause() {
+        //应用不在前台时候销毁掉监听器 
+        manager!!.unregisterListener(listener)
+        super.onPause()
+    }
+
+    private inner class SensorListener : SensorEventListener {
+
+        private var predegree = 0f
+        internal var accelerometerValues = FloatArray(3)
+        internal var magneticValues = FloatArray(3)
+
+
+        override fun onSensorChanged(event: SensorEvent) {
+
+            if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+                accelerometerValues = event.values
+            } else if (event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
+                magneticValues = event.values
+            }
+            val R = FloatArray(9)
+            val values = FloatArray(3)
+            SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticValues)
+            SensorManager.getOrientation(R, values)
+            val degree = Math.toDegrees(values[0].toDouble()).toFloat()//旋转角度
+            /**动画效果 */
+            val animation = RotateAnimation(predegree, -degree,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            animation.duration = 200
+            iv_compass.startAnimation(animation)
+            predegree = -degree
+
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+
+        }
+
+    }
 }

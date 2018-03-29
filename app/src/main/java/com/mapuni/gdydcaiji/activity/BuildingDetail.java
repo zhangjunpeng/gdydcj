@@ -1,19 +1,26 @@
 package com.mapuni.gdydcaiji.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TBuildingInfo;
 import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
+import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +60,8 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
     ClearEditText etLyzhs;
     @BindView(R.id.et_tele)
     ClearEditText etTele;
+    @BindView(R.id.iv_calculator)
+    ImageView ivCalculator;
     private TBuildingInfoDao tBuildingInfoDao;
 
     @Override
@@ -72,6 +81,46 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spLyfl.setAdapter(adapter);
         tBuildingInfoDao = GdydApplication.getInstances().getDaoSession().getTBuildingInfoDao();
+    }
+
+    @Override
+    protected void initListener() {
+        super.initListener();
+        ivCalculator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openJS();
+            }
+        });
+    }
+
+    /**
+     * 打开计算器
+     */
+    public void openJS() {
+        PackageInfo pak = getAllApps(mContext, "Calculator", "calculator"); //大小写  
+        if (pak != null) {
+            Intent intent = new Intent();
+            intent = this.getPackageManager().getLaunchIntentForPackage(pak.packageName);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "未找到计算器", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public PackageInfo getAllApps(Context context, String app_flag_1, String app_flag_2) {
+        PackageManager pManager = context.getPackageManager();
+        // 获取手机内所有应用  
+        List<PackageInfo> packlist = pManager.getInstalledPackages(0);
+        for (int i = 0; i < packlist.size(); i++) {
+            PackageInfo pak = packlist.get(i);
+            if (pak.packageName.contains(app_flag_1) || pak.packageName.contains(app_flag_2)) {
+                return pak;
+            }
+
+
+        }
+        return null;
     }
 
     @Override
@@ -114,6 +163,7 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         if (imgUrl != null && imgUrl.length > 0) {
             resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
         }
+        resultBean.setOptuser(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 
@@ -126,7 +176,7 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
 //        data.putExtra("obj", resultBean);
 //
 //        setResult(Activity.RESULT_OK, data);
-        EvevtUpdate evevtUpdate=new EvevtUpdate();
+        EvevtUpdate evevtUpdate = new EvevtUpdate();
         EventBus.getDefault().post(evevtUpdate);
         finish();
 

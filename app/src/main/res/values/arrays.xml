@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="choose">
+        <item>否</item>
+        <item>是</item>
+    </string-array>
     <string-array name="building_types">
         <item>单栋单用户</item>
         <item>单栋多用户</item>
@@ -23,6 +27,13 @@
     <string-array name="village_type">
         <item>自然村</item>
         <item>行政村</item>
+    </string-array>
+
+    <string-array name="poi_mjdj">
+        <item>A4</item>
+        <item>A3</item>
+        <item>A2</item>
+        <item>A1</item>
     </string-array>
 
     <string-array name="building_fl">

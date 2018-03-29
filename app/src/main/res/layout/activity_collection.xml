@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></com.esri.android.map.MapView>
 
+
     <LinearLayout
         android:id="@+id/linear_button"
         android:layout_width="match_parent"
@@ -70,6 +71,12 @@
             android:text="范围选择"
             android:textColor="@color/white" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_compass"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_compass" />
 
     <ImageView
         android:id="@+id/dingwei_collect"

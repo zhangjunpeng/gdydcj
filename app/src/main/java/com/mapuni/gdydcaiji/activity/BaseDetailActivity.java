@@ -50,16 +50,16 @@ import top.zibin.luban.OnCompressListener;
 public abstract class BaseDetailActivity<T> extends BaseActivity {
     @BindView(R.id.btn_save)
     Button btnSave;
-    @BindView(R.id.edit)
-    TextView edit;
-    @BindView(R.id.cover)
-    View cover;
+    //    @BindView(R.id.edit)
+//    TextView edit;
+//    @BindView(R.id.cover)
+//    View cover;
     @BindView(R.id.ll_container)
     LinearLayoutCompat llContainer;
     @BindView(R.id.iv_image)
     ImageView ivImg;
 
-    protected boolean isEdit;
+    //    protected boolean isEdit;
     protected T resultBean;
     //是否是新增
     protected boolean isInsert;
@@ -69,19 +69,19 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
     @Override
     protected void initView() {
-        
+
         EventBus.getDefault().register(this);
-        // 设置覆盖物的高度
-        llContainer
-                .getViewTreeObserver()
-                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        ViewGroup.LayoutParams layoutParams = cover.getLayoutParams();
-                        layoutParams.height = llContainer.getHeight();
-                        cover.setLayoutParams(layoutParams);
-                    }
-                });
+//        // 设置覆盖物的高度
+//        llContainer
+//                .getViewTreeObserver()
+//                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        ViewGroup.LayoutParams layoutParams = cover.getLayoutParams();
+//                        layoutParams.height = llContainer.getHeight();
+//                        cover.setLayoutParams(layoutParams);
+//                    }
+//                });
 
     }
 
@@ -90,20 +90,20 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         resultBean = (T) getIntent().getSerializableExtra("resultBean");
         if (resultBean != null) {
             //查看
-            edit.setVisibility(View.VISIBLE);
-            cover.setVisibility(View.VISIBLE);
-            btnSave.setVisibility(View.GONE);
-            isEdit = false;
+//            edit.setVisibility(View.VISIBLE);
+//            cover.setVisibility(View.VISIBLE);
+//            btnSave.setVisibility(View.GONE);
+//            isEdit = false;
             isInsert = false;
             showData();
         } else {
             //新增
             lat = getIntent().getDoubleExtra("lat", 0);
             lng = getIntent().getDoubleExtra("lng", 0);
-            edit.setVisibility(View.GONE);
-            cover.setVisibility(View.GONE);
-            btnSave.setVisibility(View.VISIBLE);
-            isEdit = true;
+//            edit.setVisibility(View.GONE);
+//            cover.setVisibility(View.GONE);
+//            btnSave.setVisibility(View.VISIBLE);
+//            isEdit = true;
             isInsert = true;
         }
     }
@@ -184,20 +184,20 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.btn_save, R.id.back, R.id.edit, R.id.iv_image})
+    @OnClick({R.id.btn_save, R.id.back, R.id.iv_image})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.back:
-                if (isEdit) {
-                    DialogUtils.showWarningDialog(mContext, "当前处于编辑状态，确定要退出吗？", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
-                } else {
-                    finish();
-                }
+//                if (isEdit) {
+                DialogUtils.showWarningDialog(mContext, "当前处于编辑状态，确定要退出吗？", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+//                } else {
+//                    finish();
+//                }
 
                 break;
             case R.id.btn_save:
@@ -205,12 +205,12 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
                 //保存
                 submit();
                 break;
-            case R.id.edit:
-                btnSave.setVisibility(View.VISIBLE);
-                cover.setVisibility(View.GONE);
-                edit.setVisibility(View.GONE);
-                isEdit = true;
-                break;
+//            case R.id.edit:
+//                btnSave.setVisibility(View.VISIBLE);
+//                cover.setVisibility(View.GONE);
+//                edit.setVisibility(View.GONE);
+//                isEdit = true;
+//                break;
             case R.id.iv_image:
                 if (imgUrl == null || imgUrl.length == 0) {
                     //没照片
@@ -228,17 +228,17 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if (isEdit) {
-                DialogUtils.showWarningDialog(mContext, "当前处于编辑状态，确定要退出吗？", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                return true;
-            } else {
-                return super.onKeyDown(keyCode, event);
-            }
+//            if (isEdit) {
+            DialogUtils.showWarningDialog(mContext, "当前处于编辑状态，确定要退出吗？", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            return true;
+//            } else {
+//                return super.onKeyDown(keyCode, event);
+//            }
 
         }
         return super.onKeyDown(keyCode, event);

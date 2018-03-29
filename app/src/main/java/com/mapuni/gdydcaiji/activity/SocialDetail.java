@@ -12,6 +12,7 @@ import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TSocialInfo;
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
+import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -95,6 +96,7 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         if (imgUrl != null && imgUrl.length > 0) {
             resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
         }
+        resultBean.setOptuser(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
         

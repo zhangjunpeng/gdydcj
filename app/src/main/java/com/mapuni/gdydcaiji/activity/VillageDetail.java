@@ -19,6 +19,7 @@ import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TVillageInfo;
 import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
+import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -146,6 +147,7 @@ public class VillageDetail extends BaseDetailActivity<TVillageInfo> {
         if (spFl.getSelectedItemPosition() == 1) {
             resultBean.setZrcbj("");
         }
+        resultBean.setOptuser(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 

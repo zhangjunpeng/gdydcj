@@ -1,8 +1,12 @@
 package com.mapuni.gdydcaiji.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
@@ -36,6 +40,7 @@ import com.mapuni.gdydcaiji.utils.ToastUtils;
 
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +48,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -57,6 +64,7 @@ import retrofit2.Response;
  */
 
 public class UploadDataActivity extends BaseActivity {
+    private static final int REQUEST_MEDIA_PROJECTION = 1;
     @BindView(R.id.title)
     TextView title;
     @BindView(R.id.et_start_time)
@@ -71,6 +79,10 @@ public class UploadDataActivity extends BaseActivity {
     private TPoiInfoDao tPoiInfoDao;
     private TSocialInfoDao tSocialInfoDao;
     private TVillageInfoDao tVillageInfoDao;
+
+    private int updataNum = 0;
+    private Date upStartTime, upStopTime;
+    private AlertDialog dialog;
 
     @Override
     protected int getLayoutResId() {
@@ -119,30 +131,53 @@ public class UploadDataActivity extends BaseActivity {
                 buildingInfos = tBuildingInfoDao.queryBuilder()
                         .where(TBuildingInfoDao.Properties.Flag.eq(0),  //未上传
                                 TBuildingInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .build().list();
+                        .orderAsc(TBuildingInfoDao.Properties.Opttime).list();
                 String buildingJson = gson.toJson(buildingInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_building_info.txt", buildingJson);
+                if (buildingInfos != null && buildingInfos.size() > 0) {
+                    updataNum += buildingInfos.size();
+                    upStartTime = buildingInfos.get(0).getOpttime();
+                    upStopTime = buildingInfos.get(buildingInfos.size() - 1).getOpttime();
+                }
 
                 poiInfos = tPoiInfoDao.queryBuilder()
                         .where(TPoiInfoDao.Properties.Flag.eq(0)
                                 , TPoiInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .build().list();
+                        .orderAsc(TPoiInfoDao.Properties.Opttime).list();
                 String poiJson = gson.toJson(poiInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_poi_info.txt", poiJson);
+
+                if (poiInfos != null && poiInfos.size() > 0) {
+                    updataNum += poiInfos.size();
+                    upStartTime = new Date(Math.min(upStartTime.getTime(), poiInfos.get(0).getOpttime().getTime()));
+                    upStopTime = new Date(Math.max(upStopTime.getTime(), poiInfos.get(poiInfos.size() - 1).getOpttime().getTime()));
+                }
 
                 socialInfos = tSocialInfoDao.queryBuilder()
                         .where(TSocialInfoDao.Properties.Flag.eq(0)
                                 , TSocialInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .build().list();
+                        .orderAsc(TSocialInfoDao.Properties.Opttime).list();
                 String socialJson = gson.toJson(socialInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_social_info.txt", socialJson);
+
+                if (socialInfos != null && socialInfos.size() > 0) {
+                    updataNum += socialInfos.size();
+                    upStartTime = new Date(Math.min(upStartTime.getTime(), socialInfos.get(0).getOpttime().getTime()));
+                    upStopTime = new Date(Math.max(upStopTime.getTime(), socialInfos.get(socialInfos.size() - 1).getOpttime().getTime()));
+                }
 
                 villageInfos = tVillageInfoDao.queryBuilder()
                         .where(TVillageInfoDao.Properties.Flag.eq(0)
                                 , TVillageInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .build().list();
+                        .orderAsc(TVillageInfoDao.Properties.Opttime).list();
                 String villageJson = gson.toJson(villageInfos);
                 FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_village_info.txt", villageJson);
+
+                if (villageInfos != null && villageInfos.size() > 0) {
+                    updataNum += villageInfos.size();
+                    upStartTime = new Date(Math.min(upStartTime.getTime(), villageInfos.get(0).getOpttime().getTime()));
+                    upStopTime = new Date(Math.max(upStopTime.getTime(), villageInfos.get(villageInfos.size() - 1).getOpttime().getTime()));
+                }
 
                 ThreadUtils.executeMainThread(new Runnable() {
                     @Override
@@ -206,18 +241,18 @@ public class UploadDataActivity extends BaseActivity {
                 }
                 UploadBean body = response.body();
                 if (body != null && body.isResult()) {
-                    showResponseDialog("上传成功");
-//                    ToastUtils.showShort();
+                    showResponseDialog("上传成功\n" + "总数：" + updataNum + "\n" + DateUtil.getStringByFormat(upStartTime, DateUtil.YMDHMS) + "\n" + DateUtil.getStringByFormat(upStopTime, DateUtil.YMDHMS));
+
                     ThreadUtils.executeSubThread(new Runnable() {
                         @Override
                         public void run() {
+                            captureScreen();
                             updateData();
                         }
                     });
 
                 } else {
                     showResponseDialog("上传失败");
-//                    ToastUtils.showShort("上传失败");
                 }
 
 
@@ -245,10 +280,57 @@ public class UploadDataActivity extends BaseActivity {
     private void showResponseDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("提示")
+                .setCancelable(false)
                 .setMessage(message)
-                .setPositiveButton("确定", null)
-                .show();
+                .setPositiveButton("确定", null);
+        dialog = builder.create();
+        dialog.show();
     }
+
+    /**
+     * 获取整个窗口的截图
+     *
+     * @return
+     */
+    @SuppressLint("NewApi")
+    private void captureScreen() {
+        View cv = getWindow().getDecorView();
+
+        cv.setDrawingCacheEnabled(true);
+        cv.buildDrawingCache();
+        Bitmap bitmap = cv.getDrawingCache();
+
+        bitmap.setHasAlpha(false);
+        bitmap.prepareToDraw();
+
+        View dialogView = dialog.getWindow().getDecorView();
+        int location[] = new int[2];
+        cv.getLocationOnScreen(location);
+        int location2[] = new int[2];
+        dialogView.getLocationOnScreen(location2);
+        dialogView.setDrawingCacheEnabled(true);
+        dialogView.buildDrawingCache();
+        Bitmap bitmap2 = Bitmap.createBitmap(dialogView.getDrawingCache(), 0, 0, dialogView.getWidth(), dialogView.getHeight());
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawBitmap(bitmap2, location2[0] - location[0], location2[1] - location[1], new Paint());
+
+        try {
+            if (!new File(PathConstant.CAPTURE_SCREEN).exists()) {
+                new File(PathConstant.CAPTURE_SCREEN).mkdirs();
+            }
+            File file = new File(PathConstant.CAPTURE_SCREEN + "/" + System.currentTimeMillis() + ".jpg");
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        cv.destroyDrawingCache();
+        dialogView.destroyDrawingCache();
+
+    }
+
 
     /**
      * 将flag标记为1
