@@ -13,7 +13,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -114,10 +117,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     var graphicName: GraphicsLayer = GraphicsLayer()
     lateinit var alertDialog: AlertDialog
 
-    //poi跳转请求码
-    private val requestCode_poi: Int = 10001
-    //面跳转请求码
-    val requestCode_ploygon: Int = 10002
+
     var tolerance: Int = 20
 
     private var mExitTime: Long = 0
@@ -212,7 +212,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         social_bz_array[0]=true
         village_bz_array[0]=true
 
-
     }
 
 
@@ -220,7 +219,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         dingwei_collect.setOnClickListener {
             val locationDisplayManager = mapview_collect.locationDisplayManager
             locationDisplayManager.autoPanMode = (LocationDisplayManager.AutoPanMode.LOCATION)
-            locationDisplayManager.start()
+
+            if (locationDisplayManager.isStarted){
+                locationDisplayManager.stop()
+            }else{
+                locationDisplayManager.start()
+            }
+
         }
         poi_collect.setOnClickListener(this)
         louyu_collect.setOnClickListener(this)
@@ -251,9 +256,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
             }
 
         })
@@ -323,7 +330,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                         bj.dropLast(1)
                         val intent1 = Intent(this@CollectionActivity, SocialDetail::class.java)
                         intent1.putExtra("bj", bj)
-                        startActivityForResult(intent1, requestCode_ploygon)
+                        startActivity(intent1)
                     } else {
                         ToastUtils.showShort("请在地图上选择点")
                     }
@@ -363,13 +370,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
 
-                startActivityForResult(intent1, requestCode_poi)
+                startActivity(intent1)
             }
             1 -> {
                 val intent1 = Intent(this, BuildingDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivityForResult(intent1, requestCode_poi)
+                startActivity(intent1)
 
             }
             2 -> {
@@ -379,7 +386,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 val intent1 = Intent(this, VillageDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivityForResult(intent1, requestCode_poi)
+                startActivity(intent1)
 
             }
         }
@@ -445,7 +452,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun beiginSelectPoint() {
-        //开始poi采集
         if (currentCode == 2 && pointPloygon.size > 2) {
             showConfirmDiaolog()
         } else {
@@ -587,24 +593,23 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
 
-                startActivityForResult(intent1, requestCode_poi)
+                startActivity(intent1)
             }
             1 -> {
                 val intent1 = Intent(this, BuildingDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivityForResult(intent1, requestCode_poi)
+                startActivity(intent1)
 
             }
             2 -> {
-                getPloygon(v, v1)
 
             }
             3 -> {
                 val intent1 = Intent(this, VillageDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
-                startActivityForResult(intent1, requestCode_poi)
+                startActivity(intent1)
 
             }
             4 -> {
@@ -615,15 +620,12 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     }
 
-    private fun getPloygon(v: Float, v1: Float) {
-
-    }
 
     private var tempGraphicID: Int = 0
     private fun getGraphics(v: Float, v1: Float) {
 
         infoList = ArrayList()
-        val symbol = SimpleMarkerSymbol(Color.parseColor("#50AA0000"), tolerance, SimpleMarkerSymbol.STYLE.CIRCLE)
+        val symbol = SimpleMarkerSymbol(Color.parseColor("#501EE15E"), tolerance, SimpleMarkerSymbol.STYLE.CIRCLE)
         val point = mapview_collect.toMapPoint(v, v1)
         val graphic = Graphic(point, symbol)
         tempGraphicID = tempGraphicLayer.addGraphic(graphic)
@@ -631,38 +633,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
         if (uids_local.isEmpty()) {
             Toast.makeText(this, "选择范围内没有点", Toast.LENGTH_SHORT).show()
-            tempGraphicLayer.removeGraphic(tempGraphicID)
+            val removeGraphic=RemoveGraphic()
+            removeGraphic.execute("")
         } else {
-            //            pointInfoList_select=tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties)
-            //            for (uid in uids_graphic) {
-
-
-            //                val graphic = graphicsLayer.getGraphic(uid)
-            //                if (graphic.geometry.type == Geometry.Type.POINT) {
-            //                    val point = graphic.geometry as Point
-            //                    val mutableList_poi = tPoiInfoDao.queryBuilder().where(TPoiInfoDao.Properties.Lng.eq(point.x), TPoiInfoDao.Properties.Lat.eq(point.y)).list()
-            //                    if (mutableList_poi.size > 0) {
-            //                        pointInfoList_select.add(mutableList_poi[0])
-            //                        val map = HashMap<String, Any>()
-            //                        map["obj"] = mutableList_poi[0]
-            //                        infoList.add(map)
-            //                    }
-            //                    val mutableList_build = tBuildingInfoDao.queryBuilder().where(TBuildingInfoDao.Properties.Lng.eq(point.x), TBuildingInfoDao.Properties.Lat.eq(point.y)).list()
-            //                    if (mutableList_build.size > 0) {
-            //                        buildingInfoList_select.add(mutableList_build[0])
-            //                        val map = HashMap<String, Any>()
-            //                        map["obj"] = mutableList_build[0]
-            //                        infoList.add(map)
-            //                    }
-            //                    val mutableList_village = tVillageInfoDao.queryBuilder().where(TVillageInfoDao.Properties.Lng.eq(point.x), TVillageInfoDao.Properties.Lat.eq(point.y)).list()
-            //                    if (mutableList_village.size > 0) {
-            //                        villageInfoList_select.add(mutableList_village[0])
-            //                        val map = HashMap<String, Any>()
-            //                        map["obj"] = mutableList_village[0]
-            //                        infoList.add(map)
-            //                    }
-            //                }
-            //            }
             for (uid in uids_local) {
                 val map = HashMap<String, Any>()
                 val info = infoMap[uid]
@@ -687,55 +660,22 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             graphicListAdtaper = GraphicListAdapter(instance, infoList, showGrahipcListDialog)
             recyclerView.adapter = graphicListAdtaper
             showGrahipcListDialog.show()
-            tempGraphicLayer.removeGraphic(tempGraphicID)
-
+            val removeGraphic=RemoveGraphic()
+            removeGraphic.execute("")
         }
 
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                requestCode_poi -> {
-                    if (data is Intent) {
-                        val obj = data.getSerializableExtra("obj")
-                        var point = Point()
-                        var name = ""
-                        when (obj) {
-                            is TPoiInfo -> {
-                                point = Point(obj.lng, obj.lat)
-//                                name = obj.name
-                                name=getPOIShowName(obj)
-                            }
-                            is TBuildingInfo -> {
-                                point = Point(obj.lng, obj.lat)
-//                                name = obj.name
-                                name=getBuildingShowName(obj)
-                            }
-                            is TVillageInfo -> {
-                                point = Point(obj.lng, obj.lat)
-//                                name = obj.name
-                                name=getVillageShowName(obj)
-                            }
-                        }
-                        val uid = addPointInMap(point)
-                        infoMap[uid] = obj
-                        addNameInMap(point, name)
-                    }
-
-                }
-                requestCode_ploygon -> {
-                    pointPloygon.clear()
-                    if (localGraphicsLayer != null) {
-                        localGraphicsLayer.removeAll()
-                    }
-                    graphicName.removeAll()
-                    upDateGraphic()
-                }
-            }
+    inner class RemoveGraphic() : AsyncTask<String, Void, String>() {
+        override fun doInBackground(vararg params: String?): String {
+            Thread.sleep(1000)
+            return ""
         }
-        super.onActivityResult(requestCode, resultCode, data)
+
+        override fun onPostExecute(result: String?) {
+            tempGraphicLayer.removeGraphic(tempGraphicID)
+        }
+
     }
 
     private fun addNameInMap(point: Point, name: String) {
@@ -1242,6 +1182,14 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
 
         }
-
     }
+        @Subscribe
+        fun onChangePloygon() {
+            pointPloygon.clear()
+            tempGraphicLayer.removeAll()
+            graphicName.removeAll()
+            localGraphicsLayer.removeAll()
+            graphicsLayer.removeAll()
+            upDateGraphic()
+        }
 }

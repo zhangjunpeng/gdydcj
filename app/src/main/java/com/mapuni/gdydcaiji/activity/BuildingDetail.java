@@ -165,6 +165,8 @@ public class BuildingDetail extends BaseDetailActivity<TBuildingInfo> {
         }
         resultBean.setOptuser(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
+        resultBean.setOptuser(SPUtils.getInstance().getString("username",""));
+
         resultBean.setFlag(0);
 
         if (isInsert)

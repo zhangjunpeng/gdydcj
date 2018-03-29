@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.EventPloyonChange;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TSocialInfo;
 import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
@@ -98,6 +99,8 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
         }
         resultBean.setOptuser(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
+        resultBean.setOptuser(SPUtils.getInstance().getString("username",""));
+
         resultBean.setFlag(0);
         
 
@@ -109,8 +112,8 @@ public class SocialDetail extends BaseDetailActivity<TSocialInfo> {
 //        Intent data=new Intent();
 //        data.putExtra("obj",resultBean);
 //        setResult(Activity.RESULT_OK,data);
-        EvevtUpdate evevtUpdate=new EvevtUpdate();
-        EventBus.getDefault().post(evevtUpdate);
+        EventPloyonChange eventPloyonChange=new EventPloyonChange();
+        EventBus.getDefault().post(eventPloyonChange);
         finish();
     }
 

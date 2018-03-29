@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
+    <color name="gray">#a2a2a2</color>
+
     <!-- 提示字体颜色 -->
     <color name="hintTextColor">#CCCCCC</color>
     <color name="login_bg">#0090fe</color>

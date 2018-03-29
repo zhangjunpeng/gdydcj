@@ -199,6 +199,7 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
         }
         resultBean.setOptuser(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
+        resultBean.setOptuser(SPUtils.getInstance().getString("username",""));
         resultBean.setFlag(0);
 
         if (isInsert)

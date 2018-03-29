@@ -2,21 +2,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/login_bg">
+                android:background="@drawable/bg">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/logo"
+        android:layout_marginTop="100dp"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_below="@+id/logo"
+        android:layout_marginTop="38dp"
+        >
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/white"
+            android:background="@drawable/bg_shurukuang"
             android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:layout_marginRight="14dp"
+            android:layout_marginLeft="14dp"
+            >
 
             <ImageView
                 android:id="@+id/iv_username"
@@ -24,7 +38,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="32dp"
-                android:src="@drawable/icon_admin"/>
+                android:src="@drawable/yonghuming"/>
 
             <EditText
                 android:id="@+id/et_username"
@@ -39,16 +53,16 @@
 
         </RelativeLayout>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
 
-            android:background="@color/hintTextColor"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/white">
+            android:background="@drawable/bg_shurukuang"
+            android:layout_marginRight="14dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="20dp"
+            >
 
             <ImageView
 
@@ -57,7 +71,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="32dp"
-                android:src="@drawable/icon_mima"/>
+                android:src="@drawable/mima"/>
 
             <EditText
                 android:id="@+id/et_password"
@@ -90,7 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/selector_login_btn"
+            android:background="@drawable/bg_login"
             android:text="登 录"
             android:textColor="@color/white"
             android:textSize="18sp"/>
