@@ -30,61 +30,24 @@
     </string-array>
 
     <string-array name="poi_mjdj">
-        <item>A4</item>
-        <item>A3</item>
-        <item>A2</item>
-        <item>A1</item>
+        <item>3A</item>
+        <item>4A</item>
+        <item>5A</item>
+        <item>三甲</item>
+        <item>二甲</item>
     </string-array>
 
     <string-array name="building_fl">
-        <item>党政军机关</item>
-        <item>党政军宿舍</item>
-        <item>武警军区</item>
-        <item>公安机关</item>
-        <item>交通服务设施</item>
-        <item>机场</item>
-        <item>港口</item>
-        <item>长途汽车站</item>
-        <item>高铁站</item>
-        <item>火车站</item>
-        <item>口岸</item>
-        <item>休闲娱乐旅游</item>
-        <item>广场</item>
-        <item>公园</item>
-        <item>风景名胜区</item>
-        <item>大型美食街</item>
-        <item>传统大型饭店</item>
-        <item>美食区</item>
-        <item>知名连锁饭店</item>
-        <item>餐饮美食</item>
-        <item>居住楼</item>
-        <item>居民小区</item>
-        <item>自然村</item>
-        <item>中小学</item>
-        <item>高校园区</item>
-        <item>星级酒店</item>
-        <item>大型商贸场所</item>
-        <item>商业楼宇</item>
-        <item>商业中心</item>
-        <item>会展中心</item>
-        <item>体育场馆</item>
-        <item>工业园区</item>
-        <item>企事业单位</item>
-        <item>社会服务行业</item>
-        <item>金融证券</item>
-        <item>银行机构</item>
-        <item>海关</item>
-        <item>供电局</item>
-        <item>医疗卫生</item>
-        <item>三甲医院</item>
-        <item>宾馆住宿</item>
-        <item>教育科研</item>
-        <item>宗教场所</item>
-        <item>公共场所</item>
-        <item>购物场所</item>
-        <item>通讯企业</item>
-        <item>新闻媒体 </item>
-        <item>河流名称 </item>   <!-- poi分类比楼宇多的一个字段-->
+        <item>美食</item>
+        <item>景点</item>
+        <item>宾馆酒店</item>
+        <item>小区</item>
+        <item>楼栋</item>
+        <item>购物广场</item>
+        <item>学校</item>
+        <item>医院</item>
+        <item>村名</item>
+        <item>其他</item>
     </string-array>
 
 </resources>

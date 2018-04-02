@@ -25,6 +25,9 @@ public class DaoMaster extends AbstractDaoMaster {
         TPoiInfoDao.createTable(db, ifNotExists);
         TSocialInfoDao.createTable(db, ifNotExists);
         TVillageInfoDao.createTable(db, ifNotExists);
+        TbLineDao.createTable(db, ifNotExists);
+        TbPointDao.createTable(db, ifNotExists);
+        TbSurfaceDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -33,6 +36,9 @@ public class DaoMaster extends AbstractDaoMaster {
         TPoiInfoDao.dropTable(db, ifExists);
         TSocialInfoDao.dropTable(db, ifExists);
         TVillageInfoDao.dropTable(db, ifExists);
+        TbLineDao.dropTable(db, ifExists);
+        TbPointDao.dropTable(db, ifExists);
+        TbSurfaceDao.dropTable(db, ifExists);
     }
 
     /**
@@ -55,6 +61,9 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(TPoiInfoDao.class);
         registerDaoClass(TSocialInfoDao.class);
         registerDaoClass(TVillageInfoDao.class);
+        registerDaoClass(TbLineDao.class);
+        registerDaoClass(TbPointDao.class);
+        registerDaoClass(TbSurfaceDao.class);
     }
 
     public DaoSession newSession() {

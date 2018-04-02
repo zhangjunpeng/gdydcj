@@ -54,8 +54,8 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 //    TextView edit;
 //    @BindView(R.id.cover)
 //    View cover;
-    @BindView(R.id.ll_container)
-    LinearLayoutCompat llContainer;
+//    @BindView(R.id.ll_container)
+//    LinearLayoutCompat llContainer;
     @BindView(R.id.iv_image)
     ImageView ivImg;
 

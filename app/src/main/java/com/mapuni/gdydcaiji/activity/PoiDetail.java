@@ -1,24 +1,24 @@
 package com.mapuni.gdydcaiji.activity;
 
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.support.v7.widget.ListPopupWindow;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
-import com.mapuni.gdydcaiji.bean.TPoiInfo;
-import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
+import com.mapuni.gdydcaiji.bean.TbPoint;
+import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
@@ -30,52 +30,41 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/3/21.
  * poi采集
  */
 
-public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
+public class PoiDetail extends BaseDetailActivity<TbPoint> {
     @BindView(R.id.title)
     TextView title;
-    @BindView(R.id.et_poiName)
-    ClearEditText etPoiName;
-    @BindView(R.id.et_forthAd)
-    ClearEditText etForthAd;
-    //    @BindView(R.id.et_fifAd)
-//    ClearEditText etFifAd;
-//    @BindView(R.id.et_sixAd)
-//    ClearEditText etSixAd;
-//    @BindView(R.id.et_sevenAd)
-//    ClearEditText etSevenAd;
-    @BindView(R.id.sp_fl)
-    Spinner spFl;
-    @BindView(R.id.sp_mjdj)
-    Spinner spMjdj;
-    @BindView(R.id.et_sslymc)
-    ClearEditText etSslymc;
-    @BindView(R.id.sp_isly)
-    Spinner spIsly;
-    @BindView(R.id.ll_poi)
-    LinearLayoutCompat llPoi;
     @BindView(R.id.sp_lyType)
     Spinner spLyType;
     @BindView(R.id.sp_lyxz)
     Spinner spLyxz;
+    @BindView(R.id.et_lyName)
+    ClearEditText etLyName;
     @BindView(R.id.sp_lyfl)
     Spinner spLyfl;
+    @BindView(R.id.et_address)
+    AutoCompleteTextView etAddress;
+    @BindView(R.id.et_dyh)
+    ClearEditText etDyh;
     @BindView(R.id.et_tele)
     ClearEditText etTele;
+    @BindView(R.id.sp_dj)
+    Spinner spDj;
     @BindView(R.id.et_lycs)
     ClearEditText etLycs;
     @BindView(R.id.et_lyzhs)
     ClearEditText etLyzhs;
-    @BindView(R.id.ll_ly)
-    LinearLayoutCompat llLy;
-    private TPoiInfoDao tPoiInfoDao;
-    private ListPopupWindow mPopup;
+    @BindView(R.id.iv_calculator)
+    ImageView ivCalculator;
+    @BindView(R.id.et_bz)
+    ClearEditText etBz;
+
+    private TbPointDao tPoiInfoDao;
     private List<String> mAddArray = new ArrayList<>();
     private String address;
 
@@ -88,19 +77,11 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
     protected void initView() {
         super.initView();
         title.setText("POI点采集");
-        etPoiName.requestFocus();
-        tPoiInfoDao = GdydApplication.getInstances().getDaoSession().getTPoiInfoDao();
-        setSpinnerData(R.array.choose, spIsly);
-        setSpinnerData(R.array.building_fl, spFl);
+        tPoiInfoDao = GdydApplication.getInstances().getDaoSession().getTbPointDao();
         setSpinnerData(R.array.building_types, spLyType);
         setSpinnerData(R.array.building_xz, spLyxz);
-        setSpinnerData(R.array.poi_mjdj, spMjdj);
-//        setSpinnerData(R.array.building_fl, spLyfl);
-        List<String> mItems = Arrays.asList(getResources().getStringArray(R.array.building_fl));
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, R.id.tv_type, mItems.subList(0, mItems.size() - 1));
-        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        spLyfl.setAdapter(adapter);
-
+        setSpinnerData(R.array.building_fl, spLyfl);
+        setSpinnerData(R.array.poi_mjdj, spDj);
         initListPopupWindow();
 
     }
@@ -111,70 +92,43 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
             return;
         }
         mAddArray = new ArrayList<>(Arrays.asList(address.split(";")));
-        mPopup = new ListPopupWindow(this);
         ArrayAdapter<String> lpwAdapter = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mAddArray);
-        mPopup.setAdapter(lpwAdapter);
-        mPopup.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopup.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        mPopup.setModal(true);
-        mPopup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                etForthAd.setText(mAddArray.get(position));
-                etForthAd.setSelection(etForthAd.getText().length());
-                mPopup.dismiss();
-            }
-        });
+        lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etAddress.setAdapter(lpwAdapter);
     }
 
     @Override
     protected void initListener() {
         super.initListener();
-        spIsly.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        //不是楼宇
-                        llLy.setVisibility(View.GONE);
-                        llPoi.setVisibility(View.VISIBLE);
-                        break;
-                    case 1:
-                        llLy.setVisibility(View.VISIBLE);
-                        llPoi.setVisibility(View.GONE);
-                        break;
-                }
-            }
 
+        etAddress.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
             }
         });
-
-        etForthAd.setOnLongClickListener(new View.OnLongClickListener() {
+        ivCalculator.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                if (!TextUtils.isEmpty(address)) {
-                    mPopup.setDropDownGravity(Gravity.START);
-                    mPopup.setAnchorView(etForthAd);
-                    mPopup.show();
-                }
-                return false;
+            public void onClick(View v) {
+                openJS();
             }
-
         });
     }
 
     @Override
     protected void showData() {
-        etPoiName.setText(resultBean.getName());
-//        spIsly.setSelection(resultBean.get);
-        etForthAd.setText(resultBean.getForthad());
-        spFl.setSelection(getSelectPosition(R.array.building_fl, resultBean.getFl()));
-//        etMjdj.setText(resultBean.getMjdj());
-        spMjdj.setSelection(getSelectPosition(R.array.poi_mjdj, resultBean.getMjdj()));
-        etSslymc.setText(resultBean.getSslymc());
+        etLyName.setText(resultBean.getName());
+        etAddress.setText(resultBean.getDz());
+        spLyType.setSelection(getSelectPosition(R.array.building_types, resultBean.getLytype()));
+        spLyxz.setSelection(getSelectPosition(R.array.building_xz, resultBean.getLyxz()));
+        spLyfl.setSelection(getSelectPosition(R.array.building_fl, resultBean.getFl()));
+        spDj.setSelection(getSelectPosition(R.array.poi_mjdj, resultBean.getDj()));
+        etDyh.setText(resultBean.getDy());
+        etTele.setText(resultBean.getLxdh());
+        etLycs.setText(resultBean.getLycs());
+        etLyzhs.setText(resultBean.getLyzhs());
+        etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
         }
@@ -184,22 +138,27 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
     @Override
     protected void submit() {
         if (resultBean == null) {
-            resultBean = new TPoiInfo();
+            resultBean = new TbPoint();
             resultBean.setLat(lat);
             resultBean.setLng(lng);
         }
 
-        resultBean.setName(getTextByView(etPoiName));
-        resultBean.setForthad(getTextByView(etForthAd));
-        resultBean.setFl(getResources().getStringArray(R.array.building_fl)[spFl.getSelectedItemPosition()]);
-        resultBean.setMjdj(getResources().getStringArray(R.array.poi_mjdj)[spMjdj.getSelectedItemPosition()]);
-        resultBean.setSslymc(getTextByView(etSslymc));
+        resultBean.setName(getTextByView(etLyName));
+        resultBean.setLytype(getResources().getStringArray(R.array.building_types)[spLyType.getSelectedItemPosition()]);
+        resultBean.setLyxz(getResources().getStringArray(R.array.building_xz)[spLyxz.getSelectedItemPosition()]);
+        resultBean.setFl(getResources().getStringArray(R.array.building_fl)[spLyfl.getSelectedItemPosition()]);
+        resultBean.setDz(getTextByView(etAddress));
+        resultBean.setDy(getTextByView(etDyh));
+        resultBean.setLxdh(getTextByView(etTele));
+        resultBean.setDj(getResources().getStringArray(R.array.poi_mjdj)[spDj.getSelectedItemPosition()]);
+        resultBean.setLycs(getTextByView(etLycs));
+        resultBean.setLyzhs(getTextByView(etLyzhs));
+        resultBean.setNote(getTextByView(etBz));
         if (imgUrl != null && imgUrl.length > 0) {
             resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
         }
-        resultBean.setOptuser(SPUtils.getInstance().getString("username", ""));
+        resultBean.setOprator(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
-        resultBean.setOptuser(SPUtils.getInstance().getString("username",""));
         resultBean.setFlag(0);
 
         if (isInsert)
@@ -219,7 +178,7 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
 
     private void saveAddress() {
 
-        String etAddressStr = getTextByView(etForthAd);
+        String etAddressStr = getTextByView(etAddress);
         if (TextUtils.isEmpty(etAddressStr)) {
             return;
         }
@@ -239,4 +198,32 @@ public class PoiDetail extends BaseDetailActivity<TPoiInfo> {
         SPUtils.getInstance().put("address", spAddress.substring(0, spAddress.length() - 1));
     }
 
+    /**
+     * 打开计算器
+     */
+    public void openJS() {
+        PackageInfo pak = getAllApps(mContext, "Calculator", "calculator"); //大小写  
+        if (pak != null) {
+            Intent intent = new Intent();
+            intent = this.getPackageManager().getLaunchIntentForPackage(pak.packageName);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "未找到计算器", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public PackageInfo getAllApps(Context context, String app_flag_1, String app_flag_2) {
+        PackageManager pManager = context.getPackageManager();
+        // 获取手机内所有应用  
+        List<PackageInfo> packlist = pManager.getInstalledPackages(0);
+        for (int i = 0; i < packlist.size(); i++) {
+            PackageInfo pak = packlist.get(i);
+            if (pak.packageName.contains(app_flag_1) || pak.packageName.contains(app_flag_2)) {
+                return pak;
+            }
+
+
+        }
+        return null;
+    }
 }

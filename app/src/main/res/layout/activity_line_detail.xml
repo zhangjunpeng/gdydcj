@@ -38,10 +38,10 @@
 
                 <TextView
                     style="@style/HintText"
-                    android:text="地址" />
+                    android:text="起点" />
 
                 <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_address"
+                    android:id="@+id/et_qd"
                     style="@style/CollectEditText" />
 
             </LinearLayout>
@@ -50,49 +50,11 @@
 
                 <TextView
                     style="@style/HintText"
-                    android:text="分类" />
-
-                <Spinner
-                    android:id="@+id/sp_fl"
-                    style="@style/CustomSpinner" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="物业信息" />
+                    android:text="终点" />
 
                 <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_wyxx"
+                    android:id="@+id/et_zd"
                     style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="联系电话" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_lxdh"
-                    style="@style/CollectEditText"
-                    android:inputType="phone" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="楼栋数" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_lds"
-                    style="@style/CollectEditText"
-                    android:inputType="number" />
 
             </LinearLayout>
 
@@ -108,7 +70,7 @@
                     android:inputType="number" />
 
             </LinearLayout>
-            
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="96dp"
