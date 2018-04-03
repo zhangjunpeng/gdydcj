@@ -618,7 +618,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         }
 
         override fun onPostExecute(result: String?) {
-            tempGraphicLayer.removeGraphic(tempGraphicID)
+            tempGraphicLayer.removeAll()
         }
 
     }
@@ -827,7 +827,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         val tvCopyDb = inflate.findViewById<TextView>(R.id.tv_copy_bd)
         val tv_bz:TextView=inflate.findViewById(R.id.tv_bz)
 
-        val ppw = PopupWindow(inflate, view!!.getWidth(), ScreenUtils.dp2px(this, 150F), true)
+        val ppw = PopupWindow(inflate,ViewGroup.LayoutParams.WRAP_CONTENT, ScreenUtils.dp2px(this, 150F), true)
         ppw.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
         ppw.isOutsideTouchable = true
         ppw.isTouchable = true
@@ -864,7 +864,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
         //获取点击View的坐标
         val location = IntArray(2)
-        view.getLocationOnScreen(location)
+        view!!.getLocationOnScreen(location)
         val y = location[1] - ppw.height
         ppw.showAtLocation(view, Gravity.NO_GRAVITY, location[0], y)
     }
