@@ -113,8 +113,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private val pointPloygon = ArrayList<Point>()
     private val pointPloyline= ArrayList<Point>()
 
-    private lateinit var graphicsLayer: GraphicsLayer
-    private lateinit var tempGraphicLayer: GraphicsLayer
+    private var graphicsLayer: GraphicsLayer= GraphicsLayer()
+    private var tempGraphicLayer: GraphicsLayer= GraphicsLayer()
     private var localGraphicsLayer: GraphicsLayer = GraphicsLayer()
     var graphicName: GraphicsLayer = GraphicsLayer()
     lateinit var alertDialog: AlertDialog
@@ -249,8 +249,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 && File(mapFilePath).exists()) {
             val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
             mapview_collect.addLayer(layer)
-            graphicsLayer = GraphicsLayer()
-            tempGraphicLayer = GraphicsLayer()
+
             mapview_collect.addLayer(graphicsLayer, 1)
             mapview_collect.addLayer(tempGraphicLayer, 2)
             mapview_collect.addLayer(localGraphicsLayer, 3)
@@ -671,17 +670,31 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun upDateGraphic() {
-        val currentPloygon = mapview_collect.extent
-        val leftTopP = currentPloygon.getPoint(0)
-        val rightTopP = currentPloygon.getPoint(1)
-        val leftBottomP = currentPloygon.getPoint(2)
+        UPDateeGraphic().execute("")
+    }
 
-        pointList=tbPointDao.queryBuilder().where(TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
-                , TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
-        lineInfoList=tbLineDao.loadAll()
-        surfaceList=tbSurfaceDao.loadAll()
+    inner class UPDateeGraphic() : AsyncTask<String, Void, Polygon>(){
+        override fun doInBackground(vararg params: String?): Polygon {
+            val currentPloygon = mapview_collect.extent
+            val leftTopP = currentPloygon.getPoint(0)
+            val rightTopP = currentPloygon.getPoint(1)
+            val leftBottomP = currentPloygon.getPoint(2)
+            pointList=tbPointDao.queryBuilder().where(TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
+                    , TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
+            lineInfoList=tbLineDao.loadAll()
+            surfaceList=tbSurfaceDao.loadAll()
+            pointList=tbPointDao.queryBuilder().where(TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
+                    , TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
+            lineInfoList=tbLineDao.loadAll()
+            surfaceList=tbSurfaceDao.loadAll()
 
-        updateGraphicInLocal(currentPloygon)
+            return currentPloygon
+        }
+
+        override fun onPostExecute(result: Polygon) {
+            updateGraphicInLocal(result)
+            super.onPostExecute(result)
+        }
 
     }
 
@@ -749,7 +762,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 polygon.lineTo(tempPointList[i])
             }
 
-            if (GeometryEngine.contains(currentPloygon, polygon, SpatialReference.create(SpatialReference.WKID_WGS84))) {
                 val uid = localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
                 infoMap[uid] = info
                 val tEnvelope = Envelope()
@@ -757,12 +769,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 val tPoint = tEnvelope.center
                 val name=getSurfaceName(info)
                 addNameInMap(tPoint, name)
-            }
 
 
         }
 
-
+        mapview_collect.invalidate()
         mIsLoading = false
     }
 
@@ -792,7 +803,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     mapview_collect.addLayer(layer)
                     graphicsLayer = GraphicsLayer()
                     mapview_collect.addLayer(graphicsLayer, 1)
-
+                    mapview_collect.addLayer(tempGraphicLayer, 2)
+                    mapview_collect.addLayer(localGraphicsLayer, 3)
+                    mapview_collect.addLayer(graphicName, 4)
                 } else {
                     mapview_collect.setVisibility(View.GONE)
                     showNotHaveMapDialog()
