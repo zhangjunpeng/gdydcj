@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventPloyonChange;
+import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbSurface;
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
@@ -54,7 +55,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
     @Override
     protected void initView() {
         super.initView();
-        title.setText("小区、学校、医院采集");
+        title.setText("面采集");
         tbSurfaceDao = GdydApplication.getInstances().getDaoSession().getTbSurfaceDao();
         setSpinnerData(R.array.social_type, spFl);
 
@@ -105,11 +106,8 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         else
             tbSurfaceDao.update(resultBean);
 
-//        Intent data=new Intent();
-//        data.putExtra("obj",resultBean);
-//        setResult(Activity.RESULT_OK,data);
-        EventPloyonChange eventPloyonChange = new EventPloyonChange();
-        EventBus.getDefault().post(eventPloyonChange);
+        EvevtUpdate evevtUpdate = new EvevtUpdate();
+        EventBus.getDefault().post(evevtUpdate);
         finish();
     }
 

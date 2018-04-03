@@ -24,17 +24,15 @@ class BZRecyAdapter(context:Context,type:Int,checkedArray:ArrayList<Boolean>): R
     init {
         when(type){
             0->{
-                property=listOf("名称","第四级","第五级","第六级","第七级","美景等级","所属楼宇名称")
+                property=listOf("名称","楼宇类型","楼宇性质","分类","地址","单元号","电话","等级","楼宇层数","楼宇住户数","采集时间")
             }
             1->{
-                property= listOf("楼宇名称","第四级","第五级","第六级","楼宇类型","楼宇性质","楼宇分类","楼宇层数","楼宇住户数")
+                property= listOf("名称","起始站","终点站","采集时间")
             }
             2->{
-                property=listOf("小区名称","第四级","第五级","小区地址","物业信息","联系电话")
+                property=listOf("名称","地址","分类","物业信息","联系电话","楼栋数","采集时间")
             }
-            3->{
-                property=listOf("名称","地址")
-            }
+
         }
     }
 

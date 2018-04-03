@@ -19,16 +19,14 @@ import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
-import com.mapuni.gdydcaiji.bean.TBuildingInfo;
-import com.mapuni.gdydcaiji.bean.TPoiInfo;
-import com.mapuni.gdydcaiji.bean.TSocialInfo;
-import com.mapuni.gdydcaiji.bean.TVillageInfo;
+import com.mapuni.gdydcaiji.bean.TbLine;
+import com.mapuni.gdydcaiji.bean.TbPoint;
+import com.mapuni.gdydcaiji.bean.TbSurface;
 import com.mapuni.gdydcaiji.bean.UploadBean;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
-import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
+import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
+import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
+import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
 import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.DateUtil;
@@ -48,8 +46,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -71,14 +67,12 @@ public class UploadDataActivity extends BaseActivity {
     TextView etStartTime;
     @BindView(R.id.et_stop_time)
     TextView etStopTime;
-    private List<TBuildingInfo> buildingInfos = new ArrayList<>();
-    private List<TPoiInfo> poiInfos;
-    private List<TSocialInfo> socialInfos;
-    private List<TVillageInfo> villageInfos;
-    private TBuildingInfoDao tBuildingInfoDao;
-    private TPoiInfoDao tPoiInfoDao;
-    private TSocialInfoDao tSocialInfoDao;
-    private TVillageInfoDao tVillageInfoDao;
+    private List<TbPoint> tbPointList = new ArrayList<>();
+    private List<TbLine> tbLineList;
+    private List<TbSurface> tbSurfaceList;
+    private TbPointDao tbPointDao;
+    private TbLineDao tbLineDao;
+    private TbSurfaceDao tbSurfaceDao;
 
     private int updataNum = 0;
     private Date upStartTime, upStopTime;
@@ -99,10 +93,9 @@ public class UploadDataActivity extends BaseActivity {
     protected void initData() {
 
         DaoSession daoSession = GdydApplication.getInstances().getDaoSession();
-        tBuildingInfoDao = daoSession.getTBuildingInfoDao();
-        tPoiInfoDao = daoSession.getTPoiInfoDao();
-        tSocialInfoDao = daoSession.getTSocialInfoDao();
-        tVillageInfoDao = daoSession.getTVillageInfoDao();
+        tbPointDao = daoSession.getTbPointDao();
+        tbLineDao = daoSession.getTbLineDao();
+        tbSurfaceDao = daoSession.getTbSurfaceDao();
     }
 
     /**
@@ -128,56 +121,45 @@ public class UploadDataActivity extends BaseActivity {
                 //生成文件
                 Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
                 //未上传
-                buildingInfos = tBuildingInfoDao.queryBuilder()
-                        .where(TBuildingInfoDao.Properties.Flag.eq(0),  //未上传
-                                TBuildingInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .orderAsc(TBuildingInfoDao.Properties.Opttime).list();
-                String buildingJson = gson.toJson(buildingInfos);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_building_info.txt", buildingJson);
-                if (buildingInfos != null && buildingInfos.size() > 0) {
-                    updataNum += buildingInfos.size();
-                    upStartTime = buildingInfos.get(0).getOpttime();
-                    upStopTime = buildingInfos.get(buildingInfos.size() - 1).getOpttime();
+                tbPointList = tbPointDao.queryBuilder()
+                        .where(TbPointDao.Properties.Flag.eq(0),  //未上传
+                                TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                        .orderAsc(TbPointDao.Properties.Opttime).list();
+                String buildingJson = gson.toJson(tbPointList);
+                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_point.txt", buildingJson);
+                if (tbPointList != null && tbPointList.size() > 0) {
+                    updataNum += tbPointList.size();
+                    upStartTime = tbPointList.get(0).getOpttime();
+                    upStopTime = tbPointList.get(tbPointList.size() - 1).getOpttime();
                 }
 
-                poiInfos = tPoiInfoDao.queryBuilder()
-                        .where(TPoiInfoDao.Properties.Flag.eq(0)
-                                , TPoiInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .orderAsc(TPoiInfoDao.Properties.Opttime).list();
-                String poiJson = gson.toJson(poiInfos);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_poi_info.txt", poiJson);
+                tbLineList = tbLineDao.queryBuilder()
+                        .where(TbLineDao.Properties.Flag.eq(0)
+                                , TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                        .orderAsc(TbLineDao.Properties.Opttime).list();
+                String poiJson = gson.toJson(tbLineList);
+                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_line.txt", poiJson);
 
-                if (poiInfos != null && poiInfos.size() > 0) {
-                    updataNum += poiInfos.size();
-                    upStartTime = new Date(Math.min(upStartTime.getTime(), poiInfos.get(0).getOpttime().getTime()));
-                    upStopTime = new Date(Math.max(upStopTime.getTime(), poiInfos.get(poiInfos.size() - 1).getOpttime().getTime()));
+                if (tbLineList != null && tbLineList.size() > 0) {
+                    updataNum += tbLineList.size();
+                    upStartTime = new Date(Math.min(upStartTime.getTime(), tbLineList.get(0).getOpttime().getTime()));
+                    upStopTime = new Date(Math.max(upStopTime.getTime(), tbLineList.get(tbLineList.size() - 1).getOpttime().getTime()));
                 }
 
-                socialInfos = tSocialInfoDao.queryBuilder()
-                        .where(TSocialInfoDao.Properties.Flag.eq(0)
-                                , TSocialInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .orderAsc(TSocialInfoDao.Properties.Opttime).list();
-                String socialJson = gson.toJson(socialInfos);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_social_info.txt", socialJson);
+                tbSurfaceList = tbSurfaceDao.queryBuilder()
+                        .where(TbSurfaceDao.Properties.Flag.eq(0)
+                                , TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                        .orderAsc(TbSurfaceDao.Properties.Opttime).list();
+                String socialJson = gson.toJson(tbSurfaceList);
+                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
 
-                if (socialInfos != null && socialInfos.size() > 0) {
-                    updataNum += socialInfos.size();
-                    upStartTime = new Date(Math.min(upStartTime.getTime(), socialInfos.get(0).getOpttime().getTime()));
-                    upStopTime = new Date(Math.max(upStopTime.getTime(), socialInfos.get(socialInfos.size() - 1).getOpttime().getTime()));
+                if (tbSurfaceList != null && tbSurfaceList.size() > 0) {
+                    updataNum += tbSurfaceList.size();
+                    upStartTime = new Date(Math.min(upStartTime.getTime(), tbSurfaceList.get(0).getOpttime().getTime()));
+                    upStopTime = new Date(Math.max(upStopTime.getTime(), tbSurfaceList.get(tbSurfaceList.size() - 1).getOpttime().getTime()));
                 }
 
-                villageInfos = tVillageInfoDao.queryBuilder()
-                        .where(TVillageInfoDao.Properties.Flag.eq(0)
-                                , TVillageInfoDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
-                        .orderAsc(TVillageInfoDao.Properties.Opttime).list();
-                String villageJson = gson.toJson(villageInfos);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/t_village_info.txt", villageJson);
 
-                if (villageInfos != null && villageInfos.size() > 0) {
-                    updataNum += villageInfos.size();
-                    upStartTime = new Date(Math.min(upStartTime.getTime(), villageInfos.get(0).getOpttime().getTime()));
-                    upStopTime = new Date(Math.max(upStopTime.getTime(), villageInfos.get(villageInfos.size() - 1).getOpttime().getTime()));
-                }
 
                 ThreadUtils.executeMainThread(new Runnable() {
                     @Override
@@ -336,30 +318,25 @@ public class UploadDataActivity extends BaseActivity {
      * 将flag标记为1
      */
     private void updateData() {
-        if (buildingInfos != null && buildingInfos.size() > 0) {
-            for (int i = 0; i < buildingInfos.size(); i++) {
-                buildingInfos.get(i).setFlag(1);
+        if (tbPointList != null && tbPointList.size() > 0) {
+            for (int i = 0; i < tbPointList.size(); i++) {
+                tbPointList.get(i).setFlag(1);
             }
-            tBuildingInfoDao.updateInTx(buildingInfos);
+            tbPointDao.updateInTx(tbPointList);
         }
-        if (poiInfos != null && poiInfos.size() > 0) {
-            for (int i = 0; i < poiInfos.size(); i++) {
-                poiInfos.get(i).setFlag(1);
+        if (tbLineList != null && tbLineList.size() > 0) {
+            for (int i = 0; i < tbLineList.size(); i++) {
+                tbLineList.get(i).setFlag(1);
             }
-            tPoiInfoDao.updateInTx(poiInfos);
+            tbLineDao.updateInTx(tbLineList);
         }
-        if (socialInfos != null && socialInfos.size() > 0) {
-            for (int i = 0; i < socialInfos.size(); i++) {
-                socialInfos.get(i).setFlag(1);
+        if (tbSurfaceList != null && tbSurfaceList.size() > 0) {
+            for (int i = 0; i < tbSurfaceList.size(); i++) {
+                tbSurfaceList.get(i).setFlag(1);
             }
-            tSocialInfoDao.updateInTx(socialInfos);
+            tbSurfaceDao.updateInTx(tbSurfaceList);
         }
-        if (villageInfos != null && villageInfos.size() > 0) {
-            for (int i = 0; i < villageInfos.size(); i++) {
-                villageInfos.get(i).setFlag(1);
-            }
-            tVillageInfoDao.updateInTx(villageInfos);
-        }
+
     }
 
     @Override

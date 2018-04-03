@@ -21,10 +21,6 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
-        TBuildingInfoDao.createTable(db, ifNotExists);
-        TPoiInfoDao.createTable(db, ifNotExists);
-        TSocialInfoDao.createTable(db, ifNotExists);
-        TVillageInfoDao.createTable(db, ifNotExists);
         TbLineDao.createTable(db, ifNotExists);
         TbPointDao.createTable(db, ifNotExists);
         TbSurfaceDao.createTable(db, ifNotExists);
@@ -32,10 +28,6 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
-        TBuildingInfoDao.dropTable(db, ifExists);
-        TPoiInfoDao.dropTable(db, ifExists);
-        TSocialInfoDao.dropTable(db, ifExists);
-        TVillageInfoDao.dropTable(db, ifExists);
         TbLineDao.dropTable(db, ifExists);
         TbPointDao.dropTable(db, ifExists);
         TbSurfaceDao.dropTable(db, ifExists);
@@ -57,10 +49,6 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
-        registerDaoClass(TBuildingInfoDao.class);
-        registerDaoClass(TPoiInfoDao.class);
-        registerDaoClass(TSocialInfoDao.class);
-        registerDaoClass(TVillageInfoDao.class);
         registerDaoClass(TbLineDao.class);
         registerDaoClass(TbPointDao.class);
         registerDaoClass(TbSurfaceDao.class);

@@ -11,10 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
-import com.mapuni.gdydcaiji.activity.BuildingDetail
-import com.mapuni.gdydcaiji.activity.PoiDetail
-import com.mapuni.gdydcaiji.activity.SocialDetail
-import com.mapuni.gdydcaiji.activity.VillageDetail
+import com.mapuni.gdydcaiji.activity.*
 import com.mapuni.gdydcaiji.bean.*
 import org.greenrobot.eventbus.EventBus
 
@@ -69,38 +66,33 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
             holder as GraphicListAdapter.Viewholder
             val obj = infoList[position]["obj"]
             when (obj) {
-                is TBuildingInfo -> {
+                is TbPoint -> {
                     holder.name.text = obj.name
                 }
-                is TPoiInfo -> {
+                is TbLine -> {
+                    holder.name.text = obj.pathname
+                }
+                is TbSurface -> {
                     holder.name.text = obj.name
                 }
-                is TVillageInfo -> {
-                    holder.name.text = obj.name
-                }
-                is TSocialInfo -> {
-                    holder.name.text = obj.name
-                }
+
             }
             holder.itemView.setOnClickListener {
                 val intent = Intent()
                 when (obj) {
-                    is TBuildingInfo -> {
-                        intent.setClass(context, BuildingDetail::class.java)
-                        intent.putExtra("resultBean", obj)
-                    }
-                    is TPoiInfo -> {
+                    is TbPoint -> {
                         intent.setClass(context, PoiDetail::class.java)
                         intent.putExtra("resultBean", obj)
                     }
-                    is TVillageInfo -> {
-                        intent.setClass(context, VillageDetail::class.java)
+                    is TbLine -> {
+                        intent.setClass(context, LineDetail::class.java)
                         intent.putExtra("resultBean", obj)
                     }
-                    is TSocialInfo -> {
+                    is TbSurface -> {
                         intent.setClass(context, SocialDetail::class.java)
                         intent.putExtra("resultBean", obj)
                     }
+
                 }
                 context.startActivity(intent)
                 if (dialog != null && dialog.isShowing) {

@@ -8,18 +8,10 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
-import com.mapuni.gdydcaiji.bean.TBuildingInfo;
-import com.mapuni.gdydcaiji.bean.TPoiInfo;
-import com.mapuni.gdydcaiji.bean.TSocialInfo;
-import com.mapuni.gdydcaiji.bean.TVillageInfo;
 import com.mapuni.gdydcaiji.bean.TbLine;
 import com.mapuni.gdydcaiji.bean.TbPoint;
 import com.mapuni.gdydcaiji.bean.TbSurface;
 
-import com.mapuni.gdydcaiji.database.greendao.TBuildingInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TPoiInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TSocialInfoDao;
-import com.mapuni.gdydcaiji.database.greendao.TVillageInfoDao;
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
@@ -33,18 +25,10 @@ import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
-    private final DaoConfig tBuildingInfoDaoConfig;
-    private final DaoConfig tPoiInfoDaoConfig;
-    private final DaoConfig tSocialInfoDaoConfig;
-    private final DaoConfig tVillageInfoDaoConfig;
     private final DaoConfig tbLineDaoConfig;
     private final DaoConfig tbPointDaoConfig;
     private final DaoConfig tbSurfaceDaoConfig;
 
-    private final TBuildingInfoDao tBuildingInfoDao;
-    private final TPoiInfoDao tPoiInfoDao;
-    private final TSocialInfoDao tSocialInfoDao;
-    private final TVillageInfoDao tVillageInfoDao;
     private final TbLineDao tbLineDao;
     private final TbPointDao tbPointDao;
     private final TbSurfaceDao tbSurfaceDao;
@@ -52,18 +36,6 @@ public class DaoSession extends AbstractDaoSession {
     public DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
-
-        tBuildingInfoDaoConfig = daoConfigMap.get(TBuildingInfoDao.class).clone();
-        tBuildingInfoDaoConfig.initIdentityScope(type);
-
-        tPoiInfoDaoConfig = daoConfigMap.get(TPoiInfoDao.class).clone();
-        tPoiInfoDaoConfig.initIdentityScope(type);
-
-        tSocialInfoDaoConfig = daoConfigMap.get(TSocialInfoDao.class).clone();
-        tSocialInfoDaoConfig.initIdentityScope(type);
-
-        tVillageInfoDaoConfig = daoConfigMap.get(TVillageInfoDao.class).clone();
-        tVillageInfoDaoConfig.initIdentityScope(type);
 
         tbLineDaoConfig = daoConfigMap.get(TbLineDao.class).clone();
         tbLineDaoConfig.initIdentityScope(type);
@@ -74,47 +46,19 @@ public class DaoSession extends AbstractDaoSession {
         tbSurfaceDaoConfig = daoConfigMap.get(TbSurfaceDao.class).clone();
         tbSurfaceDaoConfig.initIdentityScope(type);
 
-        tBuildingInfoDao = new TBuildingInfoDao(tBuildingInfoDaoConfig, this);
-        tPoiInfoDao = new TPoiInfoDao(tPoiInfoDaoConfig, this);
-        tSocialInfoDao = new TSocialInfoDao(tSocialInfoDaoConfig, this);
-        tVillageInfoDao = new TVillageInfoDao(tVillageInfoDaoConfig, this);
         tbLineDao = new TbLineDao(tbLineDaoConfig, this);
         tbPointDao = new TbPointDao(tbPointDaoConfig, this);
         tbSurfaceDao = new TbSurfaceDao(tbSurfaceDaoConfig, this);
 
-        registerDao(TBuildingInfo.class, tBuildingInfoDao);
-        registerDao(TPoiInfo.class, tPoiInfoDao);
-        registerDao(TSocialInfo.class, tSocialInfoDao);
-        registerDao(TVillageInfo.class, tVillageInfoDao);
         registerDao(TbLine.class, tbLineDao);
         registerDao(TbPoint.class, tbPointDao);
         registerDao(TbSurface.class, tbSurfaceDao);
     }
     
     public void clear() {
-        tBuildingInfoDaoConfig.clearIdentityScope();
-        tPoiInfoDaoConfig.clearIdentityScope();
-        tSocialInfoDaoConfig.clearIdentityScope();
-        tVillageInfoDaoConfig.clearIdentityScope();
         tbLineDaoConfig.clearIdentityScope();
         tbPointDaoConfig.clearIdentityScope();
         tbSurfaceDaoConfig.clearIdentityScope();
-    }
-
-    public TBuildingInfoDao getTBuildingInfoDao() {
-        return tBuildingInfoDao;
-    }
-
-    public TPoiInfoDao getTPoiInfoDao() {
-        return tPoiInfoDao;
-    }
-
-    public TSocialInfoDao getTSocialInfoDao() {
-        return tSocialInfoDao;
-    }
-
-    public TVillageInfoDao getTVillageInfoDao() {
-        return tVillageInfoDao;
     }
 
     public TbLineDao getTbLineDao() {
