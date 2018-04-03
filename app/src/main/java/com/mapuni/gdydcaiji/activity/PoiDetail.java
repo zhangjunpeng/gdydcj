@@ -101,9 +101,9 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
     protected void initListener() {
         super.initListener();
 
-        etAddress.setOnClickListener(new View.OnClickListener() {
+        etAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onFocusChange(View v, boolean hasFocus) {
                 AutoCompleteTextView view = (AutoCompleteTextView) v;
                 view.showDropDown();
             }
