@@ -47,6 +47,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -224,11 +226,16 @@ public class UploadDataActivity extends BaseActivity {
                 UploadBean body = response.body();
                 if (body != null && body.isResult()) {
                     showResponseDialog("上传成功\n" + "总数：" + updataNum + "\n" + DateUtil.getStringByFormat(upStartTime, DateUtil.YMDHMS) + "\n" + DateUtil.getStringByFormat(upStopTime, DateUtil.YMDHMS));
-
-                    ThreadUtils.executeSubThread(new Runnable() {
+                    new Timer().schedule(new TimerTask() {
                         @Override
                         public void run() {
                             captureScreen();
+                        }
+                    },100);
+                    
+                    ThreadUtils.executeSubThread(new Runnable() {
+                        @Override
+                        public void run() {
                             updateData();
                         }
                     });

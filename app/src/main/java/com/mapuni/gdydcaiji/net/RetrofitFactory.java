@@ -1,6 +1,8 @@
 package com.mapuni.gdydcaiji.net;
 
 
+import com.mapuni.gdydcaiji.utils.LogUtils;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
