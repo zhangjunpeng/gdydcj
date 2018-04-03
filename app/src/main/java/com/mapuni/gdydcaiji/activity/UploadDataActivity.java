@@ -24,6 +24,7 @@ import com.mapuni.gdydcaiji.bean.TbPoint;
 import com.mapuni.gdydcaiji.bean.TbSurface;
 import com.mapuni.gdydcaiji.bean.UploadBean;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
+
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
@@ -70,13 +71,14 @@ public class UploadDataActivity extends BaseActivity {
     private List<TbPoint> tbPointList = new ArrayList<>();
     private List<TbLine> tbLineList;
     private List<TbSurface> tbSurfaceList;
-    private TbPointDao tbPointDao;
-    private TbLineDao tbLineDao;
-    private TbSurfaceDao tbSurfaceDao;
+
 
     private int updataNum = 0;
     private Date upStartTime, upStopTime;
     private AlertDialog dialog;
+    private TbPointDao tbPointDao;
+    private TbLineDao tbLineDao;
+    private TbSurfaceDao tbSurfaceDao;
 
     @Override
     protected int getLayoutResId() {
@@ -178,10 +180,9 @@ public class UploadDataActivity extends BaseActivity {
         Map<String, RequestBody> map = new HashMap<>();
 
         List<String> filePaths = new ArrayList<>();
-        filePaths.add("/t_building_info.txt");
-        filePaths.add("/t_poi_info.txt");
-        filePaths.add("/t_social_info.txt");
-        filePaths.add("/t_village_info.txt");
+        filePaths.add("/tb_point.txt");
+        filePaths.add("/tb_line.txt");
+        filePaths.add("/tb_surface.txt");
 
         File file;
         for (int i = 0; i < filePaths.size(); i++) {
@@ -335,6 +336,7 @@ public class UploadDataActivity extends BaseActivity {
                 tbSurfaceList.get(i).setFlag(1);
             }
             tbSurfaceDao.updateInTx(tbSurfaceList);
+
         }
 
     }
