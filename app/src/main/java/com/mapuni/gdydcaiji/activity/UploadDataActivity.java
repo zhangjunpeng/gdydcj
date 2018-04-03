@@ -406,11 +406,11 @@ public class UploadDataActivity extends BaseActivity {
 
     }
 
-    @Override 
+    @Override
     protected void onStop() {
         super.onStop();
 
-        if (dialog.isShowing())
+        if (dialog != null && dialog.isShowing())
             dialog.dismiss();
 
     }
