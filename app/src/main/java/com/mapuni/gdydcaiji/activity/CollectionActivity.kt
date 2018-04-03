@@ -1059,7 +1059,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
     private fun getLineName(info: TbLine):String{
         var name=""
-        val string_poi= listOf(info.pathname,info.sfz,info.zdz,info.opttime.toString())
+        val string_poi= listOf(info.name,info.sfz,info.zdz,info.opttime.toString())
         for (i in 0 until line_bz_array.size){
             if (line_bz_array[i]&&string_poi[i].isNotEmpty()){
                 name += string_poi[i]+"/"

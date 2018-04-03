@@ -70,7 +70,7 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
                     holder.name.text = obj.name
                 }
                 is TbLine -> {
-                    holder.name.text = obj.pathname
+                    holder.name.text = obj.name
                 }
                 is TbSurface -> {
                     holder.name.text = obj.name

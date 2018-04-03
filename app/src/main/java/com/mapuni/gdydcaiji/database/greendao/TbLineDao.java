@@ -26,7 +26,7 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", false, "ID");
         public final static Property Bm = new Property(1, Long.class, "bm", true, "_id");
-        public final static Property Pathname = new Property(2, String.class, "pathname", false, "PATHNAME");
+        public final static Property Name = new Property(2, String.class, "name", false, "NAME");
         public final static Property Sfz = new Property(3, String.class, "sfz", false, "SFZ");
         public final static Property Zdz = new Property(4, String.class, "zdz", false, "ZDZ");
         public final static Property Polyarrays = new Property(5, String.class, "polyarrays", false, "POLYARRAYS");
@@ -54,7 +54,7 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"TB_LINE\" (" + //
                 "\"ID\" INTEGER," + // 0: id
                 "\"_id\" INTEGER PRIMARY KEY ," + // 1: bm
-                "\"PATHNAME\" TEXT," + // 2: pathname
+                "\"NAME\" TEXT," + // 2: name
                 "\"SFZ\" TEXT," + // 3: sfz
                 "\"ZDZ\" TEXT," + // 4: zdz
                 "\"POLYARRAYS\" TEXT," + // 5: polyarrays
@@ -87,9 +87,9 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
             stmt.bindLong(2, bm);
         }
  
-        String pathname = entity.getPathname();
-        if (pathname != null) {
-            stmt.bindString(3, pathname);
+        String name = entity.getName();
+        if (name != null) {
+            stmt.bindString(3, name);
         }
  
         String sfz = entity.getSfz();
@@ -153,9 +153,9 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
             stmt.bindLong(2, bm);
         }
  
-        String pathname = entity.getPathname();
-        if (pathname != null) {
-            stmt.bindString(3, pathname);
+        String name = entity.getName();
+        if (name != null) {
+            stmt.bindString(3, name);
         }
  
         String sfz = entity.getSfz();
@@ -215,7 +215,7 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
         TbLine entity = new TbLine( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // bm
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // pathname
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // sfz
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // zdz
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // polyarrays
@@ -234,7 +234,7 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
     public void readEntity(Cursor cursor, TbLine entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setBm(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
-        entity.setPathname(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setSfz(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setZdz(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setPolyarrays(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));

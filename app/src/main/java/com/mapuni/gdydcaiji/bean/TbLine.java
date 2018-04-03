@@ -19,7 +19,7 @@ public class TbLine implements Serializable{
     private Long bm;
 
     @Expose
-    private String pathname;
+    private String name;
 
     @Expose
     private String sfz;
@@ -48,13 +48,13 @@ public class TbLine implements Serializable{
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 23816848)
-    public TbLine(Long id, Long bm, String pathname, String sfz, String zdz,
+    @Generated(hash = 999680240)
+    public TbLine(Long id, Long bm, String name, String sfz, String zdz,
             String polyarrays, String oprator, Date opttime, String deleteflag,
             Date createtime, String note, String img, int flag) {
         this.id = id;
         this.bm = bm;
-        this.pathname = pathname;
+        this.name = name;
         this.sfz = sfz;
         this.zdz = zdz;
         this.polyarrays = polyarrays;
@@ -79,15 +79,6 @@ public class TbLine implements Serializable{
         this.id = id;
     }
     
-
-    public String getPathname() {
-        return pathname;
-    }
-
-    public void setPathname(String pathname) {
-        this.pathname = pathname == null ? null : pathname.trim();
-    }
-
     public String getSfz() {
         return sfz;
     }
@@ -174,5 +165,13 @@ public class TbLine implements Serializable{
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

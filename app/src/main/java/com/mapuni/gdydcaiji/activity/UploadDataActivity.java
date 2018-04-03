@@ -144,8 +144,8 @@ public class UploadDataActivity extends BaseActivity {
 
                 if (tbLineList != null && tbLineList.size() > 0) {
                     updataNum += tbLineList.size();
-                    upStartTime = new Date(Math.min(upStartTime.getTime(), tbLineList.get(0).getOpttime().getTime()));
-                    upStopTime = new Date(Math.max(upStopTime.getTime(), tbLineList.get(tbLineList.size() - 1).getOpttime().getTime()));
+                    upStartTime = upStartTime == null ? tbLineList.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbLineList.get(0).getOpttime().getTime()));
+                    upStopTime = upStopTime == null ? tbLineList.get(tbLineList.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbLineList.get(tbLineList.size() - 1).getOpttime().getTime()));
                 }
 
                 tbSurfaceList = tbSurfaceDao.queryBuilder()
@@ -157,10 +157,9 @@ public class UploadDataActivity extends BaseActivity {
 
                 if (tbSurfaceList != null && tbSurfaceList.size() > 0) {
                     updataNum += tbSurfaceList.size();
-                    upStartTime = new Date(Math.min(upStartTime.getTime(), tbSurfaceList.get(0).getOpttime().getTime()));
-                    upStopTime = new Date(Math.max(upStopTime.getTime(), tbSurfaceList.get(tbSurfaceList.size() - 1).getOpttime().getTime()));
+                    upStartTime = upStartTime == null ? tbSurfaceList.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbSurfaceList.get(0).getOpttime().getTime()));
+                    upStopTime = upStopTime == null ? tbSurfaceList.get(tbSurfaceList.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbSurfaceList.get(tbSurfaceList.size() - 1).getOpttime().getTime()));
                 }
-
 
 
                 ThreadUtils.executeMainThread(new Runnable() {
@@ -404,6 +403,15 @@ public class UploadDataActivity extends BaseActivity {
                 .setWheelItemTextSize(16)
                 .build();
         mDialogYearMonthDay.show(getSupportFragmentManager(), getClass().getSimpleName());
+
+    }
+
+    @Override 
+    protected void onStop() {
+        super.onStop();
+
+        if (dialog.isShowing())
+            dialog.dismiss();
 
     }
 

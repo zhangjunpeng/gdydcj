@@ -1,6 +1,5 @@
 package com.mapuni.gdydcaiji.activity;
 
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.Date;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/4/2.
@@ -53,7 +51,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 
     @Override
     protected void showData() {
-        etName.setText(resultBean.getPathname());
+        etName.setText(resultBean.getName());
         etQd.setText(resultBean.getSfz());
         etZd.setText(resultBean.getZdz());
         etBz.setText(resultBean.getNote());
@@ -70,7 +68,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
             resultBean.setPolyarrays(bj);
         }
 
-        resultBean.setPathname(getTextByView(etName));
+        resultBean.setName(getTextByView(etName));
         resultBean.setSfz(getTextByView(etQd));
         resultBean.setZdz(getTextByView(etZd));
         resultBean.setNote(getTextByView(etBz));
