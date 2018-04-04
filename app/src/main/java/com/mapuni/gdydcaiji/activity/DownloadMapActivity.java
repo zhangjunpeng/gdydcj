@@ -15,7 +15,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.bean.MapBean;
-import com.mapuni.gdydcaiji.download.DownloadObserver;
+import com.mapuni.gdydcaiji.download.DownloadUtils;
+import com.mapuni.gdydcaiji.download.DownloadListener;
 import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.FileSizeUtils;
@@ -31,6 +32,7 @@ import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -162,34 +164,63 @@ public class DownloadMapActivity extends BaseActivity {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.setMax(100);
-        dialog.show();
-        RetrofitFactory.create(RetrofitService.class).downloadMap(String.valueOf(fileId))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DownloadObserver(fileName + ".zip", fileSize) {
 
-                    @Override
-                    protected void onError(String errorMsg) {
-                        ToastUtils.showShort(errorMsg);
-                        dialog.dismiss();
-                    }
 
-                    @Override
-                    protected void onSuccess(long bytesRead, long contentLength, float progress,
-                                             boolean done, String filePath) {
+        final String filePath = PathConstant.DOWNLOAD_MAP_PATH + File.separator + fileName + ".zip";
 
-                        dialog.setProgress((int) progress);
-                        if (done) {
-                            dialog.dismiss();
-                            String fileIds = SPUtils.getInstance().getString("downloaded", "") + "#" + fileId;
-                            SPUtils.getInstance().put("downloaded", fileIds);
-                            adapter.notifyDataSetChanged();
+        final DownloadListener listener = new DownloadListener() {
+            @Override
+            public void onStartDownload() {
+                dialog.show();
+            }
 
-                            autoUndoZipFile(new File(filePath));
-                        }
+            @Override
+            public void onProgress(int progress) {
+                dialog.setProgress(progress);
+            }
 
-                    }
-                });
+            @Override
+            public void onFinishDownload() {
+                dialog.dismiss();
+                String fileIds = SPUtils.getInstance().getString("downloaded", "") + "#" + fileId;
+                SPUtils.getInstance().put("downloaded", fileIds);
+                adapter.notifyDataSetChanged();
+
+                autoUndoZipFile(new File(filePath));
+            }
+
+            @Override
+            public void onFail(String errorInfo) {
+                dialog.dismiss();
+                ToastUtils.showShort(errorInfo);
+            }
+        };
+
+        DownloadUtils downloadUtils = new DownloadUtils(RetrofitFactory.BASE_URL, fileSize, listener);
+
+        downloadUtils.download(String.valueOf(fileId), filePath, new Observer<InputStream>() {
+
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(InputStream inputStream) {
+                listener.onFinishDownload();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                listener.onFail(e.toString());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+
+        });
     }
 
     /**
