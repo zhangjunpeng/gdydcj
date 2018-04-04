@@ -82,6 +82,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         setSpinnerData(R.array.building_xz, spLyxz);
         setSpinnerData(R.array.building_fl, spLyfl);
         setSpinnerData(R.array.poi_mjdj, spDj);
+        spLyfl.setSelection(getResources().getStringArray(R.array.building_fl).length - 1);
         initListPopupWindow();
 
     }
@@ -123,7 +124,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         spLyType.setSelection(getSelectPosition(R.array.building_types, resultBean.getLytype()));
         spLyxz.setSelection(getSelectPosition(R.array.building_xz, resultBean.getLyxz()));
         spLyfl.setSelection(getSelectPosition(R.array.building_fl, resultBean.getFl()));
-        spDj.setSelection(getSelectPosition(R.array.poi_mjdj, resultBean.getDj()));
+        spDj.setSelection(TextUtils.isEmpty(resultBean.getDj()) ? 0 : getSelectPosition(R.array.poi_mjdj, resultBean.getDj()));
         etDyh.setText(resultBean.getDy());
         etTele.setText(resultBean.getLxdh());
         etLycs.setText(resultBean.getLycs());
@@ -150,7 +151,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         resultBean.setDz(getTextByView(etAddress));
         resultBean.setDy(getTextByView(etDyh));
         resultBean.setLxdh(getTextByView(etTele));
-        resultBean.setDj(getResources().getStringArray(R.array.poi_mjdj)[spDj.getSelectedItemPosition()]);
+        resultBean.setDj(spDj.getSelectedItemPosition() == 0 ? "" : getResources().getStringArray(R.array.poi_mjdj)[spDj.getSelectedItemPosition()]);
         resultBean.setLycs(getTextByView(etLycs));
         resultBean.setLyzhs(getTextByView(etLyzhs));
         resultBean.setNote(getTextByView(etBz));

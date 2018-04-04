@@ -73,10 +73,6 @@ public class DownloadUtils {
                         return responseBody.byteStream();
                     }
 
-//                    @Override
-//                    public InputStream call(MyResponseBody responseBody) {
-//                        return responseBody.byteStream();
-//                    }
                 })
                 .observeOn(Schedulers.computation()) // 用于计算任务
                 .doOnNext(new Consumer<InputStream>() {

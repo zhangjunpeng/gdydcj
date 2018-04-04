@@ -30,6 +30,7 @@
     </string-array>
 
     <string-array name="poi_mjdj">
+        <item>请选择</item>
         <item>3A</item>
         <item>4A</item>
         <item>5A</item>
