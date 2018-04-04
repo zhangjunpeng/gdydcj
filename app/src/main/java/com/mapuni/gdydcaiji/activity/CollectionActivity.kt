@@ -662,9 +662,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     override fun postAction(p0: Float, p1: Float, p2: Double) {
-        if (localGraphicsLayer != null) {
-            localGraphicsLayer.removeAll()
-        }
+        localGraphicsLayer.removeAll()
         graphicName.removeAll()
         upDateGraphic()
     }
@@ -1035,6 +1033,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private var line_bz_array= ArrayList<Boolean>()
     private var surface_bz_array=ArrayList<Boolean>()
 
+    @Subscribe
+    fun onChangeMap(event: EventChangeMap) {
+        finish()
+    }
     @Subscribe
     fun onCompleteBZ(eventBZ: EventBZ) {
         when(eventBZ.type){

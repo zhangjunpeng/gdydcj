@@ -74,7 +74,7 @@ public class DownloadUtils {
                     }
 
 //                    @Override
-//                    public InputStream call(ResponseBody responseBody) {
+//                    public InputStream call(MyResponseBody responseBody) {
 //                        return responseBody.byteStream();
 //                    }
                 })

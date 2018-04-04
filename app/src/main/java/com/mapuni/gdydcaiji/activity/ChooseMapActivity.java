@@ -10,10 +10,13 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.EventChangeMap;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -85,6 +88,8 @@ public class ChooseMapActivity extends BaseActivity {
                 SPUtils.getInstance().put("checkedMap", fileDirNames.get(position));
                 SPUtils.getInstance().put("checkedMapPath", fileDirPaths.get(position));
                 adapter.notifyDataSetChanged();
+                EventChangeMap eventChangeMap=new EventChangeMap();
+                EventBus.getDefault().post(eventChangeMap);
                 openActivity(mContext, CollectionActivity.class);
                 finish();
             }

@@ -19,6 +19,6 @@ public class DownloadInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
         return response.newBuilder().body(
-                new ResponseBody(response.body(), fileSize, downloadListener)).build();
+                new MyResponseBody(response.body(), fileSize, downloadListener)).build();
     }
 }
