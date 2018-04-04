@@ -72,7 +72,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         etLds.setText(resultBean.getLds());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
-            imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+            imgUrl = resultBean.getImg();
         }
         super.showData();
     }
@@ -93,8 +93,8 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         resultBean.setLxdh(getTextByView(etLxdh));
         resultBean.setLds(getTextByView(etLds));
         resultBean.setNote(getTextByView(etBz));
-        if (imgUrl != null && imgUrl.length > 0) {
-            resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        if (!TextUtils.isEmpty(imgUrl)) {
+            resultBean.setImg(imgUrl);
         }
         resultBean.setOprator(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));

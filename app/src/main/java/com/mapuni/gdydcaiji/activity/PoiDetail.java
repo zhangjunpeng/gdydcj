@@ -131,7 +131,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         etLyzhs.setText(resultBean.getLyzhs());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
-            imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+            imgUrl = resultBean.getImg();
         }
         super.showData();
     }
@@ -155,8 +155,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         resultBean.setLycs(getTextByView(etLycs));
         resultBean.setLyzhs(getTextByView(etLyzhs));
         resultBean.setNote(getTextByView(etBz));
-        if (imgUrl != null && imgUrl.length > 0) {
-            resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        if (!TextUtils.isEmpty(imgUrl)) {
+            resultBean.setImg(imgUrl);
         }
         resultBean.setOprator(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));

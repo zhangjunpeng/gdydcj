@@ -37,7 +37,7 @@ public class ImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         ButterKnife.bind(this);
         position = getIntent().getIntExtra("position", -1);
-        byte[] path = getIntent().getByteArrayExtra("path");
+        String path = getIntent().getStringExtra("path");
         Glide.with(this)
                 .load(Base64.decode(path, Base64.DEFAULT))
                 .apply(new RequestOptions()

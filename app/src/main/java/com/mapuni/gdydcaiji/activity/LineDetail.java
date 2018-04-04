@@ -56,7 +56,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         etZd.setText(resultBean.getZdz());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
-            imgUrl = Base64.decode(resultBean.getImg(), Base64.DEFAULT);
+            imgUrl = resultBean.getImg();
         }
         super.showData();
     }
@@ -72,8 +72,8 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         resultBean.setSfz(getTextByView(etQd));
         resultBean.setZdz(getTextByView(etZd));
         resultBean.setNote(getTextByView(etBz));
-        if (imgUrl != null && imgUrl.length > 0) {
-            resultBean.setImg(Base64.encodeToString(imgUrl, Base64.DEFAULT));
+        if (!TextUtils.isEmpty(imgUrl)) {
+            resultBean.setImg(imgUrl);
         }
         resultBean.setOprator(SPUtils.getInstance().getString("username", ""));
         resultBean.setOpttime(new Date(System.currentTimeMillis()));

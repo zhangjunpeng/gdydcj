@@ -63,7 +63,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected T resultBean;
     //是否是新增
     protected boolean isInsert;
-    protected byte[] imgUrl;
+    protected String imgUrl;
     protected double lat;
     protected double lng;
 
@@ -117,7 +117,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
      * 回显数据
      */
     protected void showData() {
-        if (imgUrl != null && imgUrl.length > 0) {
+        if (!TextUtils.isEmpty(imgUrl)) {
             Glide
                     .with(mContext)
                     .load(Base64.decode(imgUrl, Base64.DEFAULT))
@@ -165,7 +165,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
                         @Override
                         public void onSuccess(File file) {
-                            imgUrl = Base64.encode(FileIOUtils.readFile2BytesByChannel(file), Base64.DEFAULT);
+                            imgUrl = Base64.encodeToString(FileIOUtils.readFile2BytesByChannel(file), Base64.DEFAULT);
                             Glide
                                     .with(mContext)
                                     .load(Base64.decode(imgUrl, Base64.DEFAULT))
@@ -212,7 +212,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 //                isEdit = true;
 //                break;
             case R.id.iv_image:
-                if (imgUrl == null || imgUrl.length == 0) {
+                if (TextUtils.isEmpty(imgUrl)) {
                     //没照片
                     // 添加照片
                     DialogUtils.showChooseDialog(BaseDetailActivity.this, PathConstant.IMAGE_PATH_CACHE + "/chche.jpg");
