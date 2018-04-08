@@ -1,7 +1,6 @@
 package com.mapuni.gdydcaiji.activity;
 
 import android.text.TextUtils;
-import android.util.Base64;
 import android.widget.TextView;
 
 import com.mapuni.gdydcaiji.GdydApplication;
@@ -75,7 +74,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         if (!TextUtils.isEmpty(imgUrl)) {
             resultBean.setImg(imgUrl);
         }
-        resultBean.setOprator(SPUtils.getInstance().getString("username", ""));
+        resultBean.setOprator(SPUtils.getInstance().getInt("userId", -1) + "");
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 

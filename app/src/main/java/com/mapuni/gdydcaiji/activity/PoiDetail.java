@@ -157,7 +157,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         if (!TextUtils.isEmpty(imgUrl)) {
             resultBean.setImg(imgUrl);
         }
-        resultBean.setOprator(SPUtils.getInstance().getString("username", ""));
+        resultBean.setOprator(SPUtils.getInstance().getInt("userId", -1) + "");
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 

@@ -1,13 +1,11 @@
 package com.mapuni.gdydcaiji.activity;
 
 import android.text.TextUtils;
-import android.util.Base64;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
-import com.mapuni.gdydcaiji.bean.EventPloyonChange;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbSurface;
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
@@ -96,7 +94,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         if (!TextUtils.isEmpty(imgUrl)) {
             resultBean.setImg(imgUrl);
         }
-        resultBean.setOprator(SPUtils.getInstance().getString("username", ""));
+        resultBean.setOprator(SPUtils.getInstance().getInt("userId", -1) + "");
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 

@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param password
      */
     private void login(final String username, final String password) {
-        if(username.equals(spUsername) && password.equals(spPassword)){
+        if (username.equals(spUsername) && password.equals(spPassword)) {
             ToastUtils.showShort("登录成功");
             // 保存信息
             boolean isChecked = cbRemember.isChecked();
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                 // 不记住密码
                 SPUtils.getInstance().put("isRemember", isChecked);
             }
-            
+
             startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
             finish();
             return;
@@ -139,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         pd.show();
         call.enqueue(new Callback<LoginBean>() {
-            
+
             @Override
             public void onResponse(@NonNull Call<LoginBean> call, @NonNull Response<LoginBean> response) {
 //                LogUtils.d("onResponse" + response.body());
@@ -164,6 +164,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         SPUtils.getInstance().put("username", username);
                         SPUtils.getInstance().put("password", password);
+                        SPUtils.getInstance().put("userId", loginBean.getUser().getId());
                         startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
                         finish();
                     } else {
