@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -121,8 +120,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
     protected void showData() {
         etLyName.setText(resultBean.getName());
         etAddress.setText(resultBean.getDz());
-        spLyType.setSelection(getSelectPosition(R.array.building_types, resultBean.getLytype()));
-        spLyxz.setSelection(getSelectPosition(R.array.building_xz, resultBean.getLyxz()));
+        spLyType.setSelection(TextUtils.isEmpty(resultBean.getLytype()) ? 0 : getSelectPosition(R.array.building_types, resultBean.getLytype()));
+        spLyxz.setSelection(TextUtils.isEmpty(resultBean.getLyxz()) ? 0 : getSelectPosition(R.array.building_xz, resultBean.getLyxz()));
         spLyfl.setSelection(getSelectPosition(R.array.building_fl, resultBean.getFl()));
         spDj.setSelection(TextUtils.isEmpty(resultBean.getDj()) ? 0 : getSelectPosition(R.array.poi_mjdj, resultBean.getDj()));
         etDyh.setText(resultBean.getDy());
@@ -145,8 +144,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         }
 
         resultBean.setName(getTextByView(etLyName));
-        resultBean.setLytype(getResources().getStringArray(R.array.building_types)[spLyType.getSelectedItemPosition()]);
-        resultBean.setLyxz(getResources().getStringArray(R.array.building_xz)[spLyxz.getSelectedItemPosition()]);
+        resultBean.setLytype(spLyType.getSelectedItemPosition() == 0 ? "" : getResources().getStringArray(R.array.building_types)[spLyType.getSelectedItemPosition()]);
+        resultBean.setLyxz(spLyxz.getSelectedItemPosition() == 0 ? "" : getResources().getStringArray(R.array.building_xz)[spLyxz.getSelectedItemPosition()]);
         resultBean.setFl(getResources().getStringArray(R.array.building_fl)[spLyfl.getSelectedItemPosition()]);
         resultBean.setDz(getTextByView(etAddress));
         resultBean.setDy(getTextByView(etDyh));

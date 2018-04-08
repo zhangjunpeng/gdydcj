@@ -29,14 +29,12 @@ public class ImageActivity extends AppCompatActivity {
     ImageView ivDelete;
     @BindView(R.id.back)
     ImageView back;
-    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
         ButterKnife.bind(this);
-        position = getIntent().getIntExtra("position", -1);
         String path = getIntent().getStringExtra("path");
         Glide.with(this)
                 .load(Base64.decode(path, Base64.DEFAULT))
