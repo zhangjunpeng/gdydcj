@@ -28,7 +28,7 @@
                     style="@style/HintText"
                     android:text="名称" />
 
-                <com.mapuni.gdydcaiji.view.ClearEditText
+                <AutoCompleteTextView
                     android:id="@+id/et_name"
                     style="@style/CollectEditText" />
 
@@ -40,7 +40,7 @@
                     style="@style/HintText"
                     android:text="地址" />
 
-                <com.mapuni.gdydcaiji.view.ClearEditText
+                <AutoCompleteTextView
                     android:id="@+id/et_address"
                     style="@style/CollectEditText" />
 

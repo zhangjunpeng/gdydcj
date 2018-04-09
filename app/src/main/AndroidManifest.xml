@@ -28,12 +28,18 @@
         <activity
             android:name=".activity.CollectionActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".activity.PoiDetail" />
-        <activity android:name=".activity.SocialDetail" />
+        <activity
+            android:name=".activity.PoiDetail"
+            android:theme="@style/DialogActivity" />
+        <activity
+            android:name=".activity.SocialDetail"
+            android:theme="@style/DialogActivity" />
         <activity android:name=".activity.UploadDataActivity" />
         <activity android:name=".activity.ImageActivity" />
         <activity android:name=".activity.ChooseMapActivity" />
-        <activity android:name=".activity.LineDetail"/>
+        <activity
+            android:name=".activity.LineDetail"
+            android:theme="@style/DialogActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -33,7 +33,7 @@ import butterknife.OnClick;
 public class ChooseMapActivity extends BaseActivity {
     @BindView(R.id.back)
     ImageView back;
-    @BindView(R.id.title)
+    @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.mRecycleview)
     RecyclerView mRecycleView;
@@ -53,6 +53,7 @@ public class ChooseMapActivity extends BaseActivity {
     protected void initView() {
 
         title.setText("选择地图");
+        back.setVisibility(View.VISIBLE);
         edit.setVisibility(View.VISIBLE);
         edit.setText("增加");
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));

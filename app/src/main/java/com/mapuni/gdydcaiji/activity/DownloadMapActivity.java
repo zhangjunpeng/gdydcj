@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -49,7 +50,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class DownloadMapActivity extends BaseActivity {
 
-    @BindView(R.id.title)
+    @BindView(R.id.back)
+    ImageView back;
+    @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.mRecycleview)
     RecyclerView mRecycleView;
@@ -67,6 +70,7 @@ public class DownloadMapActivity extends BaseActivity {
     protected void initView() {
 
         title.setText("地图下载");
+        back.setVisibility(View.VISIBLE);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setHasFixedSize(true);
         mRecycleView.setNestedScrollingEnabled(false);

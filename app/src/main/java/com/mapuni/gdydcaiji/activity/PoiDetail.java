@@ -19,12 +19,11 @@ import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbPoint;
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
+import com.mapuni.gdydcaiji.utils.ShowDataUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -36,14 +35,14 @@ import butterknife.BindView;
  */
 
 public class PoiDetail extends BaseDetailActivity<TbPoint> {
-    @BindView(R.id.title)
+    @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.sp_lyType)
     Spinner spLyType;
     @BindView(R.id.sp_lyxz)
     Spinner spLyxz;
     @BindView(R.id.et_lyName)
-    ClearEditText etLyName;
+    AutoCompleteTextView etLyName;
     @BindView(R.id.sp_lyfl)
     Spinner spLyfl;
     @BindView(R.id.et_address)
@@ -64,8 +63,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
     ClearEditText etBz;
 
     private TbPointDao tPoiInfoDao;
-    private List<String> mAddArray = new ArrayList<>();
-    private String address;
+//    private List<String> mAddArray = new ArrayList<>();
+//    private String address;
 
     @Override
     protected int getLayoutResId() {
@@ -75,6 +74,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
     @Override
     protected void initView() {
         super.initView();
+
         title.setText("POI点采集");
         tPoiInfoDao = GdydApplication.getInstances().getDaoSession().getTbPointDao();
         setSpinnerData(R.array.building_types, spLyType);
@@ -87,14 +87,15 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
     }
 
     private void initListPopupWindow() {
-        address = SPUtils.getInstance().getString("address");
-        if (TextUtils.isEmpty(address)) {
-            return;
-        }
-        mAddArray = new ArrayList<>(Arrays.asList(address.split(";")));
+        List<String> mAddArray = ShowDataUtils.getAddressOrNameArray("address");
         ArrayAdapter<String> lpwAdapter = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mAddArray);
         lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         etAddress.setAdapter(lpwAdapter);
+
+        List<String> mNameArray = ShowDataUtils.getAddressOrNameArray("lyname");
+        ArrayAdapter<String> lpwAdapter2 = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mNameArray);
+        lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etLyName.setAdapter(lpwAdapter2);
     }
 
     @Override
@@ -102,6 +103,14 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         super.initListener();
 
         etAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
+            }
+        });
+
+        etLyName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 AutoCompleteTextView view = (AutoCompleteTextView) v;
@@ -166,7 +175,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         else
             tPoiInfoDao.update(resultBean);
 
-        saveAddress();
+        saveAddressAndName();
 
 //        Intent data=new Intent();
 //        data.putExtra("obj",resultBean);
@@ -176,26 +185,9 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         finish();
     }
 
-    private void saveAddress() {
-
-        String etAddressStr = getTextByView(etAddress);
-        if (TextUtils.isEmpty(etAddressStr)) {
-            return;
-        }
-
-        if (address.contains(etAddressStr)) {
-            mAddArray.remove(etAddressStr);
-        } else if (mAddArray.size() >= 10) {
-            mAddArray.remove(9);
-        }
-        mAddArray.add(0, etAddressStr);
-
-        String spAddress = "";
-        for (int i = 0; i < mAddArray.size(); i++) {
-            spAddress += mAddArray.get(i) + ";";
-        }
-
-        SPUtils.getInstance().put("address", spAddress.substring(0, spAddress.length() - 1));
+    private void saveAddressAndName() {
+        ShowDataUtils.saveAddressOrName("address", getTextByView(etAddress));
+        ShowDataUtils.saveAddressOrName("lyname", getTextByView(etLyName));
     }
 
     /**

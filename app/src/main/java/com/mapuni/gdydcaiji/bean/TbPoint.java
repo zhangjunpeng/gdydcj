@@ -16,6 +16,7 @@ public class TbPoint implements Serializable{
     private Long id;
 
     @Id
+    @Expose
     private Long bm;
 
     @Expose
@@ -103,7 +104,7 @@ public class TbPoint implements Serializable{
     @Generated(hash = 1467713832)
     public TbPoint() {
     }
-
+    
     public Long getId() {
         return id;
     }
@@ -112,13 +113,20 @@ public class TbPoint implements Serializable{
         this.id = id;
     }
 
+    public Long getBm() {
+        return bm;
+    }
+
+    public void setBm(Long bm) {
+        this.bm = bm;
+    }
 
     public String getLytype() {
         return lytype;
     }
 
     public void setLytype(String lytype) {
-        this.lytype = lytype == null ? null : lytype.trim();
+        this.lytype = lytype;
     }
 
     public String getLyxz() {
@@ -126,7 +134,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setLyxz(String lyxz) {
-        this.lyxz = lyxz == null ? null : lyxz.trim();
+        this.lyxz = lyxz;
     }
 
     public String getName() {
@@ -134,7 +142,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getFl() {
@@ -142,7 +150,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setFl(String fl) {
-        this.fl = fl == null ? null : fl.trim();
+        this.fl = fl;
     }
 
     public String getDz() {
@@ -150,7 +158,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setDz(String dz) {
-        this.dz = dz == null ? null : dz.trim();
+        this.dz = dz;
     }
 
     public String getDy() {
@@ -158,7 +166,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setDy(String dy) {
-        this.dy = dy == null ? null : dy.trim();
+        this.dy = dy;
     }
 
     public String getLxdh() {
@@ -166,7 +174,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setLxdh(String lxdh) {
-        this.lxdh = lxdh == null ? null : lxdh.trim();
+        this.lxdh = lxdh;
     }
 
     public String getDj() {
@@ -174,7 +182,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setDj(String dj) {
-        this.dj = dj == null ? null : dj.trim();
+        this.dj = dj;
     }
 
     public String getLycs() {
@@ -182,7 +190,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setLycs(String lycs) {
-        this.lycs = lycs == null ? null : lycs.trim();
+        this.lycs = lycs;
     }
 
     public Double getLng() {
@@ -206,7 +214,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setOprator(String oprator) {
-        this.oprator = oprator == null ? null : oprator.trim();
+        this.oprator = oprator;
     }
 
     public Date getOpttime() {
@@ -222,7 +230,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setDeleteflag(String deleteflag) {
-        this.deleteflag = deleteflag == null ? null : deleteflag.trim();
+        this.deleteflag = deleteflag;
     }
 
     public Date getCreatetime() {
@@ -238,7 +246,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setNote(String note) {
-        this.note = note == null ? null : note.trim();
+        this.note = note;
     }
 
     public String getLyzhs() {
@@ -246,19 +254,11 @@ public class TbPoint implements Serializable{
     }
 
     public void setLyzhs(String lyzhs) {
-        this.lyzhs = lyzhs == null ? null : lyzhs.trim();
-    }
-
-    public Long getBm() {
-        return this.bm;
-    }
-
-    public void setBm(Long bm) {
-        this.bm = bm;
+        this.lyzhs = lyzhs;
     }
 
     public String getImg() {
-        return this.img;
+        return img;
     }
 
     public void setImg(String img) {
@@ -266,7 +266,7 @@ public class TbPoint implements Serializable{
     }
 
     public int getFlag() {
-        return this.flag;
+        return flag;
     }
 
     public void setFlag(int flag) {

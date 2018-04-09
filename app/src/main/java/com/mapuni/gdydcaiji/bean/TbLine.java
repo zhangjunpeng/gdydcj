@@ -16,6 +16,7 @@ public class TbLine implements Serializable{
     private Long id;
 
     @Id
+    @Expose
     private Long bm;
 
     @Expose
@@ -78,13 +79,29 @@ public class TbLine implements Serializable{
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    public Long getBm() {
+        return bm;
+    }
+
+    public void setBm(Long bm) {
+        this.bm = bm;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getSfz() {
         return sfz;
     }
 
     public void setSfz(String sfz) {
-        this.sfz = sfz == null ? null : sfz.trim();
+        this.sfz = sfz;
     }
 
     public String getZdz() {
@@ -92,7 +109,7 @@ public class TbLine implements Serializable{
     }
 
     public void setZdz(String zdz) {
-        this.zdz = zdz == null ? null : zdz.trim();
+        this.zdz = zdz;
     }
 
     public String getPolyarrays() {
@@ -100,7 +117,7 @@ public class TbLine implements Serializable{
     }
 
     public void setPolyarrays(String polyarrays) {
-        this.polyarrays = polyarrays == null ? null : polyarrays.trim();
+        this.polyarrays = polyarrays;
     }
 
     public String getOprator() {
@@ -108,7 +125,7 @@ public class TbLine implements Serializable{
     }
 
     public void setOprator(String oprator) {
-        this.oprator = oprator == null ? null : oprator.trim();
+        this.oprator = oprator;
     }
 
     public Date getOpttime() {
@@ -124,7 +141,7 @@ public class TbLine implements Serializable{
     }
 
     public void setDeleteflag(String deleteflag) {
-        this.deleteflag = deleteflag == null ? null : deleteflag.trim();
+        this.deleteflag = deleteflag;
     }
 
     public Date getCreatetime() {
@@ -140,19 +157,11 @@ public class TbLine implements Serializable{
     }
 
     public void setNote(String note) {
-        this.note = note == null ? null : note.trim();
-    }
-
-    public Long getBm() {
-        return this.bm;
-    }
-
-    public void setBm(Long bm) {
-        this.bm = bm;
+        this.note = note;
     }
 
     public String getImg() {
-        return this.img;
+        return img;
     }
 
     public void setImg(String img) {
@@ -160,18 +169,10 @@ public class TbLine implements Serializable{
     }
 
     public int getFlag() {
-        return this.flag;
+        return flag;
     }
 
     public void setFlag(int flag) {
         this.flag = flag;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

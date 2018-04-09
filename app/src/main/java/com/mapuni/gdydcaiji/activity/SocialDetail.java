@@ -1,6 +1,9 @@
 package com.mapuni.gdydcaiji.activity;
 
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -10,11 +13,13 @@ import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbSurface;
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
+import com.mapuni.gdydcaiji.utils.ShowDataUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -24,12 +29,12 @@ import butterknife.BindView;
  */
 
 public class SocialDetail extends BaseDetailActivity<TbSurface> {
-    @BindView(R.id.title)
+    @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.et_name)
-    ClearEditText etName;
+    AutoCompleteTextView etName;
     @BindView(R.id.et_address)
-    ClearEditText etAddress;
+    AutoCompleteTextView etAddress;
     @BindView(R.id.sp_fl)
     Spinner spFl;
     @BindView(R.id.et_wyxx)
@@ -58,6 +63,40 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         setSpinnerData(R.array.social_type, spFl);
 
         bj = getIntent().getStringExtra("bj");
+        initListPopupWindow();
+    }
+
+    private void initListPopupWindow() {
+        List<String> mAddArray = ShowDataUtils.getAddressOrNameArray("address");
+        ArrayAdapter<String> lpwAdapter = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mAddArray);
+        lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etAddress.setAdapter(lpwAdapter);
+
+        List<String> mNameArray = ShowDataUtils.getAddressOrNameArray("lyname");
+        ArrayAdapter<String> lpwAdapter2 = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mNameArray);
+        lpwAdapter2.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etName.setAdapter(lpwAdapter2);
+    }
+
+    @Override
+    protected void initListener() {
+        super.initListener();
+
+        etAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
+            }
+        });
+
+        etName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
+            }
+        });
     }
 
     @Override
@@ -104,9 +143,14 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         else
             tbSurfaceDao.update(resultBean);
 
+        saveAddressAndName();
         EvevtUpdate evevtUpdate = new EvevtUpdate();
         EventBus.getDefault().post(evevtUpdate);
         finish();
     }
 
+    private void saveAddressAndName() {
+        ShowDataUtils.saveAddressOrName("address", getTextByView(etAddress));
+        ShowDataUtils.saveAddressOrName("lyname", getTextByView(etName));
+    }
 }

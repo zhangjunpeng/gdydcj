@@ -1,6 +1,9 @@
 package com.mapuni.gdydcaiji.activity;
 
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.mapuni.gdydcaiji.GdydApplication;
@@ -9,11 +12,13 @@ import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbLine;
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
+import com.mapuni.gdydcaiji.utils.ShowDataUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -22,10 +27,10 @@ import butterknife.BindView;
  */
 
 public class LineDetail extends BaseDetailActivity<TbLine> {
-    @BindView(R.id.title)
+    @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.et_name)
-    ClearEditText etName;
+    AutoCompleteTextView etName;
     @BindView(R.id.et_qd)
     ClearEditText etQd;
     @BindView(R.id.et_zd)
@@ -46,6 +51,27 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         title.setText("线采集");
         tbLineDao = GdydApplication.getInstances().getDaoSession().getTbLineDao();
         bj = getIntent().getStringExtra("bj");
+        initListPopupWindow();
+    }
+
+    private void initListPopupWindow() {
+
+        List<String> mNameArray = ShowDataUtils.getAddressOrNameArray("lyname");
+        ArrayAdapter<String> lpwAdapter = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mNameArray);
+        lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etName.setAdapter(lpwAdapter);
+    }
+
+    @Override
+    protected void initListener() {
+        super.initListener();
+        etName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
+            }
+        });
     }
 
     @Override
@@ -83,6 +109,8 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         else
             tbLineDao.update(resultBean);
 
+        //保存名称
+        ShowDataUtils.saveAddressOrName("lyname", getTextByView(etName));
         EvevtUpdate evevtUpdate = new EvevtUpdate();
         EventBus.getDefault().post(evevtUpdate);
         finish();

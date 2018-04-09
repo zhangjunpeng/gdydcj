@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,6 +31,7 @@ import com.mapuni.gdydcaiji.utils.DialogUtils;
 import com.mapuni.gdydcaiji.utils.FileIOUtils;
 import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
+import com.mapuni.gdydcaiji.utils.ScreenUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -71,17 +73,11 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected void initView() {
 
         EventBus.getDefault().register(this);
-//        // 设置覆盖物的高度
-//        llContainer
-//                .getViewTreeObserver()
-//                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//                    @Override
-//                    public void onGlobalLayout() {
-//                        ViewGroup.LayoutParams layoutParams = cover.getLayoutParams();
-//                        layoutParams.height = llContainer.getHeight();
-//                        cover.setLayoutParams(layoutParams);
-//                    }
-//                });
+
+        /*设置dialog的宽*/
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.width = (int) (ScreenUtils.getScreenW(this) * 0.75);
+        getWindow().setAttributes(lp);
 
     }
 
@@ -188,16 +184,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.back:
-//                if (isEdit) {
-                DialogUtils.showWarningDialog(mContext, "当前处于编辑状态，确定要退出吗？", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-//                } else {
-//                    finish();
-//                }
+                finish();
 
                 break;
             case R.id.btn_save:
@@ -205,12 +192,6 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
                 //保存
                 submit();
                 break;
-//            case R.id.edit:
-//                btnSave.setVisibility(View.VISIBLE);
-//                cover.setVisibility(View.GONE);
-//                edit.setVisibility(View.GONE);
-//                isEdit = true;
-//                break;
             case R.id.iv_image:
                 if (TextUtils.isEmpty(imgUrl)) {
                     //没照片
@@ -224,32 +205,19 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     }
 
     protected abstract void submit();
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-//            if (isEdit) {
-            DialogUtils.showWarningDialog(mContext, "当前处于编辑状态，确定要退出吗？", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
-            return true;
-//            } else {
-//                return super.onKeyDown(keyCode, event);
-//            }
-
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
+    
     @Subscribe
     public void deletePhoto(EventBean event) {
         if ("deleteImg".equals(event.beanStr)) {
             imgUrl = null;
             ivImg.setImageResource(R.drawable.selector_camera);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, R.anim.activity_dialog_out);
     }
 
     @Override

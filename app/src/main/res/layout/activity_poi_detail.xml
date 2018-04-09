@@ -57,7 +57,7 @@
                     style="@style/HintText"
                     android:text="名称" />
 
-                <com.mapuni.gdydcaiji.view.ClearEditText
+                <AutoCompleteTextView
                     android:id="@+id/et_lyName"
                     style="@style/CollectEditText"
                     android:singleLine="false" />

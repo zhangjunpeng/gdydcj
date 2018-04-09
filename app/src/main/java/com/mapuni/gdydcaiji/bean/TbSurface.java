@@ -7,15 +7,17 @@ import org.greenrobot.greendao.annotation.Id;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class TbSurface implements Serializable{
+public class TbSurface implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private Long id;
 
     @Id
+    @Expose
     private Long bm;
 
     @Expose
@@ -92,12 +94,20 @@ public class TbSurface implements Serializable{
         this.id = id;
     }
 
+    public Long getBm() {
+        return bm;
+    }
+
+    public void setBm(Long bm) {
+        this.bm = bm;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getXqdz() {
@@ -105,7 +115,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setXqdz(String xqdz) {
-        this.xqdz = xqdz == null ? null : xqdz.trim();
+        this.xqdz = xqdz;
     }
 
     public String getFl() {
@@ -113,7 +123,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setFl(String fl) {
-        this.fl = fl == null ? null : fl.trim();
+        this.fl = fl;
     }
 
     public String getWyxx() {
@@ -121,7 +131,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setWyxx(String wyxx) {
-        this.wyxx = wyxx == null ? null : wyxx.trim();
+        this.wyxx = wyxx;
     }
 
     public String getLxdh() {
@@ -129,7 +139,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setLxdh(String lxdh) {
-        this.lxdh = lxdh == null ? null : lxdh.trim();
+        this.lxdh = lxdh;
     }
 
     public String getPolyarrays() {
@@ -137,7 +147,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setPolyarrays(String polyarrays) {
-        this.polyarrays = polyarrays == null ? null : polyarrays.trim();
+        this.polyarrays = polyarrays;
     }
 
     public String getOprator() {
@@ -145,7 +155,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setOprator(String oprator) {
-        this.oprator = oprator == null ? null : oprator.trim();
+        this.oprator = oprator;
     }
 
     public Date getOpttime() {
@@ -161,7 +171,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setDeleteflag(String deleteflag) {
-        this.deleteflag = deleteflag == null ? null : deleteflag.trim();
+        this.deleteflag = deleteflag;
     }
 
     public Date getCreatetime() {
@@ -177,7 +187,7 @@ public class TbSurface implements Serializable{
     }
 
     public void setNote(String note) {
-        this.note = note == null ? null : note.trim();
+        this.note = note;
     }
 
     public String getLds() {
@@ -185,19 +195,11 @@ public class TbSurface implements Serializable{
     }
 
     public void setLds(String lds) {
-        this.lds = lds == null ? null : lds.trim();
-    }
-
-    public Long getBm() {
-        return this.bm;
-    }
-
-    public void setBm(Long bm) {
-        this.bm = bm;
+        this.lds = lds;
     }
 
     public String getImg() {
-        return this.img;
+        return img;
     }
 
     public void setImg(String img) {
@@ -205,7 +207,7 @@ public class TbSurface implements Serializable{
     }
 
     public int getFlag() {
-        return this.flag;
+        return flag;
     }
 
     public void setFlag(int flag) {
