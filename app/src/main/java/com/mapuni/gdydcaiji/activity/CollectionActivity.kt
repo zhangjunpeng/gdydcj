@@ -387,9 +387,12 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun beginpolygonCollect() {
-        currentCode = targetCode
-        upDateView()
-
+        if (currentCode==1&&pointPloyline.size>1){
+            showConfirmDiaolog()
+        }else {
+            currentCode = targetCode
+            upDateView()
+        }
     }
 
     private fun beginLouyuCollect() {
@@ -406,7 +409,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private fun beginPOICollect() {
         //开始范围选择
-        if (currentCode == 2 && pointPloygon.size > 2) {
+        if (currentCode==1&&pointPloyline.size>1){
+            showConfirmDiaolog()
+
+        }else if (currentCode == 2 && pointPloygon.size > 2) {
             showConfirmDiaolog()
         } else {
             currentCode = targetCode
@@ -415,7 +421,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun beiginSelectPoint() {
-        if (currentCode == 2 && pointPloygon.size > 2) {
+        if (currentCode==1&&pointPloyline.size>1){
+            showConfirmDiaolog()
+        }else if (currentCode == 2 && pointPloygon.size > 2) {
             showConfirmDiaolog()
         } else {
             currentCode = targetCode
@@ -491,6 +499,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             //            cleanNotSave()
             dialog.dismiss()
             pointPloygon.clear()
+            pointPloyline.clear()
             graphicsLayer.removeGraphic(grahicGonUid)
             currentCode = targetCode
             when (targetCode) {
@@ -498,10 +507,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     beginPOICollect()
                 }
                 1 -> {
-                    beginLouyuCollect()
+                    beigonLineCollect()
+                }
+                2 -> {
+                    beginpolygonCollect()
                 }
                 3 -> {
-                    beginCountryCollect()
+                    beiginSelectPoint()
                 }
             }
         }

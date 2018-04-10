@@ -16,20 +16,27 @@
 
     <LinearLayout
         android:id="@+id/linear_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/shape_model_bg"
         android:layout_marginTop="5dp"
+        android:background="#00ffffff"
         >
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00ffffff"
+            ></LinearLayout>
         <ImageView
             android:id="@+id/poi_collect"
-            android:layout_width="40dp"
-           android:layout_height="40dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+           android:layout_height="wrap_content"
             android:src="@drawable/selector_poi"
             android:background="@drawable/topraduis_selector"
             android:padding="10dp"
@@ -45,8 +52,9 @@
             />
         <ImageView
             android:id="@+id/line_collect"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
             android:src="@drawable/selector_xian"
             android:background="@drawable/btn_back_selector"
 
@@ -62,8 +70,9 @@
             />
         <ImageView
             android:id="@+id/newploygon_collect"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
             android:src="@drawable/selector_mian"
             android:background="@drawable/btn_back_selector"
 
@@ -79,13 +88,21 @@
             />
         <ImageView
             android:id="@+id/selectpoint_collect"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
             android:src="@drawable/selector_fanwei"
             android:background="@drawable/bottomraduis_selector"
             android:padding="10dp"
             android:scaleType="fitCenter"
             />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00ffffff"
+            ></LinearLayout>
     </LinearLayout>
 
     <ImageView
