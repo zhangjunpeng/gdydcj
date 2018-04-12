@@ -35,8 +35,10 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
         public final static Property Deleteflag = new Property(8, String.class, "deleteflag", false, "DELETEFLAG");
         public final static Property Createtime = new Property(9, java.util.Date.class, "createtime", false, "CREATETIME");
         public final static Property Note = new Property(10, String.class, "note", false, "NOTE");
-        public final static Property Img = new Property(11, String.class, "img", false, "IMG");
-        public final static Property Flag = new Property(12, int.class, "flag", false, "FLAG");
+        public final static Property Authcontent = new Property(11, String.class, "authcontent", false, "AUTHCONTENT");
+        public final static Property Authflag = new Property(12, String.class, "authflag", false, "AUTHFLAG");
+        public final static Property Img = new Property(13, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(14, int.class, "flag", false, "FLAG");
     }
 
 
@@ -63,8 +65,10 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
                 "\"DELETEFLAG\" TEXT," + // 8: deleteflag
                 "\"CREATETIME\" INTEGER," + // 9: createtime
                 "\"NOTE\" TEXT," + // 10: note
-                "\"IMG\" TEXT," + // 11: img
-                "\"FLAG\" INTEGER NOT NULL );"); // 12: flag
+                "\"AUTHCONTENT\" TEXT," + // 11: authcontent
+                "\"AUTHFLAG\" TEXT," + // 12: authflag
+                "\"IMG\" TEXT," + // 13: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 14: flag
     }
 
     /** Drops the underlying database table. */
@@ -132,11 +136,21 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
             stmt.bindString(11, note);
         }
  
+        String authcontent = entity.getAuthcontent();
+        if (authcontent != null) {
+            stmt.bindString(12, authcontent);
+        }
+ 
+        String authflag = entity.getAuthflag();
+        if (authflag != null) {
+            stmt.bindString(13, authflag);
+        }
+ 
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(12, img);
+            stmt.bindString(14, img);
         }
-        stmt.bindLong(13, entity.getFlag());
+        stmt.bindLong(15, entity.getFlag());
     }
 
     @Override
@@ -198,11 +212,21 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
             stmt.bindString(11, note);
         }
  
+        String authcontent = entity.getAuthcontent();
+        if (authcontent != null) {
+            stmt.bindString(12, authcontent);
+        }
+ 
+        String authflag = entity.getAuthflag();
+        if (authflag != null) {
+            stmt.bindString(13, authflag);
+        }
+ 
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(12, img);
+            stmt.bindString(14, img);
         }
-        stmt.bindLong(13, entity.getFlag());
+        stmt.bindLong(15, entity.getFlag());
     }
 
     @Override
@@ -224,8 +248,10 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // deleteflag
             cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // createtime
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // note
-            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // img
-            cursor.getInt(offset + 12) // flag
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // authcontent
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // authflag
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // img
+            cursor.getInt(offset + 14) // flag
         );
         return entity;
     }
@@ -243,8 +269,10 @@ public class TbLineDao extends AbstractDao<TbLine, Long> {
         entity.setDeleteflag(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
         entity.setCreatetime(cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)));
         entity.setNote(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setImg(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
-        entity.setFlag(cursor.getInt(offset + 12));
+        entity.setAuthcontent(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setAuthflag(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setImg(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setFlag(cursor.getInt(offset + 14));
      }
     
     @Override

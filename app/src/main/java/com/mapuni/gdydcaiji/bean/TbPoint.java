@@ -1,6 +1,7 @@
 package com.mapuni.gdydcaiji.bean;
 
 import com.google.gson.annotations.Expose;
+import com.mapuni.gdydcaiji.utils.DateUtil;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
@@ -66,6 +67,12 @@ public class TbPoint implements Serializable{
     private String note;
 
     @Expose
+    private String authcontent;//质检内容
+
+    @Expose
+    private String authflag;//0->未质检
+
+    @Expose
     private String lyzhs;
 
     @Expose
@@ -73,11 +80,12 @@ public class TbPoint implements Serializable{
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 1533830738)
+    @Generated(hash = 1558216315)
     public TbPoint(Long id, Long bm, String lytype, String lyxz, String name,
             String fl, String dz, String dy, String lxdh, String dj, String lycs,
             Double lng, Double lat, String oprator, Date opttime, String deleteflag,
-            Date createtime, String note, String lyzhs, String img, int flag) {
+            Date createtime, String note, String authcontent, String authflag,
+            String lyzhs, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.lytype = lytype;
@@ -96,6 +104,8 @@ public class TbPoint implements Serializable{
         this.deleteflag = deleteflag;
         this.createtime = createtime;
         this.note = note;
+        this.authcontent = authcontent;
+        this.authflag = authflag;
         this.lyzhs = lyzhs;
         this.img = img;
         this.flag = flag;
@@ -237,8 +247,8 @@ public class TbPoint implements Serializable{
         return createtime;
     }
 
-    public void setCreatetime(Date createtime) {
-        this.createtime = createtime;
+    public void setCreatetime(String createtime) {
+        this.createtime = DateUtil.getDateByFormat(createtime,DateUtil.YMDHMS);
     }
 
     public String getNote() {
@@ -271,5 +281,54 @@ public class TbPoint implements Serializable{
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    public String getAuthcontent() {
+        return this.authcontent;
+    }
+
+    public void setAuthcontent(String authcontent) {
+        this.authcontent = authcontent;
+    }
+
+    public String getAuthflag() {
+        return this.authflag;
+    }
+
+    public void setAuthflag(String authflag) {
+        this.authflag = authflag;
+    }
+
+    @Override
+    public String toString() {
+        return "TbPoint{" +
+                "id=" + id +
+                ", bm=" + bm +
+                ", lytype='" + lytype + '\'' +
+                ", lyxz='" + lyxz + '\'' +
+                ", name='" + name + '\'' +
+                ", fl='" + fl + '\'' +
+                ", dz='" + dz + '\'' +
+                ", dy='" + dy + '\'' +
+                ", lxdh='" + lxdh + '\'' +
+                ", dj='" + dj + '\'' +
+                ", lycs='" + lycs + '\'' +
+                ", lng=" + lng +
+                ", lat=" + lat +
+                ", oprator='" + oprator + '\'' +
+                ", opttime=" + opttime +
+                ", deleteflag='" + deleteflag + '\'' +
+                ", createtime=" + createtime +
+                ", note='" + note + '\'' +
+                ", authcontent='" + authcontent + '\'' +
+                ", authflag='" + authflag + '\'' +
+                ", lyzhs='" + lyzhs + '\'' +
+                ", img='" + img + '\'' +
+                ", flag=" + flag +
+                '}';
+    }
+
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
     }
 }

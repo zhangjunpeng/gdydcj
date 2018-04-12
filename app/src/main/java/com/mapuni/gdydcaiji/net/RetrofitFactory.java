@@ -23,7 +23,7 @@ public class RetrofitFactory {
 
     public static final String BASE_URL = "http://123.160.246.203:8055/gdwycj/post/";
     
-//    public static final String BASE_URL = "http://192.168.130.42:8080/gdwycj/post/";
+//    public static final String BASE_URL = "http://192.168.100.15:8080/gdwycj/post/";
 
     /**
      * 请求超时时间
@@ -49,7 +49,7 @@ public class RetrofitFactory {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-//                LogUtils.d("request:" + message);
+                LogUtils.d("request:" + message);
             }
         });
         //日志显示级别

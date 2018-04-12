@@ -73,9 +73,9 @@ public class UploadDataActivity extends BaseActivity {
     TextView etStopTime;
     @BindView(R.id.back)
     ImageView back;
-    private List<TbPoint> tbPointList = new ArrayList<>();
-    private List<TbLine> tbLineList;
-    private List<TbSurface> tbSurfaceList;
+    private List<TbPoint> tbPointList1, tbPointList2;
+    private List<TbLine> tbLineList1, tbLineList2;
+    private List<TbSurface> tbSurfaceList1, tbSurfaceList2;
 
 
     private int updataNum = 0;
@@ -128,45 +128,105 @@ public class UploadDataActivity extends BaseActivity {
             public void run() {
                 //生成文件
                 Gson gson = new GsonBuilder().setDateFormat(DateUtil.YMDHMS).excludeFieldsWithoutExposeAnnotation().create();
-                //未上传
-                tbPointList = tbPointDao.queryBuilder()
+                Map<String, Object> map = new HashMap<>();
+                //未上传,新增
+                tbPointList1 = tbPointDao.queryBuilder()
                         .where(TbPointDao.Properties.Flag.eq(0),  //未上传
+                                TbPointDao.Properties.Id.isNull(),
                                 TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbPointDao.Properties.Opttime).list();
-                String buildingJson = gson.toJson(tbPointList);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_point.txt", buildingJson);
-                if (tbPointList != null && tbPointList.size() > 0) {
-                    updataNum += tbPointList.size();
-                    upStartTime = tbPointList.get(0).getOpttime();
-                    upStopTime = tbPointList.get(tbPointList.size() - 1).getOpttime();
+//                String buildingJson1 = gson.toJson(tbPointList1);
+                map.put("tb_point", tbPointList1);
+//                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_point.txt", buildingJson);
+                if (tbPointList1 != null && tbPointList1.size() > 0) {
+                    updataNum += tbPointList1.size();
+                    upStartTime = tbPointList1.get(0).getOpttime();
+                    upStopTime = tbPointList1.get(tbPointList1.size() - 1).getOpttime();
                 }
 
-                tbLineList = tbLineDao.queryBuilder()
-                        .where(TbLineDao.Properties.Flag.eq(0)
+//                //未上传,修改（id不为空，flag=0）
+                tbPointList2 = tbPointDao.queryBuilder()
+                        .where(TbPointDao.Properties.Flag.eq(0),  //未上传
+                                TbPointDao.Properties.Id.isNotNull(),
+                                TbPointDao.Properties.Authflag.eq("0"),
+                                TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                        .orderAsc(TbPointDao.Properties.Opttime).list();
+//                String buildingJson2 = gson.toJson(tbPointList2);
+                map.put("tb_point_modify", tbPointList2);
+//                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_point.txt", buildingJson);
+                if (tbPointList2 != null && tbPointList2.size() > 0) {
+                    updataNum += tbPointList2.size();
+                    upStartTime = upStartTime == null ? tbPointList2.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbPointList2.get(0).getOpttime().getTime()));
+                    upStopTime = upStopTime == null ? tbPointList2.get(tbPointList2.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbPointList2.get(tbPointList2.size() - 1).getOpttime().getTime()));
+                }
+
+                //未上传,新增
+                tbLineList1 = tbLineDao.queryBuilder()
+                        .where(TbLineDao.Properties.Flag.eq(0),
+                                TbLineDao.Properties.Id.isNull()
                                 , TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbLineDao.Properties.Opttime).list();
-                String poiJson = gson.toJson(tbLineList);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_line.txt", poiJson);
+//                String poiJson1 = gson.toJson(tbLineList1);
+//                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_line.txt", poiJson);
 
-                if (tbLineList != null && tbLineList.size() > 0) {
-                    updataNum += tbLineList.size();
-                    upStartTime = upStartTime == null ? tbLineList.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbLineList.get(0).getOpttime().getTime()));
-                    upStopTime = upStopTime == null ? tbLineList.get(tbLineList.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbLineList.get(tbLineList.size() - 1).getOpttime().getTime()));
+                map.put("tb_line", tbLineList1);
+                if (tbLineList1 != null && tbLineList1.size() > 0) {
+                    updataNum += tbLineList1.size();
+                    upStartTime = upStartTime == null ? tbLineList1.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbLineList1.get(0).getOpttime().getTime()));
+                    upStopTime = upStopTime == null ? tbLineList1.get(tbLineList1.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbLineList1.get(tbLineList1.size() - 1).getOpttime().getTime()));
                 }
 
-                tbSurfaceList = tbSurfaceDao.queryBuilder()
-                        .where(TbSurfaceDao.Properties.Flag.eq(0)
+                //未上传,修改（id不为空，flag=0）
+                tbLineList2 = tbLineDao.queryBuilder()
+                        .where(TbLineDao.Properties.Flag.eq(0),
+                                TbLineDao.Properties.Id.isNotNull(),
+                                TbLineDao.Properties.Authflag.eq("0"),
+                                TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                        .orderAsc(TbLineDao.Properties.Opttime).list();
+//                String poiJson2 = gson.toJson(tbLineList2);
+//                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_line.txt", poiJson);
+
+                map.put("tb_line_modify", tbLineList2);
+                if (tbLineList2 != null && tbLineList2.size() > 0) {
+                    updataNum += tbLineList2.size();
+                    upStartTime = upStartTime == null ? tbLineList2.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbLineList2.get(0).getOpttime().getTime()));
+                    upStopTime = upStopTime == null ? tbLineList2.get(tbLineList2.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbLineList2.get(tbLineList2.size() - 1).getOpttime().getTime()));
+                }
+
+                //未上传,新增
+                tbSurfaceList1 = tbSurfaceDao.queryBuilder()
+                        .where(TbSurfaceDao.Properties.Flag.eq(0),
+                                TbSurfaceDao.Properties.Id.isNull()
                                 , TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbSurfaceDao.Properties.Opttime).list();
-                String socialJson = gson.toJson(tbSurfaceList);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
+//                String socialJson1 = gson.toJson(tbSurfaceList1);
+//                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
+                map.put("tb_surface", tbSurfaceList1);
 
-                if (tbSurfaceList != null && tbSurfaceList.size() > 0) {
-                    updataNum += tbSurfaceList.size();
-                    upStartTime = upStartTime == null ? tbSurfaceList.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbSurfaceList.get(0).getOpttime().getTime()));
-                    upStopTime = upStopTime == null ? tbSurfaceList.get(tbSurfaceList.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbSurfaceList.get(tbSurfaceList.size() - 1).getOpttime().getTime()));
+                if (tbSurfaceList1 != null && tbSurfaceList1.size() > 0) {
+                    updataNum += tbSurfaceList1.size();
+                    upStartTime = upStartTime == null ? tbSurfaceList1.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbSurfaceList1.get(0).getOpttime().getTime()));
+                    upStopTime = upStopTime == null ? tbSurfaceList1.get(tbSurfaceList1.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbSurfaceList1.get(tbSurfaceList1.size() - 1).getOpttime().getTime()));
                 }
 
+                //未上传,修改（id不为空，flag=0）
+                tbSurfaceList2 = tbSurfaceDao.queryBuilder()
+                        .where(TbSurfaceDao.Properties.Flag.eq(0),
+                                TbSurfaceDao.Properties.Id.isNotNull(),
+                                TbSurfaceDao.Properties.Authflag.eq("0"),
+                                TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                        .orderAsc(TbSurfaceDao.Properties.Opttime).list();
+//                String socialJson2 = gson.toJson(tbSurfaceList2);
+//                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
+                map.put("tb_surface_modify", tbSurfaceList2);
+
+                String json = gson.toJson(map);
+                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/upload.txt", json);
+                if (tbSurfaceList2 != null && tbSurfaceList2.size() > 0) {
+                    updataNum += tbSurfaceList2.size();
+                    upStartTime = upStartTime == null ? tbSurfaceList2.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbSurfaceList2.get(0).getOpttime().getTime()));
+                    upStopTime = upStopTime == null ? tbSurfaceList2.get(tbSurfaceList2.size() - 1).getOpttime() : new Date(Math.max(upStopTime.getTime(), tbSurfaceList2.get(tbSurfaceList2.size() - 1).getOpttime().getTime()));
+                }
 
                 ThreadUtils.executeMainThread(new Runnable() {
                     @Override
@@ -185,9 +245,9 @@ public class UploadDataActivity extends BaseActivity {
         Map<String, RequestBody> map = new HashMap<>();
 
         List<String> filePaths = new ArrayList<>();
-        filePaths.add("/tb_point.txt");
-        filePaths.add("/tb_line.txt");
-        filePaths.add("/tb_surface.txt");
+        filePaths.add("/upload.txt");
+//        filePaths.add("/tb_line.txt");
+//        filePaths.add("/tb_surface.txt");
 
         File file;
         for (int i = 0; i < filePaths.size(); i++) {
@@ -198,7 +258,7 @@ public class UploadDataActivity extends BaseActivity {
             }
         }
 
-        if (map.size() == 0) {
+        if (updataNum == 0) {
             ToastUtils.showShort("没有新数据");
             return;
         }
@@ -425,30 +485,30 @@ public class UploadDataActivity extends BaseActivity {
     }
 
     private void updateSurface() {
-        if (tbSurfaceList != null && tbSurfaceList.size() > 0) {
-            for (int i = 0; i < tbSurfaceList.size(); i++) {
-                tbSurfaceList.get(i).setFlag(1);
+        if (tbSurfaceList1 != null && tbSurfaceList1.size() > 0) {
+            for (int i = 0; i < tbSurfaceList1.size(); i++) {
+                tbSurfaceList1.get(i).setFlag(1);
             }
-            tbSurfaceDao.updateInTx(tbSurfaceList);
+            tbSurfaceDao.updateInTx(tbSurfaceList1);
 
         }
     }
 
     private void updateLine() {
-        if (tbLineList != null && tbLineList.size() > 0) {
-            for (int i = 0; i < tbLineList.size(); i++) {
-                tbLineList.get(i).setFlag(1);
+        if (tbLineList1 != null && tbLineList1.size() > 0) {
+            for (int i = 0; i < tbLineList1.size(); i++) {
+                tbLineList1.get(i).setFlag(1);
             }
-            tbLineDao.updateInTx(tbLineList);
+            tbLineDao.updateInTx(tbLineList1);
         }
     }
 
     private void updatePoi() {
-        if (tbPointList != null && tbPointList.size() > 0) {
-            for (int i = 0; i < tbPointList.size(); i++) {
-                tbPointList.get(i).setFlag(1);
+        if (tbPointList1 != null && tbPointList1.size() > 0) {
+            for (int i = 0; i < tbPointList1.size(); i++) {
+                tbPointList1.get(i).setFlag(1);
             }
-            tbPointDao.updateInTx(tbPointList);
+            tbPointDao.updateInTx(tbPointList1);
         }
     }
 

@@ -1,9 +1,11 @@
 package com.mapuni.gdydcaiji.net;
 
+import com.mapuni.gdydcaiji.bean.FieidPerson;
 import com.mapuni.gdydcaiji.bean.LoginBean;
 import com.mapuni.gdydcaiji.bean.MapBean;
 import com.mapuni.gdydcaiji.bean.UploadBean;
 
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -44,6 +46,27 @@ public interface RetrofitService {
      */
     @GET("slicesFile/syncSlicesFile")
     Observable<MapBean> getMapList(@Query("username") String userName);
+
+    /**
+     * 获取外业人员列表
+     *
+     * @return
+     */
+    @GET("building/treePerson")
+    Observable<List<FieidPerson>> getFieidPersonList();
+
+    /**
+     * 获取外业人员列表
+     *
+     * @return
+     */
+    @Streaming
+    @GET("building/downloadData")
+    Observable<ResponseBody> downloadData(@Query("optUser") String optUser,
+                                          @Query("startTime") String startTime,
+                                          @Query("endTime") String endTime,
+                                          @Query("status") String status//0->未审核状态；1->错误的状态
+    );
 
     /**
      * 大文件官方建议用 @Streaming 来进行注解，不然会出现IO异常，小文件可以忽略不注入

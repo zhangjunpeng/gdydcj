@@ -15,6 +15,8 @@ public class PathConstant {
     public static final String UNDO_ZIP_PATH = ROOT_PATH + "/localmap";
     // 下载地图路径
     public static final String DOWNLOAD_MAP_PATH = ROOT_PATH + "/dowloadmap";
+    // 下载数据路径
+    public static final String DOWNLOAD_DATA_PATH = ROOT_PATH + "/dowloaddata";
     // 数据库路径
     public static final String DATABASE_PATH = ROOT_PATH + "/database";
     // ZIP路径

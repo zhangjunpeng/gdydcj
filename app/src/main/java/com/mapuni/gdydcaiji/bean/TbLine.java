@@ -45,14 +45,21 @@ public class TbLine implements Serializable{
     private String note;
 
     @Expose
+    private String authcontent;//质检内容
+
+    @Expose
+    private String authflag;//0->未质检
+
+    @Expose
     private String img;
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 999680240)
+    @Generated(hash = 1320395952)
     public TbLine(Long id, Long bm, String name, String sfz, String zdz,
             String polyarrays, String oprator, Date opttime, String deleteflag,
-            Date createtime, String note, String img, int flag) {
+            Date createtime, String note, String authcontent, String authflag,
+            String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.name = name;
@@ -64,6 +71,8 @@ public class TbLine implements Serializable{
         this.deleteflag = deleteflag;
         this.createtime = createtime;
         this.note = note;
+        this.authcontent = authcontent;
+        this.authflag = authflag;
         this.img = img;
         this.flag = flag;
     }
@@ -174,5 +183,21 @@ public class TbLine implements Serializable{
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    public String getAuthcontent() {
+        return this.authcontent;
+    }
+
+    public void setAuthcontent(String authcontent) {
+        this.authcontent = authcontent;
+    }
+
+    public String getAuthflag() {
+        return this.authflag;
+    }
+
+    public void setAuthflag(String authflag) {
+        this.authflag = authflag;
     }
 }

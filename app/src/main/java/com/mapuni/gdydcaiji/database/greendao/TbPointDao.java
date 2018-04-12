@@ -42,9 +42,11 @@ public class TbPointDao extends AbstractDao<TbPoint, Long> {
         public final static Property Deleteflag = new Property(15, String.class, "deleteflag", false, "DELETEFLAG");
         public final static Property Createtime = new Property(16, java.util.Date.class, "createtime", false, "CREATETIME");
         public final static Property Note = new Property(17, String.class, "note", false, "NOTE");
-        public final static Property Lyzhs = new Property(18, String.class, "lyzhs", false, "LYZHS");
-        public final static Property Img = new Property(19, String.class, "img", false, "IMG");
-        public final static Property Flag = new Property(20, int.class, "flag", false, "FLAG");
+        public final static Property Authcontent = new Property(18, String.class, "authcontent", false, "AUTHCONTENT");
+        public final static Property Authflag = new Property(19, String.class, "authflag", false, "AUTHFLAG");
+        public final static Property Lyzhs = new Property(20, String.class, "lyzhs", false, "LYZHS");
+        public final static Property Img = new Property(21, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(22, int.class, "flag", false, "FLAG");
     }
 
 
@@ -78,9 +80,11 @@ public class TbPointDao extends AbstractDao<TbPoint, Long> {
                 "\"DELETEFLAG\" TEXT," + // 15: deleteflag
                 "\"CREATETIME\" INTEGER," + // 16: createtime
                 "\"NOTE\" TEXT," + // 17: note
-                "\"LYZHS\" TEXT," + // 18: lyzhs
-                "\"IMG\" TEXT," + // 19: img
-                "\"FLAG\" INTEGER NOT NULL );"); // 20: flag
+                "\"AUTHCONTENT\" TEXT," + // 18: authcontent
+                "\"AUTHFLAG\" TEXT," + // 19: authflag
+                "\"LYZHS\" TEXT," + // 20: lyzhs
+                "\"IMG\" TEXT," + // 21: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 22: flag
     }
 
     /** Drops the underlying database table. */
@@ -183,16 +187,26 @@ public class TbPointDao extends AbstractDao<TbPoint, Long> {
             stmt.bindString(18, note);
         }
  
+        String authcontent = entity.getAuthcontent();
+        if (authcontent != null) {
+            stmt.bindString(19, authcontent);
+        }
+ 
+        String authflag = entity.getAuthflag();
+        if (authflag != null) {
+            stmt.bindString(20, authflag);
+        }
+ 
         String lyzhs = entity.getLyzhs();
         if (lyzhs != null) {
-            stmt.bindString(19, lyzhs);
+            stmt.bindString(21, lyzhs);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(20, img);
+            stmt.bindString(22, img);
         }
-        stmt.bindLong(21, entity.getFlag());
+        stmt.bindLong(23, entity.getFlag());
     }
 
     @Override
@@ -289,16 +303,26 @@ public class TbPointDao extends AbstractDao<TbPoint, Long> {
             stmt.bindString(18, note);
         }
  
+        String authcontent = entity.getAuthcontent();
+        if (authcontent != null) {
+            stmt.bindString(19, authcontent);
+        }
+ 
+        String authflag = entity.getAuthflag();
+        if (authflag != null) {
+            stmt.bindString(20, authflag);
+        }
+ 
         String lyzhs = entity.getLyzhs();
         if (lyzhs != null) {
-            stmt.bindString(19, lyzhs);
+            stmt.bindString(21, lyzhs);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(20, img);
+            stmt.bindString(22, img);
         }
-        stmt.bindLong(21, entity.getFlag());
+        stmt.bindLong(23, entity.getFlag());
     }
 
     @Override
@@ -327,9 +351,11 @@ public class TbPointDao extends AbstractDao<TbPoint, Long> {
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // deleteflag
             cursor.isNull(offset + 16) ? null : new java.util.Date(cursor.getLong(offset + 16)), // createtime
             cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17), // note
-            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // lyzhs
-            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // img
-            cursor.getInt(offset + 20) // flag
+            cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18), // authcontent
+            cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19), // authflag
+            cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // lyzhs
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // img
+            cursor.getInt(offset + 22) // flag
         );
         return entity;
     }
@@ -354,9 +380,11 @@ public class TbPointDao extends AbstractDao<TbPoint, Long> {
         entity.setDeleteflag(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
         entity.setCreatetime(cursor.isNull(offset + 16) ? null : new java.util.Date(cursor.getLong(offset + 16)));
         entity.setNote(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
-        entity.setLyzhs(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
-        entity.setImg(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
-        entity.setFlag(cursor.getInt(offset + 20));
+        entity.setAuthcontent(cursor.isNull(offset + 18) ? null : cursor.getString(offset + 18));
+        entity.setAuthflag(cursor.isNull(offset + 19) ? null : cursor.getString(offset + 19));
+        entity.setLyzhs(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
+        entity.setImg(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
+        entity.setFlag(cursor.getInt(offset + 22));
      }
     
     @Override

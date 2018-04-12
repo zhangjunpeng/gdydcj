@@ -37,9 +37,11 @@ public class TbSurfaceDao extends AbstractDao<TbSurface, Long> {
         public final static Property Deleteflag = new Property(10, String.class, "deleteflag", false, "DELETEFLAG");
         public final static Property Createtime = new Property(11, java.util.Date.class, "createtime", false, "CREATETIME");
         public final static Property Note = new Property(12, String.class, "note", false, "NOTE");
-        public final static Property Lds = new Property(13, String.class, "lds", false, "LDS");
-        public final static Property Img = new Property(14, String.class, "img", false, "IMG");
-        public final static Property Flag = new Property(15, int.class, "flag", false, "FLAG");
+        public final static Property Authcontent = new Property(13, String.class, "authcontent", false, "AUTHCONTENT");
+        public final static Property Authflag = new Property(14, String.class, "authflag", false, "AUTHFLAG");
+        public final static Property Lds = new Property(15, String.class, "lds", false, "LDS");
+        public final static Property Img = new Property(16, String.class, "img", false, "IMG");
+        public final static Property Flag = new Property(17, int.class, "flag", false, "FLAG");
     }
 
 
@@ -68,9 +70,11 @@ public class TbSurfaceDao extends AbstractDao<TbSurface, Long> {
                 "\"DELETEFLAG\" TEXT," + // 10: deleteflag
                 "\"CREATETIME\" INTEGER," + // 11: createtime
                 "\"NOTE\" TEXT," + // 12: note
-                "\"LDS\" TEXT," + // 13: lds
-                "\"IMG\" TEXT," + // 14: img
-                "\"FLAG\" INTEGER NOT NULL );"); // 15: flag
+                "\"AUTHCONTENT\" TEXT," + // 13: authcontent
+                "\"AUTHFLAG\" TEXT," + // 14: authflag
+                "\"LDS\" TEXT," + // 15: lds
+                "\"IMG\" TEXT," + // 16: img
+                "\"FLAG\" INTEGER NOT NULL );"); // 17: flag
     }
 
     /** Drops the underlying database table. */
@@ -148,16 +152,26 @@ public class TbSurfaceDao extends AbstractDao<TbSurface, Long> {
             stmt.bindString(13, note);
         }
  
+        String authcontent = entity.getAuthcontent();
+        if (authcontent != null) {
+            stmt.bindString(14, authcontent);
+        }
+ 
+        String authflag = entity.getAuthflag();
+        if (authflag != null) {
+            stmt.bindString(15, authflag);
+        }
+ 
         String lds = entity.getLds();
         if (lds != null) {
-            stmt.bindString(14, lds);
+            stmt.bindString(16, lds);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(15, img);
+            stmt.bindString(17, img);
         }
-        stmt.bindLong(16, entity.getFlag());
+        stmt.bindLong(18, entity.getFlag());
     }
 
     @Override
@@ -229,16 +243,26 @@ public class TbSurfaceDao extends AbstractDao<TbSurface, Long> {
             stmt.bindString(13, note);
         }
  
+        String authcontent = entity.getAuthcontent();
+        if (authcontent != null) {
+            stmt.bindString(14, authcontent);
+        }
+ 
+        String authflag = entity.getAuthflag();
+        if (authflag != null) {
+            stmt.bindString(15, authflag);
+        }
+ 
         String lds = entity.getLds();
         if (lds != null) {
-            stmt.bindString(14, lds);
+            stmt.bindString(16, lds);
         }
  
         String img = entity.getImg();
         if (img != null) {
-            stmt.bindString(15, img);
+            stmt.bindString(17, img);
         }
-        stmt.bindLong(16, entity.getFlag());
+        stmt.bindLong(18, entity.getFlag());
     }
 
     @Override
@@ -262,9 +286,11 @@ public class TbSurfaceDao extends AbstractDao<TbSurface, Long> {
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // deleteflag
             cursor.isNull(offset + 11) ? null : new java.util.Date(cursor.getLong(offset + 11)), // createtime
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // note
-            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // lds
-            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // img
-            cursor.getInt(offset + 15) // flag
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // authcontent
+            cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // authflag
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // lds
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // img
+            cursor.getInt(offset + 17) // flag
         );
         return entity;
     }
@@ -284,9 +310,11 @@ public class TbSurfaceDao extends AbstractDao<TbSurface, Long> {
         entity.setDeleteflag(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setCreatetime(cursor.isNull(offset + 11) ? null : new java.util.Date(cursor.getLong(offset + 11)));
         entity.setNote(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
-        entity.setLds(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
-        entity.setImg(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setFlag(cursor.getInt(offset + 15));
+        entity.setAuthcontent(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
+        entity.setAuthflag(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
+        entity.setLds(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setImg(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
+        entity.setFlag(cursor.getInt(offset + 17));
      }
     
     @Override

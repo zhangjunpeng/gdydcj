@@ -52,6 +52,12 @@ public class TbSurface implements Serializable {
     private String note;
 
     @Expose
+    private String authcontent;//质检内容
+
+    @Expose
+    private String authflag;//0->未质检
+    
+    @Expose
     private String lds;
 
     @Expose
@@ -59,11 +65,11 @@ public class TbSurface implements Serializable {
 
     private int flag; //是否已上传状态（1-> 已上传、0->未上传）
 
-    @Generated(hash = 1646036237)
+    @Generated(hash = 414289962)
     public TbSurface(Long id, Long bm, String name, String xqdz, String fl,
             String wyxx, String lxdh, String polyarrays, String oprator,
             Date opttime, String deleteflag, Date createtime, String note,
-            String lds, String img, int flag) {
+            String authcontent, String authflag, String lds, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.name = name;
@@ -77,6 +83,8 @@ public class TbSurface implements Serializable {
         this.deleteflag = deleteflag;
         this.createtime = createtime;
         this.note = note;
+        this.authcontent = authcontent;
+        this.authflag = authflag;
         this.lds = lds;
         this.img = img;
         this.flag = flag;
@@ -212,5 +220,21 @@ public class TbSurface implements Serializable {
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    public String getAuthcontent() {
+        return this.authcontent;
+    }
+
+    public void setAuthcontent(String authcontent) {
+        this.authcontent = authcontent;
+    }
+
+    public String getAuthflag() {
+        return this.authflag;
+    }
+
+    public void setAuthflag(String authflag) {
+        this.authflag = authflag;
     }
 }

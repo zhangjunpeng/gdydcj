@@ -164,6 +164,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         SPUtils.getInstance().put("username", username);
                         SPUtils.getInstance().put("password", password);
+                        SPUtils.getInstance().put("roleid", loginBean.getUser().getRoleid());
                         SPUtils.getInstance().put("userId", loginBean.getUser().getId());
                         startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
                         finish();
