@@ -99,6 +99,12 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             localGraphicsLayer.removeAll()
             graphicName.removeAll()
             upDateGraphic()
+            if (currentCode==1){
+                drawline(pointPloyline)
+            }
+            if (currentCode==2){
+                drawGon(pointPloygon)
+            }
         }
     }
 
@@ -559,11 +565,14 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         val center = mapview_collect.toMapPoint(v, v1)
         when (currentCode) {
             0 -> {
+                addPointInMap(center)
+
                 val intent1 = Intent(this, PoiDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
 
                 startActivity(intent1)
+
             }
             1 -> {
                 addPolyLineInMap(center)
@@ -1123,6 +1132,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     @Subscribe
     fun onUPDataGraphic(eventUpdate: EvevtUpdate) {
+        pointPloyline.clear()
         pointPloygon.clear()
         tempGraphicLayer.removeAll()
         graphicName.removeAll()
