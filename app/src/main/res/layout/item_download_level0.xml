@@ -5,9 +5,8 @@
     android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
     android:paddingBottom="8dp"
-    android:paddingLeft="32dp"
-    android:paddingRight="32dp"
-    android:background="@color/mapbtnNormal"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
     android:paddingTop="8dp">
 
 
@@ -18,11 +17,11 @@
         android:layout_centerVertical="true"
         android:gravity="center_vertical" />
 
-    <CheckBox
-        android:id="@+id/cb_fieid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:src="@drawable/down_arrow" />
 
 </RelativeLayout>

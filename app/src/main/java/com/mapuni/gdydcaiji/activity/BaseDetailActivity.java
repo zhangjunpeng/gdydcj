@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,7 +32,9 @@ import com.mapuni.gdydcaiji.utils.DialogUtils;
 import com.mapuni.gdydcaiji.utils.FileIOUtils;
 import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
+import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ScreenUtils;
+import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,6 +63,12 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 //    LinearLayoutCompat llContainer;
     @BindView(R.id.iv_image)
     ImageView ivImg;
+    @BindView(R.id.tv_zjjgzs)
+    TextView tvZjjgzs;
+    @BindView(R.id.et_zjjg)
+    ClearEditText etZjjg;
+    @BindView(R.id.ll_zj)
+    LinearLayout llZj;
 
     //    protected boolean isEdit;
     protected T resultBean;
@@ -68,6 +77,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected String imgUrl;
     protected double lat;
     protected double lng;
+    protected String roleid;
 
     @Override
     protected void initView() {
@@ -83,6 +93,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
     @Override
     protected void initData() {
+        roleid = SPUtils.getInstance().getString("roleid");
         resultBean = (T) getIntent().getSerializableExtra("resultBean");
         if (resultBean != null) {
             //查看
@@ -91,6 +102,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 //            btnSave.setVisibility(View.GONE);
 //            isEdit = false;
             isInsert = false;
+            
             showData();
         } else {
             //新增

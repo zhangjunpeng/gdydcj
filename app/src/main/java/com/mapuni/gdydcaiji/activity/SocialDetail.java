@@ -111,6 +111,20 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             imgUrl = resultBean.getImg();
         }
+        if (roleid.equals("6")) {
+            //外业
+            if (resultBean.getId() != null && TextUtils.isEmpty(resultBean.getAuthcontent())) {
+                tvZjjgzs.setVisibility(View.VISIBLE);
+                tvZjjgzs.setText(resultBean.getAuthcontent());
+            }
+
+        } else if (roleid.equals("2")) {
+            //质检
+            if (resultBean.getId() != null) {
+                llZj.setVisibility(View.VISIBLE);
+                etZjjg.setText(resultBean.getAuthcontent());
+            }
+        }
         super.showData();
     }
 
@@ -121,6 +135,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
             resultBean.setPolyarrays(bj);
+            resultBean.setOprator(SPUtils.getInstance().getString("username"));
         }
 
         resultBean.setName(getTextByView(etName));
@@ -132,16 +147,32 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         resultBean.setNote(getTextByView(etBz));
         if (!TextUtils.isEmpty(imgUrl)) {
             resultBean.setImg(imgUrl);
+        } else {
+            resultBean.setImg("");
         }
-        resultBean.setOprator(SPUtils.getInstance().getInt("userId", -1) + "");
+        
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 
 
         if (isInsert)
             tbSurfaceDao.insert(resultBean);
-        else
+        else {
+            if (roleid.equals("6")) {
+                //外业
+                if (resultBean.getId() != null) {
+                    resultBean.setAuthflag("0");
+                }
+
+            } else if (roleid.equals("2")) {
+                //质检
+                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+                    resultBean.setAuthcontent(getTextByView(etZjjg));
+                    resultBean.setAuthflag("1");
+                }
+            }
             tbSurfaceDao.update(resultBean);
+        }
 
         saveAddressAndName();
         EvevtUpdate evevtUpdate = new EvevtUpdate();

@@ -52,11 +52,11 @@ public class TbSurface implements Serializable {
     private String note;
 
     @Expose
-    private String authcontent;//质检内容
+    private String authcontent = "";//质检内容
 
     @Expose
-    private String authflag;//0->未质检
-    
+    private String authflag = "0";//0->未质检
+
     @Expose
     private String lds;
 
@@ -67,9 +67,9 @@ public class TbSurface implements Serializable {
 
     @Generated(hash = 414289962)
     public TbSurface(Long id, Long bm, String name, String xqdz, String fl,
-            String wyxx, String lxdh, String polyarrays, String oprator,
-            Date opttime, String deleteflag, Date createtime, String note,
-            String authcontent, String authflag, String lds, String img, int flag) {
+                     String wyxx, String lxdh, String polyarrays, String oprator,
+                     Date opttime, String deleteflag, Date createtime, String note,
+                     String authcontent, String authflag, String lds, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.name = name;

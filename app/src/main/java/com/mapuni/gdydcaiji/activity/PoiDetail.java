@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/3/21.
@@ -61,6 +64,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
     ImageView ivCalculator;
     @BindView(R.id.et_bz)
     ClearEditText etBz;
+
 
     private TbPointDao tPoiInfoDao;
 //    private List<String> mAddArray = new ArrayList<>();
@@ -141,6 +145,20 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             imgUrl = resultBean.getImg();
         }
+        if (roleid.equals("6")) {
+            //外业
+            if (resultBean.getId() != null && TextUtils.isEmpty(resultBean.getAuthcontent())) {
+                tvZjjgzs.setVisibility(View.VISIBLE);
+                tvZjjgzs.setText(resultBean.getAuthcontent());
+            }
+
+        } else if (roleid.equals("2")) {
+            //质检
+            if (resultBean.getId() != null) {
+                llZj.setVisibility(View.VISIBLE);
+                etZjjg.setText(resultBean.getAuthcontent());
+            }
+        }
         super.showData();
     }
 
@@ -150,6 +168,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
             resultBean = new TbPoint();
             resultBean.setLat(lat);
             resultBean.setLng(lng);
+            resultBean.setOprator(SPUtils.getInstance().getString("username"));
         }
 
         resultBean.setName(getTextByView(etLyName));
@@ -165,15 +184,32 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         resultBean.setNote(getTextByView(etBz));
         if (!TextUtils.isEmpty(imgUrl)) {
             resultBean.setImg(imgUrl);
+        }else{
+            resultBean.setImg("");
         }
-        resultBean.setOprator(SPUtils.getInstance().getInt("userId", -1) + "");
+        
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 
         if (isInsert)
             tPoiInfoDao.insert(resultBean);
-        else
+        else {
+            if (roleid.equals("6")) {
+                //外业
+                if (resultBean.getId() != null) {
+                    resultBean.setAuthflag("0");
+                }
+
+            } else if (roleid.equals("2")) {
+                //质检
+                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+                    resultBean.setAuthcontent(getTextByView(etZjjg));
+                    resultBean.setAuthflag("1");
+                }
+            }
+
             tPoiInfoDao.update(resultBean);
+        }
 
         saveAddressAndName();
 
@@ -218,4 +254,5 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         }
         return null;
     }
+
 }

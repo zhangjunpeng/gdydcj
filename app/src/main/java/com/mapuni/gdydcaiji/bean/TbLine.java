@@ -7,12 +7,13 @@ import org.greenrobot.greendao.annotation.Id;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class TbLine implements Serializable{
+public class TbLine implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private Long id;
 
     @Id
@@ -45,10 +46,10 @@ public class TbLine implements Serializable{
     private String note;
 
     @Expose
-    private String authcontent;//质检内容
+    private String authcontent = "";//质检内容
 
     @Expose
-    private String authflag;//0->未质检
+    private String authflag = "0";//0->未质检
 
     @Expose
     private String img;
@@ -57,9 +58,9 @@ public class TbLine implements Serializable{
 
     @Generated(hash = 1320395952)
     public TbLine(Long id, Long bm, String name, String sfz, String zdz,
-            String polyarrays, String oprator, Date opttime, String deleteflag,
-            Date createtime, String note, String authcontent, String authflag,
-            String img, int flag) {
+                  String polyarrays, String oprator, Date opttime, String deleteflag,
+                  Date createtime, String note, String authcontent, String authflag,
+                  String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.name = name;

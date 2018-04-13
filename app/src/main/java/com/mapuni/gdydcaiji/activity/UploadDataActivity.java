@@ -16,6 +16,12 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
@@ -35,11 +41,13 @@ import com.mapuni.gdydcaiji.utils.DateUtil;
 import com.mapuni.gdydcaiji.utils.FileUtils;
 import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
+import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -127,7 +135,7 @@ public class UploadDataActivity extends BaseActivity {
             @Override
             public void run() {
                 //生成文件
-                Gson gson = new GsonBuilder().setDateFormat(DateUtil.YMDHMS).excludeFieldsWithoutExposeAnnotation().create();
+                Gson gson = new GsonBuilder().setDateFormat(DateUtil.YMDHMS).registerTypeAdapterFactory(new NullStringToEmptyAdapterFactory()).excludeFieldsWithoutExposeAnnotation().create();
                 Map<String, Object> map = new HashMap<>();
                 //未上传,新增
                 tbPointList1 = tbPointDao.queryBuilder()
@@ -148,7 +156,7 @@ public class UploadDataActivity extends BaseActivity {
                 tbPointList2 = tbPointDao.queryBuilder()
                         .where(TbPointDao.Properties.Flag.eq(0),  //未上传
                                 TbPointDao.Properties.Id.isNotNull(),
-                                TbPointDao.Properties.Authflag.eq("0"),
+                                TbPointDao.Properties.Authflag.eq(getFlagByUser()),
                                 TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbPointDao.Properties.Opttime).list();
 //                String buildingJson2 = gson.toJson(tbPointList2);
@@ -180,7 +188,7 @@ public class UploadDataActivity extends BaseActivity {
                 tbLineList2 = tbLineDao.queryBuilder()
                         .where(TbLineDao.Properties.Flag.eq(0),
                                 TbLineDao.Properties.Id.isNotNull(),
-                                TbLineDao.Properties.Authflag.eq("0"),
+                                TbLineDao.Properties.Authflag.eq(getFlagByUser()),
                                 TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbLineDao.Properties.Opttime).list();
 //                String poiJson2 = gson.toJson(tbLineList2);
@@ -213,7 +221,7 @@ public class UploadDataActivity extends BaseActivity {
                 tbSurfaceList2 = tbSurfaceDao.queryBuilder()
                         .where(TbSurfaceDao.Properties.Flag.eq(0),
                                 TbSurfaceDao.Properties.Id.isNotNull(),
-                                TbSurfaceDao.Properties.Authflag.eq("0"),
+                                TbSurfaceDao.Properties.Authflag.eq(getFlagByUser()),
                                 TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbSurfaceDao.Properties.Opttime).list();
 //                String socialJson2 = gson.toJson(tbSurfaceList2);
@@ -320,9 +328,7 @@ public class UploadDataActivity extends BaseActivity {
      * @param body
      */
     private void processData(UploadBean body) {
-        if ((body.getTb_point() == null || body.getTb_point().isStatus())
-                && (body.getTb_line() == null || body.getTb_line().isStatus())
-                && (body.getTb_surface() == null || body.getTb_surface().isStatus())) {
+        if (body.isStatus()) {
             showResponseDialog("上传成功\n" + "总数：" + updataNum + "\n" + DateUtil.getStringByFormat(upStartTime, DateUtil.YMDHMS) + "\n" + DateUtil.getStringByFormat(upStopTime, DateUtil.YMDHMS));
             new Timer().schedule(new TimerTask() {
                 @Override
@@ -339,83 +345,8 @@ public class UploadDataActivity extends BaseActivity {
             });
 
         } else {
-            String msg = "";
-            if ((body.getTb_point() == null || body.getTb_point().isStatus())
-                    && (body.getTb_line() != null && !body.getTb_line().isStatus())
-                    && (body.getTb_surface() != null && !body.getTb_surface().isStatus())) {
-                //poi表上传成功
-                ThreadUtils.executeSubThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updatePoi();
-                    }
-                });
-                msg = body.getTb_line().getMessage() + "\n" + body.getTb_surface().getMessage();
-            } else if ((body.getTb_point() != null && !body.getTb_point().isStatus())
-                    && (body.getTb_line() == null || body.getTb_line().isStatus())
-                    && (body.getTb_surface() != null && !body.getTb_surface().isStatus())) {
-                //line表上传成功
-                ThreadUtils.executeSubThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateLine();
-                    }
-                });
-                msg = body.getTb_point().getMessage() + "\n" + body.getTb_surface().getMessage();
-            } else if ((body.getTb_point() != null && !body.getTb_point().isStatus())
-                    && (body.getTb_line() != null && !body.getTb_line().isStatus())
-                    && (body.getTb_surface() == null || body.getTb_surface().isStatus())) {
-                //面表上传成功
-                ThreadUtils.executeSubThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateSurface();
-                    }
-                });
-                msg = body.getTb_point().getMessage() + "\n" + body.getTb_line().getMessage();
-            } else if ((body.getTb_point() == null || body.getTb_point().isStatus())
-                    && (body.getTb_line() == null || body.getTb_line().isStatus())
-                    && (body.getTb_surface() != null && !body.getTb_surface().isStatus())) {
-                //poi、line表上传成功
-                ThreadUtils.executeSubThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updatePoi();
-                        updateLine();
-                    }
-                });
-                msg = body.getTb_surface().getMessage();
-            } else if ((body.getTb_point() == null || body.getTb_point().isStatus())
-                    && (body.getTb_line() != null && !body.getTb_line().isStatus())
-                    && (body.getTb_surface() == null || body.getTb_surface().isStatus())) {
-                //poi、面表上传成功
-                ThreadUtils.executeSubThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updatePoi();
-                        updateSurface();
-                    }
-                });
-                msg = body.getTb_line().getMessage();
-            } else if ((body.getTb_point() != null && !body.getTb_point().isStatus())
-                    && (body.getTb_line() == null || body.getTb_line().isStatus())
-                    && (body.getTb_surface() == null || body.getTb_surface().isStatus())) {
-                //line、面表上传成功
-                ThreadUtils.executeSubThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateLine();
-                        updateSurface();
-                    }
-                });
-                msg = body.getTb_point().getMessage();
-            } else if ((body.getTb_point() != null && !body.getTb_point().isStatus())
-                    && (body.getTb_line() != null && !body.getTb_line().isStatus())
-                    && (body.getTb_surface() != null && !body.getTb_surface().isStatus())) {
-                //全上传失败
-                msg = body.getTb_point().getMessage() + "\n" + body.getTb_line().getMessage() + "\n" + body.getTb_surface().getMessage();
-            }
-            showResponseDialog("上传失败\n" + msg);
+
+            showResponseDialog("上传失败");
         }
     }
 
@@ -492,6 +423,13 @@ public class UploadDataActivity extends BaseActivity {
             tbSurfaceDao.updateInTx(tbSurfaceList1);
 
         }
+        if (tbSurfaceList2 != null && tbSurfaceList2.size() > 0) {
+            for (int i = 0; i < tbSurfaceList2.size(); i++) {
+                tbSurfaceList2.get(i).setFlag(1);
+            }
+            tbSurfaceDao.updateInTx(tbSurfaceList2);
+
+        }
     }
 
     private void updateLine() {
@@ -501,6 +439,13 @@ public class UploadDataActivity extends BaseActivity {
             }
             tbLineDao.updateInTx(tbLineList1);
         }
+
+        if (tbLineList2 != null && tbLineList2.size() > 0) {
+            for (int i = 0; i < tbLineList2.size(); i++) {
+                tbLineList2.get(i).setFlag(1);
+            }
+            tbLineDao.updateInTx(tbLineList2);
+        }
     }
 
     private void updatePoi() {
@@ -509,6 +454,13 @@ public class UploadDataActivity extends BaseActivity {
                 tbPointList1.get(i).setFlag(1);
             }
             tbPointDao.updateInTx(tbPointList1);
+        }
+
+        if (tbPointList2 != null && tbPointList2.size() > 0) {
+            for (int i = 0; i < tbPointList2.size(); i++) {
+                tbPointList2.get(i).setFlag(1);
+            }
+            tbPointDao.updateInTx(tbPointList2);
         }
     }
 
@@ -585,6 +537,49 @@ public class UploadDataActivity extends BaseActivity {
         if (dialog != null && dialog.isShowing())
             dialog.dismiss();
 
+    }
+
+    public String getFlagByUser() {
+        String flag = "";
+        String roleid = SPUtils.getInstance().getString("roleid");
+        if (roleid.equals("6")) {
+            //外业
+            flag = "0";
+        } else if (roleid.equals("2")) {
+            //质检
+            flag = "1";
+        }
+        return flag;
+    }
+
+    public class NullStringToEmptyAdapterFactory<T> implements TypeAdapterFactory {
+        @SuppressWarnings("unchecked")
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+            Class<T> rawType = (Class<T>) type.getRawType();
+            if (rawType != String.class) {
+                return null;
+            }
+            return (TypeAdapter<T>) new StringNullAdapter();
+        }
+    }
+
+    public class StringNullAdapter extends TypeAdapter<String> {
+        @Override
+        public String read(JsonReader reader) throws IOException {
+            if (reader.peek() == JsonToken.NULL) {
+                reader.nextNull();
+                return "";
+            }
+            return reader.nextString();
+        }
+        @Override
+        public void write(JsonWriter writer, String value) throws IOException {
+            if (value == null) {
+                writer.nullValue();
+                return;
+            }
+            writer.value(value);
+        }
     }
 
 }

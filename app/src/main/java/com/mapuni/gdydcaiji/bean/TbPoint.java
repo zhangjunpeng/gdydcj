@@ -8,12 +8,13 @@ import org.greenrobot.greendao.annotation.Id;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
-public class TbPoint implements Serializable{
+public class TbPoint implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private Long id;
 
     @Id
@@ -67,10 +68,10 @@ public class TbPoint implements Serializable{
     private String note;
 
     @Expose
-    private String authcontent;//质检内容
+    private String authcontent = "";//质检内容
 
     @Expose
-    private String authflag;//0->未质检
+    private String authflag = "0";//0->未质检
 
     @Expose
     private String lyzhs;
@@ -82,10 +83,10 @@ public class TbPoint implements Serializable{
 
     @Generated(hash = 1558216315)
     public TbPoint(Long id, Long bm, String lytype, String lyxz, String name,
-            String fl, String dz, String dy, String lxdh, String dj, String lycs,
-            Double lng, Double lat, String oprator, Date opttime, String deleteflag,
-            Date createtime, String note, String authcontent, String authflag,
-            String lyzhs, String img, int flag) {
+                   String fl, String dz, String dy, String lxdh, String dj, String lycs,
+                   Double lng, Double lat, String oprator, Date opttime, String deleteflag,
+                   Date createtime, String note, String authcontent, String authflag,
+                   String lyzhs, String img, int flag) {
         this.id = id;
         this.bm = bm;
         this.lytype = lytype;
@@ -114,7 +115,7 @@ public class TbPoint implements Serializable{
     @Generated(hash = 1467713832)
     public TbPoint() {
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -248,7 +249,7 @@ public class TbPoint implements Serializable{
     }
 
     public void setCreatetime(String createtime) {
-        this.createtime = DateUtil.getDateByFormat(createtime,DateUtil.YMDHMS);
+        this.createtime = DateUtil.getDateByFormat(createtime, DateUtil.YMDHMS);
     }
 
     public String getNote() {

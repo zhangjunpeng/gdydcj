@@ -11,8 +11,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jzxiang.pickerview.TimePickerDialog;
@@ -20,6 +22,9 @@ import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.adapter.FieidPersonListAdapter;
+import com.mapuni.gdydcaiji.adapter.Level0Item;
+import com.mapuni.gdydcaiji.adapter.Level1Item;
 import com.mapuni.gdydcaiji.bean.DownloadBean;
 import com.mapuni.gdydcaiji.bean.FieidPerson;
 import com.mapuni.gdydcaiji.bean.TbLine;
@@ -81,9 +86,10 @@ public class QCListActivity extends BaseActivity {
     TextView etStopTime;
 
     private List<FieidPerson> fieidPersonList = new ArrayList<>();
+    private ArrayList res = new ArrayList<>();
     private FieidPersonListAdapter adapter;
 
-    private List<String> fieidIds = new ArrayList<>();
+    
     private TbPointDao tbPointDao;
     private TbLineDao tbLineDao;
     private TbSurfaceDao tbSurfaceDao;
@@ -115,7 +121,7 @@ public class QCListActivity extends BaseActivity {
                 .colorResId(R.color.gray_line)
                 .build());//添加分隔线
 
-        adapter = new FieidPersonListAdapter(R.layout.item_download_fieidperson, fieidPersonList);
+        adapter = new FieidPersonListAdapter(res);
         mRecycleView.setAdapter(adapter);
     }
 
@@ -135,6 +141,22 @@ public class QCListActivity extends BaseActivity {
                     public void onNext(List<FieidPerson> fieidPeople) {
 
                         fieidPersonList.addAll(fieidPeople);
+                        
+                        for (int i = 0; i < fieidPersonList.size(); i++) {
+                            if(fieidPersonList.get(i).getLevel()==1){
+                                res.add(new Level0Item(fieidPersonList.get(i).getName(),fieidPersonList.get(i).getId()));
+                            }
+                        }
+
+                        for (int i = 0; i < res.size(); i++) {
+                            Level0Item level0Item = (Level0Item) res.get(i);
+                            for (int j = 0; j < fieidPersonList.size(); j++) {
+                                if(fieidPersonList.get(j).getLevel()==2 && fieidPersonList.get(j).getPid().equals(level0Item.getId())){
+                                    level0Item.addSubItem(new Level1Item(fieidPersonList.get(j).getName()));
+                                }
+                            }
+                        }
+                        
                         adapter.notifyDataSetChanged();
                     }
 
@@ -156,6 +178,7 @@ public class QCListActivity extends BaseActivity {
     }
 
     private void downloadData() {
+        List<String> fieidIds = adapter.getFieidIds();
         if (fieidIds.size() == 0) {
             ToastUtils.showShort("请先选择要下载的人员");
             return;
@@ -262,30 +285,32 @@ public class QCListActivity extends BaseActivity {
         }
     }
 
-    private class FieidPersonListAdapter extends BaseQuickAdapter<FieidPerson, BaseViewHolder> {
-
-        public FieidPersonListAdapter(int layoutResId, @Nullable List<FieidPerson> data) {
-            super(layoutResId, data);
-        }
-
-        @Override
-        protected void convert(BaseViewHolder helper, final FieidPerson item) {
-            helper.setText(R.id.tv_fieid_name, item.getName());
-            CheckBox checkBox = helper.getView(R.id.cb_fieid);
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        if (!fieidIds.contains(item.getName()))
-                            fieidIds.add(item.getName());
-                    } else {
-                        if (fieidIds.contains(item.getName()))
-                            fieidIds.remove(item.getName());
-                    }
-                }
-            });
-        }
-    }
+//    private class FieidPersonListAdapter extends BaseQuickAdapter<FieidPerson, BaseViewHolder> {
+//
+//        public FieidPersonListAdapter(int layoutResId, @Nullable List<FieidPerson> data) {
+//            super(layoutResId, data);
+//        }
+//
+//        @Override
+//        protected void convert(BaseViewHolder helper, final FieidPerson item) {
+//            helper.setText(R.id.tv_fieid_name, item.getName());
+//            CheckBox checkBox = helper.getView(R.id.cb_fieid);
+//            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                    if (isChecked) {
+//                        if (!fieidIds.contains(item.getName()))
+//                            fieidIds.add(item.getName());
+//                    } else {
+//                        if (fieidIds.contains(item.getName()))
+//                            fieidIds.remove(item.getName());
+//                    }
+//                }
+//            });
+//        }
+//    }
+    
+    
 
     @OnClick({R.id.back, R.id.edit, R.id.et_start_time, R.id.et_stop_time})
     public void onViewClicked(View view) {

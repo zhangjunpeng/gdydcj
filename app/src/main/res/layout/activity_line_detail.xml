@@ -22,6 +22,14 @@
             app:divider="@drawable/shape_divider"
             app:showDividers="middle">
 
+            <TextView
+                android:id="@+id/tv_zjjgzs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textColor="@color/color_red"
+                android:visibility="gone" />
+            
             <LinearLayout style="@style/HorizontalLinearLayout">
 
                 <TextView
@@ -92,6 +100,22 @@
                         android:layout_centerInParent="true"
                         android:src="@drawable/selector_camera" />
                 </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_zj"
+                style="@style/HorizontalLinearLayout"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/HintText"
+                    android:text="质检结果" />
+
+                <com.mapuni.gdydcaiji.view.ClearEditText
+                    android:id="@+id/et_zjjg"
+                    style="@style/CollectEditText"
+                    android:singleLine="false" />
 
             </LinearLayout>
 

@@ -23,5 +23,6 @@
 
     <color name="themeColor">#FD9230</color>
     <color name="themeColor_press">#FBB06C</color>
+    <color name="color_red">#ff0000</color>
 
 </resources>
