@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/3/21.
@@ -147,7 +144,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         }
         if (roleid.equals("6")) {
             //外业
-            if (resultBean.getId() != null && TextUtils.isEmpty(resultBean.getAuthcontent())) {
+            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
                 tvZjjgzs.setVisibility(View.VISIBLE);
                 tvZjjgzs.setText(resultBean.getAuthcontent());
             }
@@ -184,10 +181,10 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         resultBean.setNote(getTextByView(etBz));
         if (!TextUtils.isEmpty(imgUrl)) {
             resultBean.setImg(imgUrl);
-        }else{
+        } else {
             resultBean.setImg("");
         }
-        
+
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 

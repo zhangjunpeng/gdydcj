@@ -24,5 +24,7 @@
     <color name="themeColor">#FD9230</color>
     <color name="themeColor_press">#FBB06C</color>
     <color name="color_red">#ff0000</color>
+    <color name="common_bg">#efeff4</color>
+    <color name="light_gray_text">#999999</color>
 
 </resources>

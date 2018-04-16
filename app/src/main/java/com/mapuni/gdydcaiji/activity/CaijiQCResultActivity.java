@@ -93,7 +93,7 @@ public class CaijiQCResultActivity extends BaseActivity {
         pd.show();
 
         RetrofitFactory.create(RetrofitService.class)
-                .downloadData(SPUtils.getInstance().getString("username"), "", "", 1 + "")
+                .downloadData("'" + SPUtils.getInstance().getString("username") + "'", "", "", 1 + "")
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .map(new Function<ResponseBody, InputStream>() {
@@ -169,15 +169,15 @@ public class CaijiQCResultActivity extends BaseActivity {
             int updateSize = 0;
 
             if (tb_points != null && tb_points.size() > 0) {
-                tbPointDao.updateInTx(tb_points);
+                tbPointDao.insertOrReplaceInTx(tb_points);
                 updateSize += tb_points.size();
             }
             if (tb_lines != null && tb_lines.size() > 0) {
-                tbLineDao.updateInTx(tb_lines);
+                tbLineDao.insertOrReplaceInTx(tb_lines);
                 updateSize += tb_lines.size();
             }
             if (tb_surfaces != null && tb_surfaces.size() > 0) {
-                tbSurfaceDao.updateInTx(tb_surfaces);
+                tbSurfaceDao.insertOrReplaceInTx(tb_surfaces);
                 updateSize += tb_surfaces.size();
             }
 

@@ -85,7 +85,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         }
         if (roleid.equals("6")) {
             //外业
-            if (resultBean.getId() != null && TextUtils.isEmpty(resultBean.getAuthcontent())) {
+            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
                 tvZjjgzs.setVisibility(View.VISIBLE);
                 tvZjjgzs.setText(resultBean.getAuthcontent());
             }
@@ -117,7 +117,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         } else {
             resultBean.setImg("");
         }
-        
+
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);
 

@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
-    android:paddingBottom="8dp"
+    android:paddingBottom="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="8dp">
+    android:paddingTop="16dp">
 
 
     <TextView
@@ -18,8 +18,9 @@
         android:gravity="center_vertical" />
 
     <ImageView
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:id="@+id/iv_down"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:src="@drawable/down_arrow" />

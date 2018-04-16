@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -40,6 +41,7 @@ import com.mapuni.gdydcaiji.utils.DateUtil;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.PermissionUtils;
 import com.mapuni.gdydcaiji.utils.SPUtils;
+import com.mapuni.gdydcaiji.utils.StringUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -85,11 +87,11 @@ public class QCListActivity extends BaseActivity {
     @BindView(R.id.et_stop_time)
     TextView etStopTime;
 
-    private List<FieidPerson> fieidPersonList = new ArrayList<>();
+    //    private List<FieidPerson> fieidPersonList = new ArrayList<>();
     private ArrayList res = new ArrayList<>();
     private FieidPersonListAdapter adapter;
 
-    
+
     private TbPointDao tbPointDao;
     private TbLineDao tbLineDao;
     private TbSurfaceDao tbSurfaceDao;
@@ -97,7 +99,7 @@ public class QCListActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_download;
+        return R.layout.activity_download_tree;
     }
 
     @Override
@@ -138,31 +140,47 @@ public class QCListActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(List<FieidPerson> fieidPeople) {
+                    public void onNext(final List<FieidPerson> fieidPeople) {
 
-                        fieidPersonList.addAll(fieidPeople);
-                        
-                        for (int i = 0; i < fieidPersonList.size(); i++) {
-                            if(fieidPersonList.get(i).getLevel()==1){
-                                res.add(new Level0Item(fieidPersonList.get(i).getName(),fieidPersonList.get(i).getId()));
-                            }
+//                        fieidPersonList.addAll(fieidPeople);
+                        if (fieidPeople == null || fieidPeople.size() == 0) {
+                            showEmptyPage();
+                            return;
                         }
 
-                        for (int i = 0; i < res.size(); i++) {
-                            Level0Item level0Item = (Level0Item) res.get(i);
-                            for (int j = 0; j < fieidPersonList.size(); j++) {
-                                if(fieidPersonList.get(j).getLevel()==2 && fieidPersonList.get(j).getPid().equals(level0Item.getId())){
-                                    level0Item.addSubItem(new Level1Item(fieidPersonList.get(j).getName()));
+                        ThreadUtils.executeSubThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < fieidPeople.size(); i++) {
+                                    if (fieidPeople.get(i).getLevel() == 1) {
+                                        res.add(new Level0Item(fieidPeople.get(i).getName(), fieidPeople.get(i).getId()));
+                                    }
                                 }
+
+                                for (int i = 0; i < res.size(); i++) {
+                                    Level0Item level0Item = (Level0Item) res.get(i);
+                                    for (int j = 0; j < fieidPeople.size(); j++) {
+                                        if (fieidPeople.get(j).getLevel() == 2 && fieidPeople.get(j).getPid().equals(level0Item.getId())) {
+                                            level0Item.addSubItem(new Level1Item(fieidPeople.get(j).getName()));
+                                        }
+                                    }
+                                }
+
+                                ThreadUtils.executeMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
                             }
-                        }
-                        
-                        adapter.notifyDataSetChanged();
+                        });
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
 
+                        showEmptyPage();
                     }
 
                     @Override
@@ -178,6 +196,17 @@ public class QCListActivity extends BaseActivity {
     }
 
     private void downloadData() {
+        if (StringUtils.isEmpty(etStartTime.getText().toString().trim())) {
+            ToastUtils.showShort("请选择下载开始时间");
+            showDatePickerDialog(etStartTime);
+            return;
+        }
+        if (StringUtils.isEmpty(etStopTime.getText().toString().trim())) {
+            ToastUtils.showShort("请选择下载结束时间");
+            showDatePickerDialog(etStopTime);
+            return;
+        }
+
         List<String> fieidIds = adapter.getFieidIds();
         if (fieidIds.size() == 0) {
             ToastUtils.showShort("请先选择要下载的人员");
@@ -269,13 +298,14 @@ public class QCListActivity extends BaseActivity {
             List<TbSurface> tb_surfaces = downloadBean.getTb_surface();
 
             if (tb_points != null && tb_points.size() > 0) {
-                tbPointDao.insertInTx(tb_points);
+//                tbPointDao.insertInTx(tb_points);
+                tbPointDao.insertOrReplaceInTx(tb_points);
             }
             if (tb_lines != null && tb_lines.size() > 0) {
-                tbLineDao.insertInTx(tb_lines);
+                tbLineDao.insertOrReplaceInTx(tb_lines);
             }
             if (tb_surfaces != null && tb_surfaces.size() > 0) {
-                tbSurfaceDao.insertInTx(tb_surfaces);
+                tbSurfaceDao.insertOrReplaceInTx(tb_surfaces);
             }
 
         } catch (FileNotFoundException e) {
@@ -309,8 +339,21 @@ public class QCListActivity extends BaseActivity {
 //            });
 //        }
 //    }
-    
-    
+
+
+    protected void showEmptyPage() {
+        View common_no_data = View.inflate(this, R.layout.common_no_data, null);
+        LinearLayout common_no_dataViewById = (LinearLayout) common_no_data.findViewById(R.id.common_no_data);
+        common_no_dataViewById.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                initData();
+            }
+        });
+        adapter.setEmptyView(common_no_data);
+    }
+
 
     @OnClick({R.id.back, R.id.edit, R.id.et_start_time, R.id.et_stop_time})
     public void onViewClicked(View view) {

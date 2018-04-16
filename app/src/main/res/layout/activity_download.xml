@@ -6,40 +6,6 @@
 
     <include layout="@layout/layout_title" />
 
-    <LinearLayout style="@style/HorizontalLinearLayout">
-
-        <TextView
-            style="@style/HintText"
-            android:text="开始时间" />
-
-        <TextView
-            android:id="@+id/et_start_time"
-            style="@style/CollectEditText" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray_line" />
-
-    <LinearLayout style="@style/HorizontalLinearLayout">
-
-        <TextView
-            style="@style/HintText"
-            android:text="结束时间" />
-
-        <TextView
-            android:id="@+id/et_stop_time"
-            style="@style/CollectEditText" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray_line" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mRecycleview"
         android:layout_width="match_parent"
