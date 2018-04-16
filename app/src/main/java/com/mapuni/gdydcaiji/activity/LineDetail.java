@@ -81,7 +81,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         etZd.setText(resultBean.getZdz());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
-            imgUrl = resultBean.getImg();
+            photoImg = resultBean.getImg();
         }
         if (roleid.equals("6")) {
             //外业
@@ -95,6 +95,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
             if (resultBean.getId() != null) {
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
+                cover.setVisibility(View.VISIBLE);
             }
         }
         super.showData();
@@ -112,11 +113,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         resultBean.setSfz(getTextByView(etQd));
         resultBean.setZdz(getTextByView(etZd));
         resultBean.setNote(getTextByView(etBz));
-        if (!TextUtils.isEmpty(imgUrl)) {
-            resultBean.setImg(imgUrl);
-        } else {
-            resultBean.setImg("");
-        }
+        resultBean.setImg(getPhotoImg());
 
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);

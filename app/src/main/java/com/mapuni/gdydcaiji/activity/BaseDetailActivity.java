@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.KeyEvent;
@@ -14,8 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -24,7 +28,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.adapter.PhotoAdapter;
 import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.service.CopyService;
 import com.mapuni.gdydcaiji.utils.CustomUtils;
@@ -40,6 +46,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,40 +62,53 @@ import top.zibin.luban.OnCompressListener;
 public abstract class BaseDetailActivity<T> extends BaseActivity {
     @BindView(R.id.btn_save)
     Button btnSave;
-    //    @BindView(R.id.edit)
-//    TextView edit;
-//    @BindView(R.id.cover)
-//    View cover;
-//    @BindView(R.id.ll_container)
-//    LinearLayoutCompat llContainer;
-    @BindView(R.id.iv_image)
-    ImageView ivImg;
+    @BindView(R.id.gv_photo)
+    GridView gvPhoto;
     @BindView(R.id.tv_zjjgzs)
     TextView tvZjjgzs;
     @BindView(R.id.et_zjjg)
     ClearEditText etZjjg;
     @BindView(R.id.ll_zj)
     LinearLayout llZj;
+    @BindView(R.id.ll_container)
+    LinearLayoutCompat llContainer;
+    @BindView(R.id.cover)
+    View cover;
 
     //    protected boolean isEdit;
     protected T resultBean;
     //是否是新增
     protected boolean isInsert;
-    protected String imgUrl;
+    protected List<String> imgUrls = new ArrayList<>();
+    protected String photoImg;
     protected double lat;
     protected double lng;
     protected String roleid;
+    private PhotoAdapter adapter;
 
     @Override
     protected void initView() {
 
         EventBus.getDefault().register(this);
 
+        llContainer
+                .getViewTreeObserver()
+                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        ViewGroup.LayoutParams layoutParams = cover.getLayoutParams();
+                        layoutParams.height = llContainer.getHeight();
+                        cover.setLayoutParams(layoutParams);
+                    }
+                });
+        
         /*设置dialog的宽*/
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         lp.width = (int) (ScreenUtils.getScreenW(this) * 0.75);
         getWindow().setAttributes(lp);
 
+        adapter = new PhotoAdapter(mContext, imgUrls);
+        gvPhoto.setAdapter(adapter);
     }
 
     @Override
@@ -102,7 +122,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 //            btnSave.setVisibility(View.GONE);
 //            isEdit = false;
             isInsert = false;
-            
+
             showData();
         } else {
             //新增
@@ -119,30 +139,53 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     @Override
     protected void initListener() {
 
+        gvPhoto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position < imgUrls.size()) {
+                    viewPluImg(position);
+                } else {
+                    //没照片
+                    // 添加照片
+                    DialogUtils.showChooseDialog(BaseDetailActivity.this, PathConstant.IMAGE_PATH_CACHE + "/chche.jpg");
+                }
+            }
+        });
     }
 
     /**
      * 回显数据
      */
     protected void showData() {
-        if (!TextUtils.isEmpty(imgUrl)) {
-            Glide
-                    .with(mContext)
-                    .load(Base64.decode(imgUrl, Base64.DEFAULT))
-                    .apply(new RequestOptions()
-                            .error(R.drawable.not_have_image)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .timeout(1000))
-                    .into(ivImg);
+        if (!TextUtils.isEmpty(photoImg)) {
+            List<String> photos = Arrays.asList(photoImg.split(";"));
+            ArrayList<String> templist = new ArrayList<>(photos);
+            imgUrls.addAll(templist);
         }
+        adapter.notifyDataSetChanged();
+    }
+
+    protected String getPhotoImg() {
+        String photoImgStr = "";
+        if (imgUrls != null && imgUrls.size() > 0) {
+            for (String s :
+                    imgUrls) {
+                photoImgStr += s + ";";
+            }
+        }
+        return TextUtils.isEmpty(photoImgStr) ? "" : photoImgStr.substring(0, photoImgStr.length() - 1);
     }
 
     /**
      * 查看大图
+     *
+     * @param position
      */
-    private void viewPluImg() {
+
+    private void viewPluImg(int position) {
         Intent intent = new Intent(this, ImageActivity.class);
-        intent.putExtra("path", imgUrl);
+        intent.putExtra("path", imgUrls.get(position));
+        intent.putExtra("position", position);
         startActivity(intent);
     }
 
@@ -173,14 +216,9 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
                         @Override
                         public void onSuccess(File file) {
-                            imgUrl = Base64.encodeToString(FileIOUtils.readFile2BytesByChannel(file), Base64.DEFAULT);
-                            Glide
-                                    .with(mContext)
-                                    .load(Base64.decode(imgUrl, Base64.DEFAULT))
-                                    .apply(new RequestOptions()
-                                            .error(R.drawable.not_have_image)
-                                            .diskCacheStrategy(DiskCacheStrategy.NONE).timeout(1000))
-                                    .into(ivImg);
+                            String imgUrl = Base64.encodeToString(FileIOUtils.readFile2BytesByChannel(file), Base64.DEFAULT);
+                            imgUrls.add(imgUrl);
+                            adapter.notifyDataSetChanged();
                         }
 
                         @Override
@@ -192,7 +230,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.btn_save, R.id.back, R.id.iv_image})
+    @OnClick({R.id.btn_save, R.id.back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.back:
@@ -204,25 +242,16 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
                 //保存
                 submit();
                 break;
-            case R.id.iv_image:
-                if (TextUtils.isEmpty(imgUrl)) {
-                    //没照片
-                    // 添加照片
-                    DialogUtils.showChooseDialog(BaseDetailActivity.this, PathConstant.IMAGE_PATH_CACHE + "/chche.jpg");
-                } else {
-                    viewPluImg();
-                }
-                break;
         }
     }
 
     protected abstract void submit();
-    
+
     @Subscribe
     public void deletePhoto(EventBean event) {
         if ("deleteImg".equals(event.beanStr)) {
-            imgUrl = null;
-            ivImg.setImageResource(R.drawable.selector_camera);
+            imgUrls.remove(event.position);
+            adapter.notifyDataSetChanged();
         }
     }
 

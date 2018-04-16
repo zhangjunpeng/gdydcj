@@ -15,7 +15,6 @@
         android:layout_height="match_parent">
 
         <android.support.v7.widget.LinearLayoutCompat
-            android:id="@+id/ll_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -29,79 +28,79 @@
                 android:padding="16dp"
                 android:textColor="@color/color_red"
                 android:visibility="gone" />
-            
-            <LinearLayout style="@style/HorizontalLinearLayout">
 
-                <TextView
-                    style="@style/HintText"
-                    android:text="名称" />
-
-                <AutoCompleteTextView
-                    android:id="@+id/et_name"
-                    style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="起点" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_qd"
-                    style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="终点" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_zd"
-                    style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="备注" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_bz"
-                    style="@style/CollectEditText"
-                    android:inputType="number" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="96dp"
-                android:orientation="horizontal">
+                android:layout_height="match_parent">
 
-                <TextView
-                    style="@style/HintText"
-                    android:text="图片" />
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:id="@+id/ll_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:divider="@drawable/shape_divider"
+                    app:showDividers="middle">
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="96dp"
-                    android:layout_weight="7">
+                    <LinearLayout style="@style/HorizontalLinearLayout">
 
-                    <ImageView
-                        android:id="@+id/iv_image"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/selector_camera" />
-                </RelativeLayout>
+                        <TextView
+                            style="@style/HintText"
+                            android:text="名称" />
 
-            </LinearLayout>
+                        <AutoCompleteTextView
+                            android:id="@+id/et_name"
+                            style="@style/CollectEditText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="起点" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_qd"
+                            style="@style/CollectEditText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="终点" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_zd"
+                            style="@style/CollectEditText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="备注" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_bz"
+                            style="@style/CollectEditText"
+                            android:inputType="number" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_photo" />
+                </android.support.v7.widget.LinearLayoutCompat>
+
+                <View
+                    android:id="@+id/cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/ll_zj"

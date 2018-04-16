@@ -109,7 +109,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         etLds.setText(resultBean.getLds());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
-            imgUrl = resultBean.getImg();
+            photoImg = resultBean.getImg();
         }
         if (roleid.equals("6")) {
             //外业
@@ -123,6 +123,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
             if (resultBean.getId() != null) {
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
+                cover.setVisibility(View.VISIBLE);
             }
         }
         super.showData();
@@ -145,11 +146,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         resultBean.setLxdh(getTextByView(etLxdh));
         resultBean.setLds(getTextByView(etLds));
         resultBean.setNote(getTextByView(etBz));
-        if (!TextUtils.isEmpty(imgUrl)) {
-            resultBean.setImg(imgUrl);
-        } else {
-            resultBean.setImg("");
-        }
+        resultBean.setImg(getPhotoImg());
 
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);

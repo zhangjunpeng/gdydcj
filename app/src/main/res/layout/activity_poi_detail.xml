@@ -14,13 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-
         <android.support.v7.widget.LinearLayoutCompat
-            android:id="@+id/ll_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -35,174 +29,174 @@
                 android:textColor="@color/color_red"
                 android:visibility="gone" />
 
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="楼宇类型" />
-
-                <Spinner
-                    android:id="@+id/sp_lyType"
-                    style="@style/CustomSpinner" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="楼宇性质" />
-
-                <Spinner
-                    android:id="@+id/sp_lyxz"
-                    style="@style/CustomSpinner" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="名称" />
-
-                <AutoCompleteTextView
-                    android:id="@+id/et_lyName"
-                    style="@style/CollectEditText"
-                    android:singleLine="false" />
-
-            </LinearLayout>
-
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="分类" />
-
-                <Spinner
-                    android:id="@+id/sp_lyfl"
-                    style="@style/CustomSpinner" />
-
-            </LinearLayout>
-
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="地址" />
-
-                <AutoCompleteTextView
-                    android:id="@+id/et_address"
-                    style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="单元号" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_dyh"
-                    style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="电话" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_tele"
-                    style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="等级" />
-
-                <Spinner
-                    android:id="@+id/sp_dj"
-                    style="@style/CustomSpinner" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="楼宇层数" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_lycs"
-                    style="@style/CollectEditText" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="楼宇住户数" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_lyzhs"
-                    style="@style/CollectEditText"
-                    android:layout_weight="6" />
-
-                <ImageView
-                    android:id="@+id/iv_calculator"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_calculator" />
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/HorizontalLinearLayout">
-
-                <TextView
-                    style="@style/HintText"
-                    android:text="备注" />
-
-                <com.mapuni.gdydcaiji.view.ClearEditText
-                    android:id="@+id/et_bz"
-                    style="@style/CollectEditText"
-                    android:singleLine="false" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="96dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
-                <TextView
-                    style="@style/HintText"
-                    android:text="图片" />
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:id="@+id/ll_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:divider="@drawable/shape_divider"
+                    app:showDividers="middle">
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="96dp"
-                    android:layout_weight="7">
+                    <LinearLayout style="@style/HorizontalLinearLayout">
 
-                    <ImageView
-                        android:id="@+id/iv_image"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/selector_camera" />
+                        <TextView
+                            style="@style/HintText"
+                            android:text="楼宇类型" />
 
-                </RelativeLayout>
+                        <Spinner
+                            android:id="@+id/sp_lyType"
+                            style="@style/CustomSpinner" />
 
-            </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="楼宇性质" />
+
+                        <Spinner
+                            android:id="@+id/sp_lyxz"
+                            style="@style/CustomSpinner" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="名称" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/et_lyName"
+                            style="@style/CollectEditText"
+                            android:singleLine="false" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="分类" />
+
+                        <Spinner
+                            android:id="@+id/sp_lyfl"
+                            style="@style/CustomSpinner" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="地址" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/et_address"
+                            style="@style/CollectEditText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="单元号" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_dyh"
+                            style="@style/CollectEditText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="电话" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_tele"
+                            style="@style/CollectEditText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="等级" />
+
+                        <Spinner
+                            android:id="@+id/sp_dj"
+                            style="@style/CustomSpinner" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="楼宇层数" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_lycs"
+                            style="@style/CollectEditText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="楼宇住户数" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_lyzhs"
+                            style="@style/CollectEditText"
+                            android:layout_weight="6" />
+
+                        <ImageView
+                            android:id="@+id/iv_calculator"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_calculator" />
+
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/HorizontalLinearLayout">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="备注" />
+
+                        <com.mapuni.gdydcaiji.view.ClearEditText
+                            android:id="@+id/et_bz"
+                            style="@style/CollectEditText"
+                            android:singleLine="false" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_photo" />
+                </android.support.v7.widget.LinearLayoutCompat>
+
+                <View
+                    android:id="@+id/cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/ll_zj"
@@ -232,14 +226,6 @@
 
         </android.support.v7.widget.LinearLayoutCompat>
 
-        <!--<View-->
-        <!--android:id="@+id/cover"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:clickable="true" />-->
-
-        <!--</RelativeLayout>-->
     </ScrollView>
 
 </LinearLayout>

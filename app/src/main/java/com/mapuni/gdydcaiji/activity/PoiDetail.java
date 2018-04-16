@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -28,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/3/21.
@@ -61,7 +64,6 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
     ImageView ivCalculator;
     @BindView(R.id.et_bz)
     ClearEditText etBz;
-
 
     private TbPointDao tPoiInfoDao;
 //    private List<String> mAddArray = new ArrayList<>();
@@ -140,7 +142,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         etLyzhs.setText(resultBean.getLyzhs());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
-            imgUrl = resultBean.getImg();
+            photoImg = resultBean.getImg();
         }
         if (roleid.equals("6")) {
             //外业
@@ -154,6 +156,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
             if (resultBean.getId() != null) {
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
+                cover.setVisibility(View.VISIBLE);
             }
         }
         super.showData();
@@ -179,11 +182,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> {
         resultBean.setLycs(getTextByView(etLycs));
         resultBean.setLyzhs(getTextByView(etLyzhs));
         resultBean.setNote(getTextByView(etBz));
-        if (!TextUtils.isEmpty(imgUrl)) {
-            resultBean.setImg(imgUrl);
-        } else {
-            resultBean.setImg("");
-        }
+        resultBean.setImg(getPhotoImg());
 
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
         resultBean.setFlag(0);

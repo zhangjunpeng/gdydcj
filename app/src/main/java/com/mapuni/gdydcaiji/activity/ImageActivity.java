@@ -29,6 +29,7 @@ public class ImageActivity extends AppCompatActivity {
     ImageView ivDelete;
     @BindView(R.id.back)
     ImageView back;
+    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class ImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         ButterKnife.bind(this);
         String path = getIntent().getStringExtra("path");
+        position = getIntent().getIntExtra("position", -1);
         Glide.with(this)
                 .load(Base64.decode(path, Base64.DEFAULT))
                 .apply(new RequestOptions()
@@ -52,7 +54,7 @@ public class ImageActivity extends AppCompatActivity {
                 DialogUtils.showWarningDialog(this, "确定要删除照片吗", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EventBus.getDefault().post(new EventBean("deleteImg"));
+                        EventBus.getDefault().post(new EventBean("deleteImg",position));
                         finish();
                     }
                 });
