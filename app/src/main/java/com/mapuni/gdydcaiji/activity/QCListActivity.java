@@ -1,6 +1,8 @@
 package com.mapuni.gdydcaiji.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -258,12 +260,13 @@ public class QCListActivity extends BaseActivity {
                     public void onNext(InputStream inputStream) {
                         pd.dismiss();
                         ToastUtils.showShort("下载成功");
-                        ThreadUtils.executeSubThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                insertData2DB();
-                            }
-                        });
+//                        ThreadUtils.executeSubThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                insertData2DB();
+//                            }
+//                        });
+                        new InserDataTask().execute("");
 
                     }
 
@@ -451,6 +454,25 @@ public class QCListActivity extends BaseActivity {
                 .build();
         mDialogYearMonthDay.show(getSupportFragmentManager(), getClass().getSimpleName());
 
+    }
+
+    class InserDataTask extends AsyncTask<String,Void,String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            insertData2DB();
+            return "done";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if ("done".equals(s)){
+                Intent intent=new Intent(QCListActivity.this,ZhiJianCollectionActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            super.onPostExecute(s);
+        }
     }
 
 }

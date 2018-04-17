@@ -30,15 +30,17 @@ import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleLineSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
 import com.mapuni.gdydcaiji.GdydApplication
-import com.mapuni.gdydcaiji.GraphicListAdapter
+import com.mapuni.gdydcaiji.adapter.GraphicListAdapter
 import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.activity.LineDetail
 import com.mapuni.gdydcaiji.activity.PoiDetail
 import com.mapuni.gdydcaiji.activity.SocialDetail
+import com.mapuni.gdydcaiji.adapter.OnlyShowAdapter
 import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao
+import com.mapuni.gdydcaiji.utils.SPUtils
 import com.mapuni.gdydcaiji.utils.ToastUtils
 import java.util.ArrayList
 import java.util.HashMap
@@ -92,9 +94,12 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
 
     private var tempGraphicID: Int = 0
 
+    private var MODE=0
+
 
 
     init {
+        MODE= SPUtils.getInstance().getString("roleid").toInt()
         initShowGraphicDialog()
 
         infoMap = HashMap()
@@ -409,6 +414,7 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
         mapView.addLayer(tempGraphicLayer, 2)
         mapView.addLayer(localGraphicsLayer, 3)
         mapView.addLayer(graphicName, 4)
+
     }
 
 
@@ -434,8 +440,6 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
         val center = mapView.toMapPoint(v, v1)
         when (currentCode) {
             0 -> {
-                addPointInMap(center)
-
                 val intent1 = Intent(context, PoiDetail::class.java)
                 intent1.putExtra("lat", center.y)
                 intent1.putExtra("lng", center.x)
@@ -505,11 +509,22 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
 
             }
 
-            val graphicListAdtaper = GraphicListAdapter(context, infoList as ArrayList, showGrahipcListDialog)
-            recyclerView.adapter = graphicListAdtaper
+
+            when(MODE){
+                6->{
+                    val graphicListAdtaper = GraphicListAdapter(context, infoList as ArrayList, showGrahipcListDialog)
+                    recyclerView.adapter = graphicListAdtaper
+
+                }
+                2->{
+                    val onlyShowAdapter =OnlyShowAdapter(context,infoList as ArrayList,showGrahipcListDialog)
+                    recyclerView.adapter=onlyShowAdapter
+                }
+            }
             showGrahipcListDialog.show()
             val removeGraphic = RemoveGraphic()
             removeGraphic.execute("")
+
         }
 
     }

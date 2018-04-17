@@ -11,8 +11,8 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.*
 import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -30,6 +30,7 @@ import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.presenter.WaiYePresenter
+import com.mapuni.gdydcaiji.presenter.ZhiJianPresenter
 import com.mapuni.gdydcaiji.service.CopyService
 import com.mapuni.gdydcaiji.utils.*
 import com.xw.repo.BubbleSeekBar
@@ -38,9 +39,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
 
-
-class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, OnZoomListener, OnPanListener, BubbleSeekBar.OnProgressChangedListener {
-
+class ZhiJianCollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, OnZoomListener, OnPanListener, BubbleSeekBar.OnProgressChangedListener  {
 
     private var mIsLoading: Boolean = false
 
@@ -96,6 +95,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     lateinit var instance: Activity
 
     private lateinit var waiYeInterface: WaiYePresenter
+    private lateinit var zhiJianPresenter: ZhiJianPresenter
 
     private lateinit var bzRecyAdapter_point: BZRecyAdapter
     private lateinit var bzRecyAdapter_line: BZRecyAdapter
@@ -112,15 +112,16 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         instance = this
         PermissionUtils.requestAllPermission(this)
 
-        MODE=SPUtils.getInstance().getString("roleid").toInt()
+        MODE= SPUtils.getInstance().getString("roleid").toInt()
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
         EventBus.getDefault().register(this)
 
         val intent = Intent(this, CopyService::class.java)
         startService(intent)
-        //获取系统服务（SENSOR_SERVICE)返回一个SensorManager 对象 
+        //获取系统服务（SENSOR_SERVICE)返回一个SensorManager 对象
         manager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        waiYeInterface=WaiYePresenter(this,mapview_collect)
+        waiYeInterface= WaiYePresenter(this,mapview_collect)
+        zhiJianPresenter= ZhiJianPresenter(this,mapview_collect)
 
         initMapView()
         initBZDialog()
@@ -159,7 +160,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mapFilePath = SPUtils.getInstance().getString("checkedMapPath", "")
         if (!TextUtils.isEmpty(mapFileName) && !TextUtils.isEmpty(mapFilePath)
                 && File(mapFilePath).exists()) {
+
             waiYeInterface.initMapview(mapFilePath)
+
         } else {
             // 获取所有地图文件
             getAllFiles()
@@ -171,6 +174,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mapview_collect.isShowMagnifierOnLongPress = true
         mapview_collect.setAllowMagnifierToPanMap(true)
 
+        mapview_collect.maxScale=10.0
 
     }
 
@@ -222,6 +226,62 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             upDateView()
         }
     }
+
+
+//    private fun addPointInmap(point: Point = mapview_collect.center) {
+//        when (currentCode) {
+//            0 -> {
+//                val intent1 = Intent(this, PoiDetail::class.java)
+//                intent1.putExtra("lat", point.y)
+//                intent1.putExtra("lng", point.x)
+//                startActivity(intent1)
+//            }
+//            1 -> {
+//                addPolyLineInMap(point)
+//            }
+//            2 -> {
+//                addPolygonInMap(point)
+//            }
+//        }
+//
+//    }
+
+//    private fun addPolyLineInMap(point: Point = mapview_collect.center) {
+//        pointPloyline.add(point)
+//        drawline(pointPloyline)
+//    }
+
+//    private fun drawline(pointPloyline: ArrayList<Point>) {
+//        if (pointPloyline.size == 1) run { grahicGonUid = addPointInMap(pointPloyline[0]) } else if (pointPloyline.size > 1) {
+//            val polyline = Polyline()
+//            for (i in pointPloyline.indices) {
+//                if (i == 0) {
+//                    polyline.startPath(pointPloyline[0])
+//                } else {
+//                    polyline.lineTo(pointPloyline[i])
+//                }
+//            }
+//            graphicsLayer.removeGraphic(grahicGonUid)
+//            val simpleLineSymbol = SimpleLineSymbol(Color.RED, 2f)
+//
+//            grahicGonUid = graphicsLayer.addGraphic(Graphic(polyline, simpleLineSymbol))
+//        }
+//    }
+
+
+//    private fun ploygonBack() {
+//        graphicsLayer.removeGraphic(grahicGonUid)
+//        if (pointPloygon.size > 0) {
+//            pointPloygon.remove(pointPloygon.last())
+//            drawGon(pointPloygon)
+//        }
+//    }
+
+//    private fun addPolygonInMap(point: Point = mapview_collect.center) {
+//        //开始小区采集
+//        pointPloygon.add(point)
+//        drawGon(pointPloygon)
+//    }
 
 
     private fun beginpolygonCollect() {
@@ -348,6 +408,33 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         return alertDialog
     }
 
+
+//    private var grahicGonUid: Int = 0
+//    private fun drawGon(pointList: ArrayList<Point>) {
+//        if (pointList.size == 0) {
+//            return
+//        }
+//        grahicGonUid = if (pointList.size == 1) {
+//            addPointInMap(pointList[0])
+//        } else {
+//            val fillSymbol = SimpleFillSymbol(Color.argb(100, 255, 0, 0))
+//            val polygon = Polygon()
+//            polygon.startPath(pointList[0])
+//            for (i in 1 until pointList.size) {
+//                polygon.lineTo(pointList[i])
+//            }
+//            graphicsLayer.removeGraphic(grahicGonUid)
+//
+//            graphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
+//        }
+//    }
+//
+//    private fun addPointInMap(point: Point): Int {
+//        val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
+//        val graphic = Graphic(point, simpleMarkerSymbol)
+//        return graphicsLayer.addGraphic(graphic)
+//    }
+
     override fun onSingleTap(v: Float, v1: Float) {
         singleTapOnCollection(v, v1)
     }
@@ -358,6 +445,32 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
 
+
+
+//    private fun addNameInMap(point: Point, name: String) {
+//
+//        val tv = TextView(this)
+//        if (name.isEmpty()) {
+//            return
+//        }
+//        tv.text = name
+//
+//        tv.textSize = 8f
+//        tv.setTextColor(Color.WHITE)
+//        tv.isDrawingCacheEnabled = true
+//        tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+//        tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
+//        val bitmap = Bitmap.createBitmap(tv.drawingCache)
+//        //千万别忘最后一步
+//        tv.destroyDrawingCache()
+//        val picturSymbol = PictureMarkerSymbol(BitmapDrawable(resources, bitmap))
+//        picturSymbol.offsetY = 10f
+//        val nameGraphic = Graphic(point, picturSymbol)
+//        graphicName.addGraphic(nameGraphic)
+//    }
+
+
+
     override fun preAction(p0: Float, p1: Float, p2: Double) {
 
     }
@@ -365,6 +478,89 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     override fun postAction(p0: Float, p1: Float, p2: Double) {
         waiYeInterface.updateGraphic()
     }
+
+
+
+
+//    private fun updateGraphicInLocal(currentPloygon: Polygon) {
+//        for (info: TbPoint in pointList) {
+//            val point = Point(info.lng, info.lat)
+//            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
+//            val graphic = Graphic(point, simpleMarkerSymbol)
+//            val uid = localGraphicsLayer.addGraphic(graphic)
+//            infoMap[uid] = info
+//            val name = getPointName(info)
+//            addNameInMap(point, name)
+//        }
+//
+//        for (info: TbLine in lineInfoList) {
+//            val bj = info.polyarrays
+//            val polyline = Polyline()
+//            val points_array = bj.split(";")
+//            for (i in 0 until points_array.size) {
+//                val item = points_array[i]
+//                if (item.isEmpty()) {
+//                    continue
+//                }
+//                val points = item.split(",")
+//                val point = Point(points[0].toDouble(), points[1].toDouble())
+//                if (i == 0) {
+//                    polyline.startPath(point)
+//                } else {
+//                    polyline.lineTo(point)
+//                }
+//
+//            }
+//            val simpleLineSymbol = SimpleLineSymbol(Color.RED, 2f, SimpleLineSymbol.STYLE.SOLID)
+//            val graphic = Graphic(polyline, simpleLineSymbol)
+//            val uid = localGraphicsLayer.addGraphic(graphic)
+//            infoMap[uid] = info
+//            val name = getLineName(info)
+//
+//            val tEnvelope = Envelope()
+//            polyline.queryEnvelope(tEnvelope)
+//            val tPoint = tEnvelope.center
+//
+//            addNameInMap(tPoint, name)
+//
+//        }
+//
+//        for (info: TbSurface in surfaceList) {
+//            val bj = info.polyarrays
+//            val tempPointList = ArrayList<Point>()
+//            val points_array = bj.split(";")
+//            for (i in 0 until points_array.size) {
+//                val item = points_array[i]
+//                if (item.isEmpty()) {
+//                    continue
+//                }
+//                val points = item.split(",")
+//                val point = Point(points[0].toDouble(), points[1].toDouble())
+//                tempPointList.add(point)
+//            }
+//
+//            val fillSymbol = SimpleFillSymbol(Color.argb(100, 255, 0, 0))
+//            val polygon = Polygon()
+//            polygon.startPath(tempPointList[0])
+//            for (i in 1 until tempPointList.size) {
+//                polygon.lineTo(tempPointList[i])
+//            }
+//
+//            val uid = localGraphicsLayer.addGraphic(Graphic(polygon, fillSymbol))
+//            infoMap[uid] = info
+//            val tEnvelope = Envelope()
+//            polygon.queryEnvelope(tEnvelope)
+//            val tPoint = tEnvelope.center
+//            val name = getSurfaceName(info)
+//            addNameInMap(tPoint, name)
+//
+//
+//        }
+//
+//        mapview_collect.invalidate()
+//        mIsLoading = false
+//    }
+
 
     private fun getAllFiles() {
         ThreadUtils.executeSubThread {
@@ -464,7 +660,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 //外业
                 startActivity(Intent(this, CaijiQCResultActivity::class.java))
             }
-            
+
             ppw.dismiss()
         }
         tv_bz.setOnClickListener {
@@ -558,6 +754,18 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
 
+//    private fun initShowGraphicDialog() {
+//        showGrahipcListDialog = Dialog(instance)
+//        showGrahipcListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        val contentView = LayoutInflater.from(instance).inflate(R.layout.dialog_showgraphicinfo, null, false)
+//        showGrahipcListDialog.setContentView(contentView)
+//        showGrahipcListDialog.setCanceledOnTouchOutside(false)
+//        recyclerView = contentView.findViewById(R.id.recycler_dialog)
+//
+//        recyclerView.layoutManager = LinearLayoutManager(this)
+//
+//    }
+
     override fun onResume() {
         super.onResume()
         /**
@@ -602,7 +810,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
 
     override fun onPause() {
-        //应用不在前台时候销毁掉监听器 
+        //应用不在前台时候销毁掉监听器
         manager!!.unregisterListener(listener)
         super.onPause()
     }
@@ -674,10 +882,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             waiYeInterface.baocunPopwindow()
         }
         quxiao.setOnClickListener {
-           waiYeInterface.quxiaoPopWindow()
+            waiYeInterface.quxiaoPopWindow()
         }
         houtui.setOnClickListener {
-           waiYeInterface.huituiPopWindow()
+            waiYeInterface.huituiPopWindow()
         }
 
     }

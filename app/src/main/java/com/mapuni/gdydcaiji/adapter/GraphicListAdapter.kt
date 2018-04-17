@@ -1,9 +1,8 @@
-package com.mapuni.gdydcaiji
+package com.mapuni.gdydcaiji.adapter
 
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.support.v7.view.menu.MenuView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.activity.*
 import com.mapuni.gdydcaiji.bean.*
 import org.greenrobot.eventbus.EventBus
@@ -63,7 +63,7 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (position<infoList.size) {
-            holder as GraphicListAdapter.Viewholder
+            holder as Viewholder
             val obj = infoList[position]["obj"]
             when (obj) {
                 is TbPoint -> {

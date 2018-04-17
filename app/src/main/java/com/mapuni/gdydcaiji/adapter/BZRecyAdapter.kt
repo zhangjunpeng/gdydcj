@@ -1,4 +1,4 @@
-package com.mapuni.gdydcaiji
+package com.mapuni.gdydcaiji.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.bean.EventBZ
 import org.greenrobot.eventbus.EventBus
 
@@ -71,7 +72,7 @@ class BZRecyAdapter(context:Context,type:Int,checkedArray:ArrayList<Boolean>): R
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (position<property.size){
-            holder as BZRecyAdapter.Viewholder
+            holder as Viewholder
             holder.name.text=property[position]
             holder.isdetet.isChecked=checkedArray[position]
             holder.isdetet.setOnCheckedChangeListener { _, isChecked ->
