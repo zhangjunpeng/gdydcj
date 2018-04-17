@@ -3,21 +3,14 @@ package com.mapuni.gdydcaiji.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
-import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jzxiang.pickerview.TimePickerDialog;
@@ -41,8 +34,6 @@ import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.DateUtil;
 import com.mapuni.gdydcaiji.utils.PathConstant;
-import com.mapuni.gdydcaiji.utils.PermissionUtils;
-import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.StringUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
@@ -456,7 +447,7 @@ public class QCListActivity extends BaseActivity {
 
     }
 
-    class InserDataTask extends AsyncTask<String,Void,String>{
+    class InserDataTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... strings) {
@@ -466,8 +457,8 @@ public class QCListActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            if ("done".equals(s)){
-                Intent intent=new Intent(QCListActivity.this,ZhiJianCollectionActivity.class);
+            if ("done".equals(s)) {
+                Intent intent = new Intent(QCListActivity.this, CollectionActivity.class);
                 startActivity(intent);
                 finish();
             }

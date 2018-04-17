@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,7 +25,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.annotations.NonNull;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -118,7 +116,14 @@ public class LoginActivity extends AppCompatActivity {
                 SPUtils.getInstance().put("isRemember", isChecked);
             }
 
+            String roleid = SPUtils.getInstance().getString("roleid");
+//            if("2".equals(roleid)){
+//                //质检
+//                startActivity(new Intent(LoginActivity.this, QCListActivity.class));
+//            }else if("6".equals(roleid)){
+            //外业
             startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
+//            }
             finish();
             return;
         }
@@ -166,7 +171,13 @@ public class LoginActivity extends AppCompatActivity {
                         SPUtils.getInstance().put("password", password);
                         SPUtils.getInstance().put("roleid", loginBean.getUser().getRoleid());
                         SPUtils.getInstance().put("userId", loginBean.getUser().getId());
+//                        if("2".equals(loginBean.getUser().getRoleid())){
+//                            //质检
+//                            startActivity(new Intent(LoginActivity.this, QCListActivity.class));
+//                        }else if("6".equals(loginBean.getUser().getRoleid())){
+                        //外业
                         startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
+//                        }
                         finish();
                     } else {
                         ToastUtils.showShort(loginBean.getMsg());
@@ -193,7 +204,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-
 
     }
 

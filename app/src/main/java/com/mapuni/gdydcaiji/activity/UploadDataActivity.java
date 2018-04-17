@@ -298,6 +298,9 @@ public class UploadDataActivity extends BaseActivity {
                 UploadBean body = response.body();
                 if (body == null) {
                     showResponseDialog("上传失败");
+                    updataNum = 0;
+                    upStartTime = null;
+                    upStopTime = null;
                     return;
                 }
                 processData(body);
@@ -316,6 +319,9 @@ public class UploadDataActivity extends BaseActivity {
                 } else {
                     ToastUtils.showShort("上传取消");
                 }
+                updataNum = 0;
+                upStartTime = null;
+                upStopTime = null;
 
             }
         });
@@ -347,6 +353,9 @@ public class UploadDataActivity extends BaseActivity {
         } else {
 
             showResponseDialog("上传失败");
+            updataNum = 0;
+            upStartTime = null;
+            upStopTime = null;
         }
     }
 
@@ -572,6 +581,7 @@ public class UploadDataActivity extends BaseActivity {
             }
             return reader.nextString();
         }
+
         @Override
         public void write(JsonWriter writer, String value) throws IOException {
             if (value == null) {

@@ -11,7 +11,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.*
+import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -25,18 +25,21 @@ import com.esri.android.map.event.OnPanListener
 import com.esri.android.map.event.OnSingleTapListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
-import com.mapuni.gdydcaiji.adapter.BZRecyAdapter
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
+import com.mapuni.gdydcaiji.adapter.BZRecyAdapter
+import com.mapuni.gdydcaiji.adapter.PpwAdapter
 import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.presenter.WaiYePresenter
 import com.mapuni.gdydcaiji.service.CopyService
 import com.mapuni.gdydcaiji.utils.*
 import com.xw.repo.BubbleSeekBar
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration
 import kotlinx.android.synthetic.main.activity_collection.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
+import java.util.*
 
 
 class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, OnZoomListener, OnPanListener, BubbleSeekBar.OnProgressChangedListener {
@@ -85,7 +88,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private var tolerance: Int = 20
     private var mExitTime: Long = 0
     private var mapFileName: String? = null
-    private var mapFilePath: String=""
+    private var mapFilePath: String = ""
 
     private lateinit var bzDialog: Dialog
     private lateinit var recyclerView_bz: RecyclerView
@@ -104,15 +107,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     //质检模式为1
     //外业采集模式为0
-    private var MODE:Int=0
+    private var MODE: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
-        instance = this
         PermissionUtils.requestAllPermission(this)
+        instance = this
 
-        MODE=SPUtils.getInstance().getString("roleid").toInt()
+        MODE = SPUtils.getInstance().getString("roleid").toInt()
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
         EventBus.getDefault().register(this)
 
@@ -120,7 +123,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         startService(intent)
         //获取系统服务（SENSOR_SERVICE)返回一个SensorManager 对象 
         manager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        waiYeInterface=WaiYePresenter(this,mapview_collect)
+        waiYeInterface = WaiYePresenter(this, mapview_collect)
 
         initMapView()
         initBZDialog()
@@ -189,7 +192,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     waiYeInterface.targetCode = 2
                     beginpolygonCollect()
                 }
-                R.id.tianjia_collect ->{
+                R.id.tianjia_collect -> {
                     waiYeInterface.addPointInMap(mapview_collect.center)
                 }
                 R.id.selectpoint_collect -> {
@@ -232,7 +235,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             upDateView()
         }
     }
-
 
 
     private fun beginPOICollect() {
@@ -354,7 +356,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
 
     private fun singleTapOnCollection(v: Float, v1: Float) {
-        waiYeInterface.singleTapOnCollection(v,v1,tolerance)
+        waiYeInterface.singleTapOnCollection(v, v1, tolerance)
     }
 
 
@@ -423,59 +425,96 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun showMenuPop(view: View?) {
-        val inflate = LayoutInflater.from(this).inflate(R.layout.ppw_menu, null, false)
-        val tvUploadData = inflate.findViewById<TextView>(R.id.tv_upload)
-        val tvChooseMap = inflate.findViewById<TextView>(R.id.tv_choosemap)
-        val tvCopyDb = inflate.findViewById<TextView>(R.id.tv_copy_bd)
-        val tv_zj = inflate.findViewById<TextView>(R.id.tv_zj)
-        val tv_bz: TextView = inflate.findViewById(R.id.tv_bz)
+        val inflate = LayoutInflater.from(this).inflate(R.layout.ppw_menu2, null, false)
+        val ryPpw = inflate.findViewById<RecyclerView>(R.id.ry_ppw)
 
-        val ppw = PopupWindow(inflate, ViewGroup.LayoutParams.WRAP_CONTENT, ScreenUtils.dp2px(this, 180F), true)
+        ryPpw.setLayoutManager(LinearLayoutManager(this))
+        ryPpw.setHasFixedSize(true)
+        ryPpw.setNestedScrollingEnabled(false)
+        ryPpw.addItemDecoration(HorizontalDividerItemDecoration.Builder(this)
+                .size(1)
+                .colorResId(R.color.gray_line)
+                .build())//添加分隔线
+
+        val data = ArrayList<String>()
+        data.add("上传数据")
+        data.add("选择地图")
+        data.add("备份")
+        data.add("标注设置")
+//        data.add("质检")
+
+        var adapter = PpwAdapter(R.layout.item_ppw, data)
+        ryPpw.setAdapter(adapter)
+
+        var roleid = SPUtils.getInstance().getString("roleid")
+        if ("2".equals(roleid)) {
+            //质检
+            data.add("下载数据")
+            data.add("删除数据")
+        } else if ("6".equals(roleid)) {
+            //外业
+            data.add("纠错")
+        }
+
+        val ppw = PopupWindow(inflate, ViewGroup.LayoutParams.WRAP_CONTENT, ScreenUtils.dp2px(this, (37 * data.size - 1).toFloat()), true)
         ppw.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
         ppw.isOutsideTouchable = true
         ppw.isTouchable = true
 
-        tvUploadData.setOnClickListener {
-            startActivity(Intent(this, UploadDataActivity::class.java))
+        adapter.setOnItemClickListener { adapter, view, position ->
             ppw.dismiss()
-        }
-
-        tvChooseMap.setOnClickListener {
-            startActivity(Intent(this, ChooseMapActivity::class.java))
-            ppw.dismiss()
-        }
-
-        tvCopyDb.setOnClickListener {
-            ppw.dismiss()
-            ThreadUtils.executeSubThread {
-                FileUtils.copyFile(GdydApplication.getInstances().db.path, PathConstant.DATABASE_PATH + "/sport.db") { true }
-                ThreadUtils.executeMainThread {
-                    ToastUtils.showShort("备份成功")
+            when (position) {
+                0 -> {
+                    startActivity(Intent(this, UploadDataActivity::class.java))
                 }
+                1 -> {
+                    startActivity(Intent(this, ChooseMapActivity::class.java))
+                }
+                2 -> {
+                    ThreadUtils.executeSubThread {
+                        FileUtils.copyFile(GdydApplication.getInstances().db.path, PathConstant.DATABASE_PATH + "/sport.db") { true }
+                        ThreadUtils.executeMainThread {
+                            ToastUtils.showShort("备份成功")
+                        }
+                    }
+                }
+                3 -> {
+                    bzDialog.show()
+                    bzRecyAdapter_point = BZRecyAdapter(this, 0, waiYeInterface.point_bz_array)
+                    bzRecyAdapter_line = BZRecyAdapter(this, 1, waiYeInterface.line_bz_array)
+                    bzRecyAdapter_surface = BZRecyAdapter(this, 2, waiYeInterface.surface_bz_array)
+
+                    recyclerView_bz.adapter = bzRecyAdapter_point
+                }
+                4 -> {
+                    if ("2".equals(roleid)) {
+                        //质检
+                        startActivity(Intent(this, QCListActivity::class.java))
+                    } else if ("6".equals(roleid)) {
+                        //外业
+                        startActivity(Intent(this, CaijiQCResultActivity::class.java))
+                    }
+                }
+                5 -> {
+                    //质检删除数据
+                    ThreadUtils.executeSubThread {
+
+                        if (DbUtils().noUpdateNum == 0) {
+                            DbUtils().deleteData()
+                            ThreadUtils.executeMainThread {
+                                ToastUtils.showShort("删除成功")
+                                waiYeInterface.updateGraphic()
+                            }
+                        } else {
+                            ThreadUtils.executeMainThread {
+                                showWarnDialog()
+                            }
+                        }
+
+                    }
+                }
+
             }
-        }
-
-        tv_zj.setOnClickListener {
-            var roleid = SPUtils.getInstance().getString("roleid")
-            if ("2".equals(roleid)) {
-                //质检
-                startActivity(Intent(this, QCListActivity::class.java))
-            } else if ("6".equals(roleid)) {
-                //外业
-                startActivity(Intent(this, CaijiQCResultActivity::class.java))
-            }
-            
-            ppw.dismiss()
-        }
-        tv_bz.setOnClickListener {
-            ppw.dismiss()
-
-            bzDialog.show()
-            bzRecyAdapter_point = BZRecyAdapter(this, 0, waiYeInterface.point_bz_array)
-            bzRecyAdapter_line = BZRecyAdapter(this, 1, waiYeInterface.line_bz_array)
-            bzRecyAdapter_surface = BZRecyAdapter(this, 2, waiYeInterface.surface_bz_array)
-
-            recyclerView_bz.adapter = bzRecyAdapter_point
         }
 
         //获取点击View的坐标
@@ -485,7 +524,23 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         ppw.showAtLocation(view, Gravity.NO_GRAVITY, location[0], y)
     }
 
-
+    private fun showWarnDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("提示")
+                .setCancelable(false)
+                .setMessage("当前有未上传的质检数据，是否仍然删除")
+                .setPositiveButton("确定") { dialog, which ->
+                    ThreadUtils.executeSubThread {
+                        DbUtils().deleteData()
+                        ThreadUtils.executeMainThread {
+                            ToastUtils.showShort("删除成功")
+                            waiYeInterface.updateGraphic()
+                        }
+                    }
+                }
+                .setNegativeButton("取消", null)
+        builder.show()
+    }
 
 
     private fun initBZDialog() {
@@ -573,15 +628,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
 
-
-
     @Subscribe
     fun onDeleteInfo(eventDeleteInfo: EventDeleteInfo) {
         waiYeInterface.deleteInfo(eventDeleteInfo)
 //        showGrahipcListDialog.dismiss()
     }
-
-
 
 
     @Subscribe
@@ -674,10 +725,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             waiYeInterface.baocunPopwindow()
         }
         quxiao.setOnClickListener {
-           waiYeInterface.quxiaoPopWindow()
+            waiYeInterface.quxiaoPopWindow()
         }
         houtui.setOnClickListener {
-           waiYeInterface.huituiPopWindow()
+            waiYeInterface.huituiPopWindow()
         }
 
     }
