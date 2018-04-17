@@ -57,7 +57,7 @@
 
         <service android:name=".service.CopyService"/>
 
-        <activity android:name=".activity.ZhiJianCollectionActivity">
+        <activity android:name=".activity.CheckActivity">
         </activity>
     </application>
 

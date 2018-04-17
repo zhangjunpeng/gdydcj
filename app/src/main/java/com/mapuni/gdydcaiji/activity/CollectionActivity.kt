@@ -165,7 +165,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             waiYeInterface.initMapview(mapFilePath)
         } else {
             // 获取所有地图文件
-            getAllFiles()
+            waiYeInterface.getAllFiles()
         }
 
         mapview_collect.onSingleTapListener = this
@@ -174,6 +174,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mapview_collect.isShowMagnifierOnLongPress = true
         mapview_collect.setAllowMagnifierToPanMap(true)
 
+        if (MODE==2){
+            mapview_collect.maxScale=5.0
+        }
 
     }
 
@@ -368,60 +371,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         waiYeInterface.updateGraphic()
     }
 
-    private fun getAllFiles() {
-        ThreadUtils.executeSubThread {
-            val path = PathConstant.UNDO_ZIP_PATH
-            val fileDir = File(path)
-            if (!fileDir.exists()) {
-                fileDir.mkdirs()
-            }
-            // 获得文件夹下所有文件夹和文件的名字
-//            var allDirNames = fileDir.list()
-            // 获得文件夹下所有文件夹和文件
-            var allDirFiles = fileDir.listFiles()
-            // 等待切换fragment动画完成
-            //SystemClock.sleep(1000);
-            ThreadUtils.executeMainThread {
-                if (allDirFiles != null && allDirFiles.size != 0) {
-                    mapview_collect.setVisibility(View.VISIBLE)
-                    // 默认显示数组中的第一个文件      按字母顺序排列
-                    mapFilePath = allDirFiles[0].getAbsolutePath()
-                    // 将选中的地图名字存入sp中
-                    SPUtils.getInstance().put("checkedMap", allDirFiles[0].getName())
-                    SPUtils.getInstance().put("checkedMapPath", allDirFiles[0].getAbsolutePath())
-//                    val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
-//                    mapview_collect.addLayer(layer)
-//                    graphicsLayer = GraphicsLayer()
-//                    mapview_collect.addLayer(graphicsLayer, 1)
-//                    mapview_collect.addLayer(tempGraphicLayer, 2)
-//                    mapview_collect.addLayer(localGraphicsLayer, 3)
-//                    mapview_collect.addLayer(graphicName, 4)
-                    waiYeInterface.initMapview(mapFilePath)
-                } else {
-                    mapview_collect.visibility = View.GONE
-                    showNotHaveMapDialog()
-                }
-            }
-        }
 
-    }
 
-    /**
-     * 弹出没有地图Dialog
-     */
-    private fun showNotHaveMapDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("无地图文件，请先下载地图")
-        builder.setPositiveButton("确定") { dialog, which -> startActivity(Intent(this, DownloadMapActivity::class.java)) }
-        builder.setNegativeButton("取消", null)
-        builder.show()
-    }
+
 
     @Subscribe
     fun onEventMainThread(eventBean: EventBean) {
         if ("download".equals(eventBean.beanStr))
         // 下载成功
-            getAllFiles()
+            waiYeInterface.getAllFiles()
     }
 
     private fun showMenuPop(view: View?) {

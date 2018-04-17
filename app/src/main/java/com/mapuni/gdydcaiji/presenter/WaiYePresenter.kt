@@ -1,6 +1,7 @@
 package com.mapuni.gdydcaiji.presenter
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -32,6 +33,7 @@ import com.esri.core.symbol.SimpleMarkerSymbol
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.adapter.GraphicListAdapter
 import com.mapuni.gdydcaiji.R
+import com.mapuni.gdydcaiji.activity.DownloadMapActivity
 import com.mapuni.gdydcaiji.activity.LineDetail
 import com.mapuni.gdydcaiji.activity.PoiDetail
 import com.mapuni.gdydcaiji.activity.SocialDetail
@@ -40,8 +42,12 @@ import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao
+import com.mapuni.gdydcaiji.utils.PathConstant
 import com.mapuni.gdydcaiji.utils.SPUtils
+import com.mapuni.gdydcaiji.utils.ThreadUtils
 import com.mapuni.gdydcaiji.utils.ToastUtils
+import kotlinx.android.synthetic.main.activity_collection.*
+import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -225,7 +231,7 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
 
     }
 
-    private fun addNameInMap(point: Point, name: String) {
+    fun addNameInMap(point: Point, name: String) {
 
         val tv = TextView(context)
         if (name.isEmpty()) {
@@ -250,8 +256,12 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
     private fun updateGraphicInLocal(currentPloygon: Polygon) {
         for (info: TbPoint in pointList as List) {
             val point = Point(info.lng, info.lat)
-            val simpleMarkerSymbol = SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
-            val graphic = Graphic(point, simpleMarkerSymbol)
+            var simpleMarkerSymbol:SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()){
+                SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
+            }else{
+                SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
+            }
+            var graphic = Graphic(point, simpleMarkerSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
             infoMap[uid] = info
             val name = getPointName(info)
@@ -510,17 +520,17 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
             }
 
 
-            when(MODE){
-                6->{
+//            when(MODE){
+//                6->{
                     val graphicListAdtaper = GraphicListAdapter(context, infoList as ArrayList, showGrahipcListDialog)
                     recyclerView.adapter = graphicListAdtaper
 
-                }
-                2->{
-                    val onlyShowAdapter =OnlyShowAdapter(context,infoList as ArrayList,showGrahipcListDialog)
-                    recyclerView.adapter=onlyShowAdapter
-                }
-            }
+//                }
+//                2->{
+//                    val onlyShowAdapter =OnlyShowAdapter(context,infoList as ArrayList,showGrahipcListDialog)
+//                    recyclerView.adapter=onlyShowAdapter
+//                }
+//            }
             showGrahipcListDialog.show()
             val removeGraphic = RemoveGraphic()
             removeGraphic.execute("")
@@ -614,5 +624,53 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
         lp_bz.width = (dm.widthPixels * 0.75).toInt()// 宽度设置为屏幕的0.65
         dialogWindow.attributes = lp
         dialogWindow_bz.attributes = lp_bz
+    }
+
+    fun getAllFiles() {
+        ThreadUtils.executeSubThread {
+            val path = PathConstant.UNDO_ZIP_PATH
+            val fileDir = File(path)
+            if (!fileDir.exists()) {
+                fileDir.mkdirs()
+            }
+            // 获得文件夹下所有文件夹和文件的名字
+//            var allDirNames = fileDir.list()
+            // 获得文件夹下所有文件夹和文件
+            var allDirFiles = fileDir.listFiles()
+            // 等待切换fragment动画完成
+            //SystemClock.sleep(1000);
+            ThreadUtils.executeMainThread {
+                if (allDirFiles != null && allDirFiles.size != 0) {
+                    mapView.setVisibility(View.VISIBLE)
+                    // 默认显示数组中的第一个文件      按字母顺序排列
+                    val mapFilePath = allDirFiles[0].getAbsolutePath()
+                    // 将选中的地图名字存入sp中
+                    SPUtils.getInstance().put("checkedMap", allDirFiles[0].getName())
+                    SPUtils.getInstance().put("checkedMapPath", allDirFiles[0].getAbsolutePath())
+//                    val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
+//                    mapview_collect.addLayer(layer)
+//                    graphicsLayer = GraphicsLayer()
+//                    mapview_collect.addLayer(graphicsLayer, 1)
+//                    mapview_collect.addLayer(tempGraphicLayer, 2)
+//                    mapview_collect.addLayer(localGraphicsLayer, 3)
+//                    mapview_collect.addLayer(graphicName, 4)
+                    initMapview(mapFilePath)
+                } else {
+                    mapView.visibility = View.GONE
+                    showNotHaveMapDialog()
+                }
+            }
+        }
+    }
+
+    /**
+     * 弹出没有地图Dialog
+     */
+    private fun showNotHaveMapDialog() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("无地图文件，请先下载地图")
+        builder.setPositiveButton("确定") { dialog, which -> context.startActivity(Intent(context, DownloadMapActivity::class.java)) }
+        builder.setNegativeButton("取消", null)
+        builder.show()
     }
 }
