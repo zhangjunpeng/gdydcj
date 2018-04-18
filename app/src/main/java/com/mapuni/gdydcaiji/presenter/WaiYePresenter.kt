@@ -215,11 +215,11 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
             pointList = tbPointDao.queryBuilder().where(
                     TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
                     TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
-                    TbPointDao.Properties.Authcontent.isNull).list()
+                    TbPointDao.Properties.Id.isNull).list()
             lineInfoList = tbLineDao.queryBuilder().where(
-                    TbLineDao.Properties.Authcontent.isNull).list()
+                    TbLineDao.Properties.Id.isNull).list()
             surfaceList = tbSurfaceDao.queryBuilder().where(
-                    TbSurfaceDao.Properties.Authcontent.isNull).list()
+                    TbSurfaceDao.Properties.Id.isNull).list()
             return currentPloygon
         }
 

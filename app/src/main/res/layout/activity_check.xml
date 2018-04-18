@@ -7,29 +7,43 @@
     android:layout_height="match_parent"
     tools:context=".activity.CheckActivity">
 
+        <com.esri.android.map.MapView
+            android:id="@+id/mapview_check"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        </com.esri.android.map.MapView>
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.esri.android.map.MapView
-            android:id="@+id/mapview_check"
+        <RelativeLayout
+            android:id="@+id/title_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </com.esri.android.map.MapView>
+            android:layout_height="48dp"
+            android:background="@color/loginNormal"
 
-        <ImageView
-            android:id="@+id/btn_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/selector_caidan"
-            android:padding="10dp"
-            android:background="@color/white"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="#00ffffff"
+                android:text="纠错"
+                />
 
-            />
+            <ImageView
+                android:id="@+id/btn_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/caidan"
+                android:layout_alignParentRight="true"
+                android:layout_margin="10dp"
+                />
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
