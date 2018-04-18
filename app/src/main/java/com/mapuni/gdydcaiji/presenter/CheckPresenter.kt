@@ -2,7 +2,10 @@ package com.mapuni.gdydcaiji.presenter
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -13,6 +16,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.CheckBox
 import android.widget.TextView
 import com.esri.android.map.GraphicsLayer
@@ -28,25 +32,35 @@ import com.esri.core.symbol.PictureMarkerSymbol
 import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleLineSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import com.google.gson.stream.JsonWriter
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
-import com.mapuni.gdydcaiji.activity.DownloadMapActivity
-import com.mapuni.gdydcaiji.activity.LineDetail
-import com.mapuni.gdydcaiji.activity.PoiDetail
-import com.mapuni.gdydcaiji.activity.SocialDetail
-import com.mapuni.gdydcaiji.bean.TbLine
-import com.mapuni.gdydcaiji.bean.TbPoint
-import com.mapuni.gdydcaiji.bean.TbSurface
+import com.mapuni.gdydcaiji.activity.*
+import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao
-import com.mapuni.gdydcaiji.utils.PathConstant
-import com.mapuni.gdydcaiji.utils.SPUtils
-import com.mapuni.gdydcaiji.utils.ThreadUtils
+import com.mapuni.gdydcaiji.net.RetrofitFactory
+import com.mapuni.gdydcaiji.net.RetrofitService
+import com.mapuni.gdydcaiji.utils.*
 import kotlinx.android.synthetic.main.activity_collection.*
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.util.*
 
 /**
  * Created by zjp on 2018/4/16.
@@ -58,10 +72,8 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
     private val context:Activity=context
     private val recyler:RecyclerView=recyler_check
 
+    private val adapter=RecylerAdapter()
 
-    fun initShowZhiJianDialog(){
-
-    }
 
     //数据库操作对象
 
@@ -99,22 +111,35 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
             getAllFiles()
         }
 
+        recyler.adapter=adapter
+
 
     }
 
     fun updataGraphic(){
+        graphicName.removeAll()
         graphicsLayer.removeAll()
         UPDateGraphicTask().execute("")
     }
     inner class UPDateGraphicTask : AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String {
-            pointList = tbPointDao.queryBuilder().where(TbPointDao.Properties.Authcontent.isNotNull).build().list()
-            lineInfoList = tbLineDao.queryBuilder().where(TbLineDao.Properties.Authcontent.isNotNull).build().list()
-            surfaceList = tbSurfaceDao.queryBuilder().where(TbSurfaceDao.Properties.Authcontent.isNotNull).build().list()
+            pointList = tbPointDao.queryBuilder().where(
+                    TbPointDao.Properties.Authcontent.isNotNull,
+                    TbPointDao.Properties.Flag.eq("0"),
+                    TbPointDao.Properties.Id.isNotNull).build().list()
+            lineInfoList = tbLineDao.queryBuilder().where(
+                    TbLineDao.Properties.Authcontent.isNotNull,
+                    TbLineDao.Properties.Flag.eq("0"),
+                    TbLineDao.Properties.Id.isNotNull).build().list()
+            surfaceList = tbSurfaceDao.queryBuilder().where(
+                    TbSurfaceDao.Properties.Authcontent.isNotNull,
+                    TbSurfaceDao.Properties.Flag.eq("0"),
+                    TbSurfaceDao.Properties.Id.isNotNull).build().list()
             return "done"
         }
 
         override fun onPostExecute(result: String) {
+            graphicInfoList.clear()
             for (info: TbPoint in pointList as List) {
                 val point = Point(info.lng, info.lat)
                 val simpleMarkerSymbol= SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
@@ -204,13 +229,14 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
                 graphicInfoList.add(map)
             }
 
-            recyler.adapter=RecylerAdapter()
+            adapter.notifyDataSetChanged()
             super.onPostExecute(result)
 
 
         }
 
     }
+
 
 
     fun getAllFiles() {
@@ -280,6 +306,8 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
         graphicName.addGraphic(nameGraphic)
     }
 
+
+
     inner class RecylerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
             val view = LayoutInflater.from(context).inflate(R.layout.item_list_showgraphicinfo, parent, false)
@@ -324,6 +352,7 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
                         intent.putExtra("resultBean", info)
                     }
                 }
+                context.startActivity(intent)
 
             }
 
@@ -336,5 +365,302 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
 
     }
 
+
+    fun insertData2DB(filePath:String) {
+        var fileTemp: FileInputStream? = null
+        try {
+
+            fileTemp = FileInputStream(File(filePath))
+            val length = fileTemp!!.available()
+            val buffer = ByteArray(length)
+            fileTemp.read(buffer)
+            val json = String(buffer)
+            val gson = GsonBuilder().setDateFormat(DateUtil.YMDHMS).create()
+            val downloadBean = gson.fromJson(json, DownloadBean::class.java)
+            val tb_points = downloadBean.tb_point
+            val tb_lines = downloadBean.tb_line
+            val tb_surfaces = downloadBean.tb_surface
+
+            var updateSize = 0
+
+            if (tb_points != null && tb_points.size > 0) {
+                        tbPointDao.insertOrReplaceInTx(tb_points)
+                        updateSize += tb_points.size
+
+            }
+            if (tb_lines != null && tb_lines.size > 0) {
+                tbLineDao.insertOrReplaceInTx(tb_lines)
+                updateSize += tb_lines.size
+            }
+            if (tb_surfaces != null && tb_surfaces.size > 0) {
+                        tbSurfaceDao.insertOrReplaceInTx(tb_surfaces)
+                        updateSize += tb_surfaces.size
+            }
+
+            val size = tbPointDao.queryBuilder()
+                    .where(TbPointDao.Properties.Flag.eq(0), //未上传
+                            TbPointDao.Properties.Authflag.eq("1"))//错误
+                    .list().size
+            val size1 = tbLineDao.queryBuilder()
+                    .where(TbLineDao.Properties.Flag.eq(0), //未上传
+                            TbLineDao.Properties.Authflag.eq("1"))//错误
+                    .list().size
+            val size2 = tbSurfaceDao.queryBuilder()
+                    .where(TbSurfaceDao.Properties.Flag.eq(0), //未上传
+                            TbSurfaceDao.Properties.Authflag.eq("1"))//错误
+                    .list().size
+
+            val totalSize = size + size1 + size2
+
+            val finalUpdateSize = updateSize
+            ThreadUtils.executeMainThread {
+                val dialog=Dialog(context)
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                val textView=TextView(context)
+                textView.text="需要修改数据总数：$totalSize\n新增数据数:$finalUpdateSize"
+                dialog.setContentView(textView)
+                dialog.show()
+
+                updataGraphic()
+            }
+
+//            ThreadUtils.executeMainThread { tvResult.setText("需要修改数据总数：$totalSize\n新增数据数:$finalUpdateSize") }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
+
+    private lateinit var tbPointList2: MutableList<TbPoint>
+    private lateinit var tbLineList2: MutableList<TbLine>
+    private lateinit var tbSurfaceList2: MutableList<TbSurface>
+
+    fun createFile(){
+        ThreadUtils.executeSubThread {
+            //生成文件
+            val gson = GsonBuilder().setDateFormat(DateUtil.YMDHMS).registerTypeAdapterFactory(NullStringToEmptyAdapterFactory<Any>()).excludeFieldsWithoutExposeAnnotation().create()
+            val map = HashMap<String, Any>()
+
+            //                //未上传,修改（id不为空，flag=0）
+            tbPointList2 = tbPointDao.queryBuilder()
+                    .where(TbPointDao.Properties.Flag.eq(0), //未上传
+                            TbPointDao.Properties.Id.isNotNull,
+                            TbPointDao.Properties.Authflag.eq(getFlagByUser()))
+                    .orderAsc(TbPointDao.Properties.Opttime).list()
+            //                String buildingJson2 = gson.toJson(tbPointList2);
+            map["tb_point_modify"] = tbPointList2
+
+
+
+            //未上传,修改（id不为空，flag=0）
+            tbLineList2 = tbLineDao.queryBuilder()
+                    .where(TbLineDao.Properties.Flag.eq(0),
+                            TbLineDao.Properties.Id.isNotNull,
+                            TbLineDao.Properties.Authflag.eq(getFlagByUser()))
+                    .orderAsc(TbLineDao.Properties.Opttime).list()
+            //                String poiJson2 = gson.toJson(tbLineList2);
+            //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_line.txt", poiJson);
+
+            map["tb_line_modify"] = tbLineList2
+
+
+            //未上传,修改（id不为空，flag=0）
+            tbSurfaceList2 = tbSurfaceDao.queryBuilder()
+                    .where(TbSurfaceDao.Properties.Flag.eq(0),
+                            TbSurfaceDao.Properties.Id.isNotNull,
+                            TbSurfaceDao.Properties.Authflag.eq(getFlagByUser()))
+                    .orderAsc(TbSurfaceDao.Properties.Opttime).list()
+            //                String socialJson2 = gson.toJson(tbSurfaceList2);
+            //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
+            map["tb_surface_modify"] = tbSurfaceList2
+
+            val json = gson.toJson(map)
+            FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/upload.txt", json)
+
+
+            ThreadUtils.executeMainThread {
+                //联网上传
+                uploadData()
+            }
+        }
+    }
+
+    fun getFlagByUser(): String {
+        var flag = ""
+        val roleid = SPUtils.getInstance().getString("roleid")
+        if (roleid == "6") {
+            //外业
+            flag = "0"
+        } else if (roleid == "2") {
+            //质检
+            flag = "1"
+        }
+        return flag
+    }
+
+    inner class NullStringToEmptyAdapterFactory<T> : TypeAdapterFactory {
+        override fun <T> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
+            val rawType = type.rawType as Class<T>
+            return if (rawType != String::class.java) {
+                null
+            } else StringNullAdapter() as TypeAdapter<T>
+        }
+    }
+
+    inner class StringNullAdapter : TypeAdapter<String>() {
+        @Throws(IOException::class)
+        override fun read(reader: JsonReader): String {
+            if (reader.peek() == JsonToken.NULL) {
+                reader.nextNull()
+                return ""
+            }
+            return reader.nextString()
+        }
+
+        @Throws(IOException::class)
+        override fun write(writer: JsonWriter, value: String?) {
+            if (value == null) {
+                writer.nullValue()
+                return
+            }
+            writer.value(value)
+        }
+    }
+
+    private fun uploadData() {
+        val map = HashMap<String, RequestBody>()
+
+        val filePaths = ArrayList<String>()
+        filePaths.add("/upload.txt")
+        //        filePaths.add("/tb_line.txt");
+        //        filePaths.add("/tb_surface.txt");
+
+        var file: File
+        for (i in filePaths.indices) {
+            file = File(PathConstant.UPLOAD_DATA + filePaths[i])
+            if (file.exists() && file.length() > 10) {
+                val build = RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), file)
+                map["file\"; filename=\"" + file.name] = build
+            }
+        }
+
+
+
+        val call = RetrofitFactory.create(RetrofitService::class.java).upload(map)
+        // Dialog
+        val pd = ProgressDialog(context)
+        pd.setMessage("正在上传...")
+        // 点击对话框以外的地方无法取消
+        pd.setCanceledOnTouchOutside(false)
+        // 点击返回按钮无法取消
+        pd.setCancelable(false)
+        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "取消") { dialog, which -> call.cancel() }
+        pd.show()
+
+        call.enqueue(object : Callback<UploadBean> {
+            override fun onResponse(call: Call<UploadBean>, response: Response<UploadBean>) {
+                LogUtils.d("onResponse" + response.body()!!)
+
+                if (pd.isShowing) {
+                    pd.dismiss()
+                }
+                val body = response.body()
+                if (body == null) {
+                    showResponseDialog("上传失败")
+
+                    return
+                }
+                processData(body)
+            }
+
+            override fun onFailure(call: Call<UploadBean>, t: Throwable) {
+                t.printStackTrace()
+                if (!call.isCanceled) {
+                    // 非点击取消
+                    //LogUtils.d(t.getMessage());
+                    if (pd.isShowing) {
+                        pd.dismiss()
+                    }
+                    ToastUtils.showShort("网络错误")
+                } else {
+                    ToastUtils.showShort("上传取消")
+                }
+            }
+        })
+
+    }
+
+    /**
+     * 处理数据
+     *
+     * @param body
+     */
+    private fun processData(body: UploadBean) {
+        if (body.isStatus) {
+            ToastUtile.showText(context,"上传成功\n" )
+            ThreadUtils.executeSubThread { updateData() }
+
+        } else {
+            showResponseDialog("上传失败")
+        }
+    }
+
+    private lateinit var dialog: AlertDialog
+
+    private fun showResponseDialog(message: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("提示")
+                .setCancelable(false)
+                .setMessage(message)
+                .setPositiveButton("确定", null)
+        dialog = builder.create()
+        dialog.show()
+    }
+
+
+    /**
+     * 将flag标记为1
+     */
+    private fun updateData() {
+        updatePoi()
+        updateLine()
+        updateSurface()
+        updataGraphic()
+    }
+
+    private fun updateSurface() {
+
+        if (tbSurfaceList2 != null && tbSurfaceList2.size > 0) {
+            for (i in tbSurfaceList2.indices) {
+                tbSurfaceList2[i].flag = 1
+            }
+            tbSurfaceDao.updateInTx(tbSurfaceList2)
+
+        }
+    }
+
+    private fun updateLine() {
+
+
+        if (tbLineList2 != null && tbLineList2.size > 0) {
+            for (i in tbLineList2.indices) {
+                tbLineList2[i].flag = 1
+            }
+            tbLineDao.updateInTx(tbLineList2)
+        }
+    }
+
+    private fun updatePoi() {
+
+
+        if (tbPointList2 != null && tbPointList2.size > 0) {
+            for (i in tbPointList2.indices) {
+                tbPointList2[i].flag = 1
+            }
+            tbPointDao.updateInTx(tbPointList2)
+        }
+    }
 
 }

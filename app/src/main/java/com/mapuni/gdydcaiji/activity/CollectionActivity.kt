@@ -450,7 +450,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                         startActivity(Intent(this, QCListActivity::class.java))
                     } else if ("6".equals(roleid)) {
                         //外业
-                        startActivity(Intent(this, CaijiQCResultActivity::class.java))
+                        startActivity(Intent(this, CheckActivity::class.java))
                     }
                 }
                 5 -> {
@@ -690,4 +690,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         }
 
     }
+
+
 }

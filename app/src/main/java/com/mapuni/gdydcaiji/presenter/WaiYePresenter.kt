@@ -212,15 +212,14 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
             val leftTopP = currentPloygon.getPoint(0)
             val rightTopP = currentPloygon.getPoint(1)
             val leftBottomP = currentPloygon.getPoint(2)
-            pointList = tbPointDao.queryBuilder().where(TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
-                    , TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
-            lineInfoList = tbLineDao.loadAll()
-            surfaceList = tbSurfaceDao.loadAll()
-            pointList = tbPointDao.queryBuilder().where(TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x)
-                    , TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
-            lineInfoList = tbLineDao.loadAll()
-            surfaceList = tbSurfaceDao.loadAll()
-
+            pointList = tbPointDao.queryBuilder().where(
+                    TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
+                    TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
+                    TbPointDao.Properties.Authcontent.isNull).list()
+            lineInfoList = tbLineDao.queryBuilder().where(
+                    TbLineDao.Properties.Authcontent.isNull).list()
+            surfaceList = tbSurfaceDao.queryBuilder().where(
+                    TbSurfaceDao.Properties.Authcontent.isNull).list()
             return currentPloygon
         }
 
