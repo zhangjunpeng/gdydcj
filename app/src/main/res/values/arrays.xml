@@ -5,7 +5,6 @@
         <item>是</item>
     </string-array>
     <string-array name="building_types">
-        <item>请选择</item>
         <item>单栋单用户</item>
         <item>单栋多用户</item>
         <item>多栋单用户</item>
@@ -13,7 +12,6 @@
     </string-array>
 
     <string-array name="building_xz">
-        <item>请选择</item>
         <item>商用</item>
         <item>家用</item>
         <item>商住一体</item>
