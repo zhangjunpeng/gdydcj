@@ -335,6 +335,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         builder.setPositiveButton("确定") { dialog, _ ->
             //跳转保存页
             dialog.dismiss()
+            waiYeInterface.baocunPopwindow()
 
 
         }.setNegativeButton("取消") { dialog, _ ->
