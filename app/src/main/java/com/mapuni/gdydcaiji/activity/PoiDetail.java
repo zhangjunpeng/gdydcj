@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.bean.EventBean;
+import com.mapuni.gdydcaiji.bean.EventYD;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbPoint;
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
@@ -73,6 +75,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     TextView tvXz1;
     @BindView(R.id.tv_xz2)
     TextView tvXz2;
+    @BindView(R.id.edit)
+    TextView edit;
 
     private TbPointDao tPoiInfoDao;
     private String lyType = "", lyXz = "";
@@ -144,6 +148,14 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
             }
         });
 
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new EventYD(resultBean));
+                finish();
+            }
+        });
+
         tvType0.setOnClickListener(this);
         tvType1.setOnClickListener(this);
         tvType2.setOnClickListener(this);
@@ -156,6 +168,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
 
     @Override
     protected void showData() {
+        edit.setVisibility(View.VISIBLE);
+        edit.setText("移点");
         etLyName.setText(resultBean.getName());
         etAddress.setText(resultBean.getDz());
 //        spLyType.setSelection(TextUtils.isEmpty(resultBean.getLytype()) ? 0 : getSelectPosition(R.array.building_types, resultBean.getLytype()));
@@ -196,6 +210,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     @Override
     protected void submit() {
         if (resultBean == null) {
+            
             resultBean = new TbPoint();
             resultBean.setLat(lat);
             resultBean.setLng(lng);
@@ -417,4 +432,5 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
                 break;
         }
     }
+
 }

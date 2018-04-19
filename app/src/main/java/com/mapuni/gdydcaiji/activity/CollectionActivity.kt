@@ -174,8 +174,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mapview_collect.isShowMagnifierOnLongPress = true
         mapview_collect.setAllowMagnifierToPanMap(true)
 
-        if (MODE==2){
-            mapview_collect.maxScale=5.0
+        if (MODE == 2) {
+            mapview_collect.maxScale = 5.0
         }
 
     }
@@ -223,6 +223,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         //开始范围选择
         if (waiYeInterface.currentCode == 2 && waiYeInterface.pointPloygon.size > 2) {
             showConfirmDiaolog()
+        } else if (waiYeInterface.currentCode == 0 && waiYeInterface.getCurrentPoi() != null) {
+            //移点
+            showYidianDialog()
         } else {
             waiYeInterface.currentCode = waiYeInterface.targetCode
             upDateView()
@@ -233,6 +236,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private fun beginpolygonCollect() {
         if (waiYeInterface.currentCode == 1 && waiYeInterface.pointPloyline.size > 1) {
             showConfirmDiaolog()
+        } else if (waiYeInterface.currentCode == 0 && waiYeInterface.getCurrentPoi() != null) {
+            //移点
+            showYidianDialog()
         } else {
             waiYeInterface.currentCode = waiYeInterface.targetCode
             upDateView()
@@ -258,6 +264,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             showConfirmDiaolog()
         } else if (waiYeInterface.currentCode == 2 && waiYeInterface.pointPloygon.size > 2) {
             showConfirmDiaolog()
+        } else if (waiYeInterface.currentCode == 0 && waiYeInterface.getCurrentPoi() != null) {
+            //移点
+            showYidianDialog()
         } else {
             waiYeInterface.currentCode = waiYeInterface.targetCode
             upDateView()
@@ -353,6 +362,38 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         return alertDialog
     }
 
+    private fun showYidianDialog() {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("提示")
+        builder.setMessage("是否取消移点")
+        builder.setPositiveButton("确定") { dialog, _ ->
+            //跳转保存页
+            dialog.dismiss()
+            waiYeInterface.setCurrentPoiNull()
+            waiYeInterface.updateGraphic()
+            when (waiYeInterface.targetCode) {
+                0 -> {
+                    beginPOICollect()
+                }
+                1 -> {
+                    beigonLineCollect()
+                }
+                2 -> {
+                    beginpolygonCollect()
+                }
+                3 -> {
+                    beiginSelectPoint()
+                }
+            }
+        }.setNegativeButton("取消") { dialog, _ ->
+            //            cleanNotSave()
+            dialog.dismiss()
+
+        }
+        builder.show()
+    }
+
     override fun onSingleTap(v: Float, v1: Float) {
         singleTapOnCollection(v, v1)
     }
@@ -370,9 +411,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     override fun postAction(p0: Float, p1: Float, p2: Double) {
         waiYeInterface.updateGraphic()
     }
-
-
-
 
 
     @Subscribe
@@ -609,6 +647,15 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         waiYeInterface.updateGraphic()
     }
 
+    @Subscribe
+    fun onPoiYd(eventYd: EventYD) {
+        if (eventYd.tbPoint != null) {
+            waiYeInterface.targetCode = 0
+            waiYeInterface.currentCode = waiYeInterface.targetCode
+            upDateView()
+            waiYeInterface.setCurrentPoi(eventYd.tbPoint);
+        }
+    }
 
     override fun onPause() {
         //应用不在前台时候销毁掉监听器 

@@ -21,6 +21,8 @@ import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
+import java.sql.RowId;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -117,15 +119,17 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             String roleid = SPUtils.getInstance().getString("roleid");
+            if (!TextUtils.isEmpty(roleid)) {
+                startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
+                finish();
+                return;
+            }
 //            if("2".equals(roleid)){
 //                //质检
 //                startActivity(new Intent(LoginActivity.this, QCListActivity.class));
 //            }else if("6".equals(roleid)){
             //外业
-            startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
-//            }
-            finish();
-            return;
+
         }
         final Call<LoginBean> call = RetrofitFactory.create(RetrofitService.class)
                 .login(username, password);

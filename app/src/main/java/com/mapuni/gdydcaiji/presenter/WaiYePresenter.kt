@@ -46,6 +46,7 @@ import com.mapuni.gdydcaiji.utils.PathConstant
 import com.mapuni.gdydcaiji.utils.SPUtils
 import com.mapuni.gdydcaiji.utils.ThreadUtils
 import com.mapuni.gdydcaiji.utils.ToastUtils
+import com.mapuni.gdydcaiji.utils.Utils.init
 import kotlinx.android.synthetic.main.activity_collection.*
 import java.io.File
 import java.util.ArrayList
@@ -55,37 +56,37 @@ import java.util.HashMap
  * Created by zjp on 2018/4/13.
  * mail:zhangjunpeng92@163.com
  */
-class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
+class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
+
     var point_bz_array: ArrayList<Boolean>
     var line_bz_array: ArrayList<Boolean>
     var surface_bz_array: ArrayList<Boolean>
     var pointPloygon: ArrayList<Point>
     var pointPloyline: ArrayList<Point>
 
-    var targetCode: Int=0
-    var currentCode: Int=0
+    var targetCode: Int = 0
+    var currentCode: Int = 0
 
 
-    private val context:Context=context
-    private val mapView:MapView=mapView
+    private val context: Context = context
+    private val mapView: MapView = mapView
 
 
     //数据库操作对象
 
-    var tbLineDao: TbLineDao= GdydApplication.instances.daoSession.tbLineDao
-    var tbPointDao: TbPointDao= GdydApplication.instances.daoSession.tbPointDao
-    var tbSurfaceDao: TbSurfaceDao= GdydApplication.instances.daoSession.tbSurfaceDao
+    var tbLineDao: TbLineDao = GdydApplication.instances.daoSession.tbLineDao
+    var tbPointDao: TbPointDao = GdydApplication.instances.daoSession.tbPointDao
+    var tbSurfaceDao: TbSurfaceDao = GdydApplication.instances.daoSession.tbSurfaceDao
 
 
-    var lineInfoList: List<TbLine>?=null
-    var pointList: List<TbPoint>?=null
-    var surfaceList: List<TbSurface>?=null
+    var lineInfoList: List<TbLine>? = null
+    var pointList: List<TbPoint>? = null
+    var surfaceList: List<TbSurface>? = null
 
     //显示的点线面
 
-    var infoList: ArrayList<Map<String, Any>>?=null
+    var infoList: ArrayList<Map<String, Any>>? = null
     var infoMap: HashMap<Int, Any> = HashMap()
-
 
 
     //graphiclayer定义
@@ -94,41 +95,41 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
     private var localGraphicsLayer: GraphicsLayer = GraphicsLayer()
     var graphicName: GraphicsLayer = GraphicsLayer()
 
-    private var mIsLoading: Boolean=false
+    private var mIsLoading: Boolean = false
 
-    private var grahicGonUid: Int=0
+    private var grahicGonUid: Int = 0
 
     private var tempGraphicID: Int = 0
 
-    private var MODE=0
+    private var MODE = 0
 
-
+    private var currentPoi: TbPoint? = null
 
     init {
-        MODE= SPUtils.getInstance().getString("roleid").toInt()
+        MODE = SPUtils.getInstance().getString("roleid").toInt()
         initShowGraphicDialog()
 
         infoMap = HashMap()
-        point_bz_array=ArrayList<Boolean>()
-        line_bz_array=ArrayList<Boolean>()
-        surface_bz_array=ArrayList<Boolean>()
-        pointPloygon= ArrayList()
-        pointPloyline=ArrayList()
+        point_bz_array = ArrayList<Boolean>()
+        line_bz_array = ArrayList<Boolean>()
+        surface_bz_array = ArrayList<Boolean>()
+        pointPloygon = ArrayList()
+        pointPloyline = ArrayList()
 
         for (i in 0 until 12) {
             point_bz_array.add(false)
         }
-        point_bz_array[0]=true
+        point_bz_array[0] = true
 
         for (i in 0 until 4) {
             line_bz_array.add(false)
         }
-        line_bz_array[0]=true
+        line_bz_array[0] = true
 
         for (i in 0 until 7) {
             surface_bz_array.add(false)
         }
-        surface_bz_array[0]=true
+        surface_bz_array[0] = true
     }
 
 
@@ -173,9 +174,16 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
         when (currentCode) {
             0 -> {
                 val intent1 = Intent(context, PoiDetail::class.java)
-                intent1.putExtra("lat", point.y)
-                intent1.putExtra("lng", point.x)
-
+                if (currentPoi != null) {
+                    //移点
+                    currentPoi!!.lat = point.y
+                    currentPoi!!.lng = point.x
+                    intent1.putExtra("resultBean", currentPoi)
+                    currentPoi = null
+                } else {
+                    intent1.putExtra("lat", point.y)
+                    intent1.putExtra("lng", point.x)
+                }
                 context.startActivity(intent1)
             }
             1 -> {
@@ -194,16 +202,16 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
     }
 
 
-    private fun addPolyLineInMap(point: Point ) {
+    private fun addPolyLineInMap(point: Point) {
         pointPloyline.add(point)
-        grahicGonUid=drawline(pointPloyline)
+        grahicGonUid = drawline(pointPloyline)
     }
 
 
-    private fun addPolygonInMap(point: Point ) {
+    private fun addPolygonInMap(point: Point) {
         //开始小区采集
         pointPloygon.add(point)
-        grahicGonUid=drawGon(pointPloygon)
+        grahicGonUid = drawGon(pointPloygon)
     }
 
     inner class UPDateGraphicTask() : AsyncTask<String, Void, Polygon>() {
@@ -255,9 +263,9 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
     private fun updateGraphicInLocal(currentPloygon: Polygon) {
         for (info: TbPoint in pointList as List) {
             val point = Point(info.lng, info.lat)
-            var simpleMarkerSymbol:SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()){
+            var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()) {
                 SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
-            }else{
+            } else {
                 SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             }
             var graphic = Graphic(point, simpleMarkerSymbol)
@@ -367,6 +375,7 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
         }
         return name.dropLast(1)
     }
+
     override fun updateGraphic() {
         pointPloyline.clear()
         pointPloygon.clear()
@@ -393,8 +402,9 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
 
             }
         }
-       updateGraphic()
+        updateGraphic()
     }
+
     override fun deleteInfo(eventDeleteInfo: EventDeleteInfo) {
         for (obj in eventDeleteInfo.deleteList) {
             when (obj) {
@@ -431,27 +441,35 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
         graphicsLayer.removeGraphic(grahicGonUid)
         if (pointPloygon.size > 0) {
             pointPloygon.remove(pointPloygon.last())
-            grahicGonUid=drawGon(pointPloygon)
+            grahicGonUid = drawGon(pointPloygon)
         }
     }
 
     override fun backUpAfterMover() {
         updateGraphic()
-        if (currentCode==1){
-            grahicGonUid=drawline(pointPloyline)
+        if (currentCode == 1) {
+            grahicGonUid = drawline(pointPloyline)
         }
-        if (currentCode==2){
-            grahicGonUid=drawGon(pointPloygon)
+        if (currentCode == 2) {
+            grahicGonUid = drawGon(pointPloygon)
         }
     }
 
-    override fun singleTapOnCollection(v: Float, v1: Float,tolerance: Int) {
+    override fun singleTapOnCollection(v: Float, v1: Float, tolerance: Int) {
         val center = mapView.toMapPoint(v, v1)
         when (currentCode) {
             0 -> {
                 val intent1 = Intent(context, PoiDetail::class.java)
-                intent1.putExtra("lat", center.y)
-                intent1.putExtra("lng", center.x)
+                if (currentPoi != null) {
+                    //移点
+                    currentPoi!!.lat = center.y
+                    currentPoi!!.lng = center.x
+                    intent1.putExtra("resultBean", currentPoi)
+                    currentPoi = null
+                } else {
+                    intent1.putExtra("lat", center.y)
+                    intent1.putExtra("lng", center.x)
+                }
 
                 context.startActivity(intent1)
 
@@ -463,7 +481,7 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
                 addPolygonInMap(center)
             }
             3 -> {
-                getGraphics(v, v1,tolerance )
+                getGraphics(v, v1, tolerance)
             }
 
         }
@@ -486,7 +504,7 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
 
     }
 
-    private fun getGraphics(v: Float, v1: Float, tolerance:Int) {
+    private fun getGraphics(v: Float, v1: Float, tolerance: Int) {
 
         infoList = ArrayList()
         val symbol = SimpleMarkerSymbol(Color.parseColor("#501EE15E"), tolerance, SimpleMarkerSymbol.STYLE.CIRCLE)
@@ -521,8 +539,8 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
 
 //            when(MODE){
 //                6->{
-                    val graphicListAdtaper = GraphicListAdapter(context, infoList as ArrayList, showGrahipcListDialog)
-                    recyclerView.adapter = graphicListAdtaper
+            val graphicListAdtaper = GraphicListAdapter(context, infoList as ArrayList, showGrahipcListDialog)
+            recyclerView.adapter = graphicListAdtaper
 
 //                }
 //                2->{
@@ -543,6 +561,7 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
             Thread.sleep(1000)
             return ""
         }
+
         override fun onPostExecute(result: String?) {
             tempGraphicLayer.removeAll()
         }
@@ -588,7 +607,7 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
             graphicsLayer.removeGraphic(grahicGonUid)
             if (pointPloyline.size > 0) {
                 pointPloyline.remove(pointPloyline.last())
-                grahicGonUid=drawline(pointPloyline)
+                grahicGonUid = drawline(pointPloyline)
             }
         }
     }
@@ -671,5 +690,17 @@ class WaiYePresenter(context: Context,mapView: MapView):WaiYeInterface{
         builder.setPositiveButton("确定") { dialog, which -> context.startActivity(Intent(context, DownloadMapActivity::class.java)) }
         builder.setNegativeButton("取消", null)
         builder.show()
+    }
+
+    override fun setCurrentPoi(tbPoint: TbPoint) {
+        currentPoi = tbPoint
+    }
+
+    override fun getCurrentPoi(): TbPoint? {
+        return currentPoi
+    }
+
+    override fun setCurrentPoiNull() {
+        currentPoi = null
     }
 }
