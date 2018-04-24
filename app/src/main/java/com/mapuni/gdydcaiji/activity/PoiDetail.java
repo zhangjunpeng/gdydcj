@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
-import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.bean.EventYD;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbPoint;
@@ -31,7 +29,6 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by yf on 2018/3/21.
@@ -125,7 +122,6 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     @Override
     protected void initListener() {
         super.initListener();
-
         etAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -210,7 +206,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     @Override
     protected void submit() {
         if (resultBean == null) {
-            
+
             resultBean = new TbPoint();
             resultBean.setLat(lat);
             resultBean.setLng(lng);
@@ -260,9 +256,15 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
 //        Intent data=new Intent();
 //        data.putExtra("obj",resultBean);
 //        setResult(Activity.RESULT_OK,data);
+
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
         EvevtUpdate evevtUpdate = new EvevtUpdate();
         EventBus.getDefault().post(evevtUpdate);
-        finish();
+        super.onPause();
     }
 
     private void saveAddressAndName() {

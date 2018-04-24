@@ -549,7 +549,7 @@ public class UploadDataActivity extends BaseActivity {
     }
 
     public String getFlagByUser() {
-        String flag = "";
+        String flag = "0";
         String roleid = SPUtils.getInstance().getString("roleid");
         if (roleid.equals("6")) {
             //外业

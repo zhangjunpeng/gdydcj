@@ -8,6 +8,7 @@ import java.util.ArrayList;
  */
 
 public class EventBZ {
+    public int tvColor;
     public int type;
     public ArrayList<Boolean> booleanArrayList;
 

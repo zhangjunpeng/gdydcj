@@ -69,6 +69,9 @@ dependencies {
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     implementation 'com.android.support:multidex:1.0.3'
     compile 'com.xw.repo:bubbleseekbar:3.16-lite'
+    compile('cn.qqtheme.framework:ColorPicker:latest.release') {
+        exclude group: 'com.android.support'
+    }
 }
 
 repositories {

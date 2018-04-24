@@ -104,7 +104,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private lateinit var bzRecyAdapter_line: BZRecyAdapter
     private lateinit var bzRecyAdapter_surface: BZRecyAdapter
 
-
     //质检模式为1
     //外业采集模式为0
     private var MODE: Int = 0
@@ -174,9 +173,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mapview_collect.isShowMagnifierOnLongPress = true
         mapview_collect.setAllowMagnifierToPanMap(true)
 
-        if (MODE == 2) {
-            mapview_collect.maxScale = 5.0
-        }
+//        if (MODE == 2) {
+        mapview_collect.maxScale = 5.0
+//        }
 
     }
 
@@ -453,7 +452,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             data.add("纠错")
         }
 
-        val ppw = PopupWindow(inflate, ViewGroup.LayoutParams.WRAP_CONTENT, ScreenUtils.dp2px(this, (37 * data.size - 1).toFloat()), true)
+        val ppw = PopupWindow(inflate, view!!.width, ScreenUtils.dp2px(this, (37 * data.size - 1).toFloat()), true)
         ppw.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
         ppw.isOutsideTouchable = true
         ppw.isTouchable = true
@@ -477,9 +476,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 }
                 3 -> {
                     bzDialog.show()
-                    bzRecyAdapter_point = BZRecyAdapter(this, 0, waiYeInterface.point_bz_array)
-                    bzRecyAdapter_line = BZRecyAdapter(this, 1, waiYeInterface.line_bz_array)
-                    bzRecyAdapter_surface = BZRecyAdapter(this, 2, waiYeInterface.surface_bz_array)
+                    bzDialog.findViewById<Spinner>(R.id.spinener_bz_dialog).setSelection(0)
+                    bzRecyAdapter_point = BZRecyAdapter(this, 0, waiYeInterface.currentPoiColor, waiYeInterface.point_bz_array)
+                    bzRecyAdapter_line = BZRecyAdapter(this, 1, waiYeInterface.currentLineColor, waiYeInterface.line_bz_array)
+                    bzRecyAdapter_surface = BZRecyAdapter(this, 2, waiYeInterface.currentSurfaceColor, waiYeInterface.surface_bz_array)
 
                     recyclerView_bz.adapter = bzRecyAdapter_point
                 }

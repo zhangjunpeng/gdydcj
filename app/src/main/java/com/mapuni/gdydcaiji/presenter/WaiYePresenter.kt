@@ -105,6 +105,10 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private var currentPoi: TbPoint? = null
 
+    var currentPoiColor: Int = -1
+    var currentLineColor: Int = -1
+    var currentSurfaceColor: Int = -1
+
     init {
         MODE = SPUtils.getInstance().getString("roleid").toInt()
         initShowGraphicDialog()
@@ -184,6 +188,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                     intent1.putExtra("lat", point.y)
                     intent1.putExtra("lng", point.x)
                 }
+                addOnePointInMap(point)
                 context.startActivity(intent1)
             }
             1 -> {
@@ -238,7 +243,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     }
 
-    fun addNameInMap(point: Point, name: String) {
+    fun addNameInMap(point: Point, name: String, currentTvColor: Int) {
 
         val tv = TextView(context)
         if (name.isEmpty()) {
@@ -246,7 +251,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         }
         tv.text = name
         tv.textSize = 8f
-        tv.setTextColor(Color.WHITE)
+        tv.setTextColor(currentTvColor)
         tv.isDrawingCacheEnabled = true
         tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
         tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
@@ -272,7 +277,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             val uid = localGraphicsLayer.addGraphic(graphic)
             infoMap[uid] = info
             val name = getPointName(info)
-            addNameInMap(point, name)
+            addNameInMap(point, name, currentPoiColor)
         }
 
         for (info: TbLine in lineInfoList as List) {
@@ -303,7 +308,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             polyline.queryEnvelope(tEnvelope)
             val tPoint = tEnvelope.center
 
-            addNameInMap(tPoint, name)
+            addNameInMap(tPoint, name, currentLineColor)
 
         }
 
@@ -334,7 +339,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             polygon.queryEnvelope(tEnvelope)
             val tPoint = tEnvelope.center
             val name = getSurfaceName(info)
-            addNameInMap(tPoint, name)
+            addNameInMap(tPoint, name, currentSurfaceColor)
 
 
         }
@@ -391,12 +396,15 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         when (eventBZ.type) {
             0 -> {
                 point_bz_array = eventBZ.booleanArrayList
+                currentPoiColor = eventBZ.tvColor
             }
             1 -> {
                 line_bz_array = eventBZ.booleanArrayList
+                currentLineColor = eventBZ.tvColor
             }
             2 -> {
                 surface_bz_array = eventBZ.booleanArrayList
+                currentSurfaceColor = eventBZ.tvColor
             }
             else -> {
 
@@ -470,6 +478,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                     intent1.putExtra("lat", center.y)
                     intent1.putExtra("lng", center.x)
                 }
+                addOnePointInMap(center)
 
                 context.startActivity(intent1)
 
