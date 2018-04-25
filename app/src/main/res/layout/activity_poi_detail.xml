@@ -208,7 +208,8 @@
 
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_tele"
-                            style="@style/CollectEditText" />
+                            style="@style/CollectEditText" 
+                            android:inputType="phone"/>
 
                     </LinearLayout>
 
@@ -232,7 +233,8 @@
 
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_lycs"
-                            style="@style/CollectEditText" />
+                            style="@style/CollectEditText" 
+                            android:inputType="number"/>
 
                     </LinearLayout>
 
@@ -245,7 +247,8 @@
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_lyzhs"
                             style="@style/CollectEditText"
-                            android:layout_weight="6" />
+                            android:layout_weight="6"
+                            android:inputType="number"/>
 
                         <ImageView
                             android:id="@+id/iv_calculator"

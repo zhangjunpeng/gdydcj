@@ -39,6 +39,7 @@ public interface WaiYeInterface {
     fun baocunPopwindow()
     fun huituiPopWindow()
     fun quxiaoPopWindow()
+    fun deleteLineOrGon()
     fun initDialogSize(bzDialog: Dialog)
     fun setCurrentPoi(tbPoint: TbPoint)
     fun setCurrentPoiNull()

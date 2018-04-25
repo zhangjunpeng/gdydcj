@@ -124,7 +124,7 @@
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_bz"
                             style="@style/CollectEditText"
-                            android:inputType="number" />
+                            android:singleLine="false"/>
 
                     </LinearLayout>
 

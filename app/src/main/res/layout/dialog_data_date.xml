@@ -1,0 +1,55 @@
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:divider="@drawable/shape_divider"
+    app:showDividers="middle">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/loginNormal"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="数据时间选择"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+    <LinearLayout style="@style/HorizontalLinearLayout">
+
+        <TextView
+            style="@style/HintText"
+            android:text="采集开始时间" />
+
+        <TextView
+            android:id="@+id/et_start_time"
+            style="@style/CollectEditText" />
+
+    </LinearLayout>
+
+
+    <LinearLayout style="@style/HorizontalLinearLayout">
+
+        <TextView
+            style="@style/HintText"
+            android:text="采集结束时间" />
+
+        <TextView
+            android:id="@+id/et_stop_time"
+            style="@style/CollectEditText" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_sure"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/selector_login_btn"
+        android:text="确定"
+        android:textColor="@color/white" />
+
+</android.support.v7.widget.LinearLayoutCompat>

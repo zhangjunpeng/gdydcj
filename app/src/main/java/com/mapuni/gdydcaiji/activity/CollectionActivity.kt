@@ -25,6 +25,8 @@ import com.esri.android.map.event.OnPanListener
 import com.esri.android.map.event.OnSingleTapListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
+import com.jzxiang.pickerview.TimePickerDialog
+import com.jzxiang.pickerview.data.Type
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.adapter.BZRecyAdapter
@@ -274,6 +276,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     private fun upDateView() {
+        waiYeInterface.deleteLineOrGon()
         tianjia_collect.visibility = View.VISIBLE
         when (waiYeInterface.currentCode) {
             0 -> {
@@ -341,6 +344,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         }.setNegativeButton("取消") { dialog, _ ->
             //            cleanNotSave()
             dialog.dismiss()
+            waiYeInterface.pointPloyline.clear()
+            waiYeInterface.pointPloygon.clear()
             waiYeInterface.updateGraphic()
             when (waiYeInterface.targetCode) {
                 0 -> {
@@ -438,6 +443,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         data.add("选择地图")
         data.add("备份")
         data.add("标注设置")
+        data.add("数据设置")
 //        data.add("质检")
 
         var adapter = PpwAdapter(R.layout.item_ppw, data)
@@ -485,6 +491,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     recyclerView_bz.adapter = bzRecyAdapter_point
                 }
                 4 -> {
+                    //设置数据时间
+
+                    showDataDateDialog()
+                }
+                5 -> {
                     if ("2".equals(roleid)) {
                         //质检
                         startActivity(Intent(this, QCListActivity::class.java))
@@ -493,7 +504,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                         startActivity(Intent(this, CheckActivity::class.java))
                     }
                 }
-                5 -> {
+                6 -> {
                     //质检删除数据
                     ThreadUtils.executeSubThread {
 
@@ -538,6 +549,51 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 }
                 .setNegativeButton("取消", null)
         builder.show()
+    }
+
+    /**
+     * 设置数据时间对话框
+     */
+    private fun showDataDateDialog() {
+        var dialog = Dialog(instance)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val contentView = LayoutInflater.from(instance).inflate(R.layout.dialog_data_date, null, false)
+        dialog.setContentView(contentView)
+        dialog.setCanceledOnTouchOutside(false)
+        val attributes = dialog.window!!.attributes
+        attributes.width = (ScreenUtils.getScreenW(this) * 0.75).toInt()
+
+        val et_start_time = contentView.findViewById<TextView>(R.id.et_start_time)
+        val et_stop_time = contentView.findViewById<TextView>(R.id.et_stop_time)
+        val btn_sure = contentView.findViewById<Button>(R.id.btn_sure)
+        et_start_time.setText(waiYeInterface.dateStartTime)
+        et_stop_time.setText(waiYeInterface.dateStopTime)
+        et_start_time.setOnClickListener {
+            showDatePickerDialog(et_start_time)
+        }
+        et_stop_time.setOnClickListener {
+            showDatePickerDialog(et_stop_time)
+        }
+        btn_sure.setOnClickListener {
+            if (StringUtils.isEmpty(et_start_time.getText().toString())) {
+                ToastUtils.showShort("请选择开始时间")
+                showDatePickerDialog(et_start_time)
+                return@setOnClickListener
+            }
+            if (StringUtils.isEmpty(et_stop_time.getText().toString())) {
+                ToastUtils.showShort("请选择结束时间")
+                showDatePickerDialog(et_stop_time)
+                return@setOnClickListener
+            }
+
+            waiYeInterface.dateStartTime = et_start_time.text.toString()
+            waiYeInterface.dateStopTime = et_stop_time.text.toString()
+            waiYeInterface.updateGraphic()
+            dialog.dismiss()
+
+        }
+        dialog.show()
+
     }
 
 
@@ -646,6 +702,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     @Subscribe
     fun onUPDataGraphic(eventUpdate: EvevtUpdate) {
+        waiYeInterface.pointPloyline.clear()
+        waiYeInterface.pointPloygon.clear()
         waiYeInterface.updateGraphic()
     }
 
@@ -740,5 +798,41 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     }
 
+    /**
+     * 显示时间选择框
+     */
+    protected fun showDatePickerDialog(tv: TextView) {
+        // 回显时间，展示选择框
+        val calendar = GregorianCalendar()
+        val text = tv.text.toString()
+        if (!TextUtils.isEmpty(text)) {
+            val date = DateUtil.getDateByFormat(text, DateUtil.YMD)
+            calendar.time = date ?: Date()
+        }
+
+        val _100year = 100L * 365 * 1000 * 60 * 60 * 24L//100年
+        val mDialogYearMonthDay = TimePickerDialog.Builder()
+                .setCallBack { timePickerView, millseconds -> tv.text = DateUtil.getStringByFormat(millseconds, DateUtil.YMD) }
+                .setCancelStringId("取消")
+                .setSureStringId("确定")
+                .setTitleStringId("选择日期")
+                .setYearText("年")
+                .setMonthText("月")
+                .setDayText("日")
+                .setCyclic(false)
+                .setMinMillseconds(System.currentTimeMillis() - _100year)//设置最小时间
+                //                .setMinMillseconds(System.currentTimeMillis())//设置最小时间为当前时间
+                //                .setMaxMillseconds(System.currentTimeMillis() + _100year)//设置最大时间+100年
+                .setMaxMillseconds(System.currentTimeMillis())//设置最大时间是当前时间
+                .setCurrentMillseconds(calendar.timeInMillis)//设置当前时间
+                .setThemeColor(resources.getColor(R.color.color_deep_sky_blue))
+                .setType(Type.YEAR_MONTH_DAY)
+                .setWheelItemTextNormalColor(resources.getColor(R.color.timetimepicker_default_text_color))
+                .setWheelItemTextSelectorColor(resources.getColor(R.color.timepicker_toolbar_bg))
+                .setWheelItemTextSize(16)
+                .build()
+        mDialogYearMonthDay.show(supportFragmentManager, javaClass.simpleName)
+
+    }
 
 }

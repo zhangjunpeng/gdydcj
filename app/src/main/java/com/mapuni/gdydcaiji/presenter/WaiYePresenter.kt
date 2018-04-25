@@ -31,26 +31,19 @@ import com.esri.core.symbol.SimpleFillSymbol
 import com.esri.core.symbol.SimpleLineSymbol
 import com.esri.core.symbol.SimpleMarkerSymbol
 import com.mapuni.gdydcaiji.GdydApplication
-import com.mapuni.gdydcaiji.adapter.GraphicListAdapter
 import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.activity.DownloadMapActivity
 import com.mapuni.gdydcaiji.activity.LineDetail
 import com.mapuni.gdydcaiji.activity.PoiDetail
 import com.mapuni.gdydcaiji.activity.SocialDetail
-import com.mapuni.gdydcaiji.adapter.OnlyShowAdapter
+import com.mapuni.gdydcaiji.adapter.GraphicListAdapter
 import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao
-import com.mapuni.gdydcaiji.utils.PathConstant
-import com.mapuni.gdydcaiji.utils.SPUtils
-import com.mapuni.gdydcaiji.utils.ThreadUtils
-import com.mapuni.gdydcaiji.utils.ToastUtils
-import com.mapuni.gdydcaiji.utils.Utils.init
-import kotlinx.android.synthetic.main.activity_collection.*
+import com.mapuni.gdydcaiji.utils.*
 import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 /**
  * Created by zjp on 2018/4/13.
@@ -109,9 +102,15 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     var currentLineColor: Int = -1
     var currentSurfaceColor: Int = -1
 
+    var dateStartTime: String
+    var dateStopTime: String
+
     init {
         MODE = SPUtils.getInstance().getString("roleid").toInt()
         initShowGraphicDialog()
+
+        dateStartTime = DateUtil.getCurrentDateByOffset(DateUtil.YMD, Calendar.DATE, -2)
+        dateStopTime = DateUtil.getCurrentDate(DateUtil.YMD)
 
         infoMap = HashMap()
         point_bz_array = ArrayList<Boolean>()
@@ -225,25 +224,37 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             val leftTopP = currentPloygon.getPoint(0)
             val rightTopP = currentPloygon.getPoint(1)
             val leftBottomP = currentPloygon.getPoint(2)
-            when(MODE){
-                2->{
+            when (MODE) {
+                2 -> {
                     //质检
                     pointList = tbPointDao.queryBuilder().where(
                             TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
-                            TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
-                    lineInfoList = tbLineDao.loadAll()
-                    surfaceList = tbSurfaceDao.loadAll()
+                            TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
+                            TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS)))
+                            .list()
+                    lineInfoList = tbLineDao.queryBuilder().where(
+                            TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS)))
+                            .list()
+                    surfaceList = tbSurfaceDao.queryBuilder().where(
+                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
+                    ).list()
                 }
-                6->{
+                6 -> {
                     //外业
                     pointList = tbPointDao.queryBuilder().where(
                             TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
                             TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
-                            TbPointDao.Properties.Id.isNull).list()
+                            TbPointDao.Properties.Id.isNull,
+                            TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
+                    ).list()
                     lineInfoList = tbLineDao.queryBuilder().where(
-                            TbLineDao.Properties.Id.isNull).list()
+                            TbLineDao.Properties.Id.isNull,
+                            TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
+                    ).list()
                     surfaceList = tbSurfaceDao.queryBuilder().where(
-                            TbSurfaceDao.Properties.Id.isNull).list()
+                            TbSurfaceDao.Properties.Id.isNull,
+                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
+                    ).list()
                 }
             }
 
@@ -358,6 +369,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
         }
 
+        backUpAfterMover()
+
         mapView.invalidate()
         mIsLoading = false
     }
@@ -396,8 +409,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     }
 
     override fun updateGraphic() {
-        pointPloyline.clear()
-        pointPloygon.clear()
+//        pointPloyline.clear()
+//        pointPloygon.clear()
         tempGraphicLayer.removeAll()
         graphicName.removeAll()
         localGraphicsLayer.removeAll()
@@ -468,7 +481,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     }
 
     override fun backUpAfterMover() {
-        updateGraphic()
+//        updateGraphic()
         if (currentCode == 1) {
             grahicGonUid = drawline(pointPloyline)
         }
@@ -646,6 +659,13 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         }
     }
 
+    //在切换采集状态时清空
+    override fun deleteLineOrGon() {
+        graphicsLayer.removeGraphic(grahicGonUid)
+        pointPloyline.clear()
+        pointPloygon.clear()
+    }
+
     override fun initDialogSize(bzDialog: Dialog) {
 
         val dialogWindow = showGrahipcListDialog.window
@@ -726,4 +746,6 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     override fun setCurrentPoiNull() {
         currentPoi = null
     }
+
+
 }
