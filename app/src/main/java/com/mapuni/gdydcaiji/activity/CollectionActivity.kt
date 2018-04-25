@@ -48,6 +48,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     private var mIsLoading: Boolean = false
 
     override fun postPointerMove(v: Float, v1: Float, v2: Float, v3: Float) {
+
     }
 
     private var mStartX: Float = 0f
@@ -79,7 +80,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mStartY = 0f
         if (!mIsLoading) {
             mIsLoading = true
-            waiYeInterface.backUpAfterMover()
+            waiYeInterface.updateGraphic()
         }
     }
 

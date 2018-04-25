@@ -219,20 +219,34 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         grahicGonUid = drawGon(pointPloygon)
     }
 
-    inner class UPDateGraphicTask() : AsyncTask<String, Void, Polygon>() {
+    inner class UPDateGraphicTask : AsyncTask<String, Void, Polygon>() {
         override fun doInBackground(vararg params: String?): Polygon {
             val currentPloygon = mapView.extent
             val leftTopP = currentPloygon.getPoint(0)
             val rightTopP = currentPloygon.getPoint(1)
             val leftBottomP = currentPloygon.getPoint(2)
-            pointList = tbPointDao.queryBuilder().where(
-                    TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
-                    TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
-                    TbPointDao.Properties.Id.isNull).list()
-            lineInfoList = tbLineDao.queryBuilder().where(
-                    TbLineDao.Properties.Id.isNull).list()
-            surfaceList = tbSurfaceDao.queryBuilder().where(
-                    TbSurfaceDao.Properties.Id.isNull).list()
+            when(MODE){
+                2->{
+                    //质检
+                    pointList = tbPointDao.queryBuilder().where(
+                            TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
+                            TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y)).list()
+                    lineInfoList = tbLineDao.loadAll()
+                    surfaceList = tbSurfaceDao.loadAll()
+                }
+                6->{
+                    //外业
+                    pointList = tbPointDao.queryBuilder().where(
+                            TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
+                            TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
+                            TbPointDao.Properties.Id.isNull).list()
+                    lineInfoList = tbLineDao.queryBuilder().where(
+                            TbLineDao.Properties.Id.isNull).list()
+                    surfaceList = tbSurfaceDao.queryBuilder().where(
+                            TbSurfaceDao.Properties.Id.isNull).list()
+                }
+            }
+
             return currentPloygon
         }
 
