@@ -16,13 +16,16 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.*
 import com.esri.android.map.LocationDisplayManager
+import com.esri.android.map.ags.ArcGISLocalTiledLayer
 import com.esri.android.map.event.OnPanListener
 import com.esri.android.map.event.OnSingleTapListener
+import com.esri.android.map.event.OnStatusChangedListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
 import com.jzxiang.pickerview.TimePickerDialog
@@ -111,6 +114,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     //外业采集模式为0
     private var MODE: Int = 0
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
@@ -181,6 +186,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 //        }
 
     }
+
+
 
     override fun onClick(v: View?) {
         if (v is View) {
@@ -444,6 +451,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         data.add("备份")
         data.add("标注设置")
         data.add("数据设置")
+        data.add("多地图选择")
 //        data.add("质检")
 
         var adapter = PpwAdapter(R.layout.item_ppw, data)
@@ -495,7 +503,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
                     showDataDateDialog()
                 }
-                5 -> {
+                5->{
+                    waiYeInterface.searchFile()
+                }
+                6-> {
                     if ("2".equals(roleid)) {
                         //质检
                         startActivity(Intent(this, QCListActivity::class.java))
@@ -504,7 +515,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                         startActivity(Intent(this, CheckActivity::class.java))
                     }
                 }
-                6 -> {
+                7 -> {
                     //质检删除数据
                     ThreadUtils.executeSubThread {
 
@@ -795,6 +806,30 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         houtui.setOnClickListener {
             waiYeInterface.huituiPopWindow()
         }
+
+    }
+    @Subscribe
+    fun showmap(eventShowMap: EventShowMap){
+        mapview_collect.removeAll()
+
+        var maxExtent=mapview_collect.maxExtent
+        for (mapFilePath in eventShowMap.filePahts){
+            if (mapFilePath == eventShowMap.filePahts.last()){
+                val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
+                waiYeInterface.initMapview(mapFilePath)
+
+                maxExtent.merge(layer.fullExtent)
+                mapview_collect.maxExtent=maxExtent
+//                mapview_collect.invalidate()
+
+            }else{
+                val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
+                mapview_collect.addLayer(layer)
+                maxExtent.merge(layer.fullExtent)
+
+            }
+        }
+
 
     }
 

@@ -37,6 +37,8 @@ import com.mapuni.gdydcaiji.activity.LineDetail
 import com.mapuni.gdydcaiji.activity.PoiDetail
 import com.mapuni.gdydcaiji.activity.SocialDetail
 import com.mapuni.gdydcaiji.adapter.GraphicListAdapter
+import com.mapuni.gdydcaiji.adapter.MapChoseListAdapter
+import com.mapuni.gdydcaiji.adapter.OnlyShowAdapter
 import com.mapuni.gdydcaiji.bean.*
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao
@@ -104,6 +106,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     var dateStartTime: String
     var dateStopTime: String
+    private val fileDirNames = ArrayList<String>()
+    private val fileDirPaths = ArrayList<String>()
 
     init {
         MODE = SPUtils.getInstance().getString("roleid").toInt()
@@ -112,6 +116,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         dateStartTime = DateUtil.getCurrentDateByOffset(DateUtil.YMD, Calendar.DATE, -2)
         dateStopTime = DateUtil.getCurrentDate(DateUtil.YMD)
 
+        initShowMapListDialog()
         infoMap = HashMap()
         point_bz_array = ArrayList<Boolean>()
         line_bz_array = ArrayList<Boolean>()
@@ -464,10 +469,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     override fun initMapview(mapFilePath: String) {
         val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
         mapView.addLayer(layer)
-        mapView.addLayer(graphicsLayer, 1)
-        mapView.addLayer(tempGraphicLayer, 2)
-        mapView.addLayer(localGraphicsLayer, 3)
-        mapView.addLayer(graphicName, 4)
+        mapView.addLayer(graphicsLayer)
+        mapView.addLayer(tempGraphicLayer)
+        mapView.addLayer(localGraphicsLayer)
+        mapView.addLayer(graphicName)
+
 
     }
 
@@ -592,6 +598,21 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     }
 
+    private lateinit var showMapListDialog: Dialog
+    private lateinit var recyclerView_showmap: RecyclerView
+    private fun initShowMapListDialog() {
+        showMapListDialog = Dialog(context)
+        showMapListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val contentView = LayoutInflater.from(context).inflate(R.layout.dialog_showgraphicinfo, null, false)
+        showMapListDialog.setContentView(contentView)
+        showMapListDialog.setCanceledOnTouchOutside(false)
+        recyclerView_showmap = contentView.findViewById(R.id.recycler_dialog)
+
+        recyclerView_showmap.layoutManager = LinearLayoutManager(context)
+
+
+    }
+
     inner class RemoveGraphic() : AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String {
             Thread.sleep(1000)
@@ -708,13 +729,6 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                     // 将选中的地图名字存入sp中
                     SPUtils.getInstance().put("checkedMap", allDirFiles[0].getName())
                     SPUtils.getInstance().put("checkedMapPath", allDirFiles[0].getAbsolutePath())
-//                    val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
-//                    mapview_collect.addLayer(layer)
-//                    graphicsLayer = GraphicsLayer()
-//                    mapview_collect.addLayer(graphicsLayer, 1)
-//                    mapview_collect.addLayer(tempGraphicLayer, 2)
-//                    mapview_collect.addLayer(localGraphicsLayer, 3)
-//                    mapview_collect.addLayer(graphicName, 4)
                     initMapview(mapFilePath)
                 } else {
                     mapView.visibility = View.GONE
@@ -723,6 +737,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             }
         }
     }
+
 
     /**
      * 弹出没有地图Dialog
@@ -748,4 +763,32 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     }
 
 
+    fun searchFile(){
+        ThreadUtils.executeSubThread {
+            val path = PathConstant.UNDO_ZIP_PATH
+            val fileDir = File(path)
+            if (!fileDir.exists()) {
+                fileDir.mkdirs()
+            }
+            // 获得文件夹下所有文件夹和文件的名字
+            val fileDirs = fileDir.list()
+            // 获得文件夹下所有文件夹和文件
+            val files = fileDir.listFiles()
+            //添加之前先清空集合
+            fileDirNames.clear()
+            fileDirPaths.clear()
+            //抛出java.lang.UnsupportedOperationException
+            val tempList = Arrays.asList(*fileDirs!!)
+            fileDirNames.addAll(tempList)
+            for (file in files!!) {
+                fileDirPaths.add(file.absolutePath)
+            }
+
+            ThreadUtils.executeMainThread {
+//                adapter.notifyDataSetChanged()
+                recyclerView_showmap.adapter=MapChoseListAdapter(context,fileDirNames,fileDirPaths,showMapListDialog)
+                showMapListDialog.show()
+            }
+        }
+    }
 }
