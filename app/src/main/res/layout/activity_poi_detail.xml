@@ -233,8 +233,7 @@
 
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_lycs"
-                            style="@style/CollectEditText" 
-                            android:inputType="number"/>
+                            style="@style/CollectEditText"/>
 
                     </LinearLayout>
 

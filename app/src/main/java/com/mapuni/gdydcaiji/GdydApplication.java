@@ -19,6 +19,7 @@ public class GdydApplication extends Application {
     private SQLiteDatabase db;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
+    
     //静态单例  
     public static GdydApplication instances;
 
@@ -62,4 +63,5 @@ public class GdydApplication extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+    
 }  

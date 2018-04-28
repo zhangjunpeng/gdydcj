@@ -145,4 +145,9 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setContentView(R.layout.activity_empty);
+    }
 }

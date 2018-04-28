@@ -1,17 +1,10 @@
 package com.mapuni.gdydcaiji.activity;
 
-import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -20,19 +13,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.adapter.PhotoAdapter;
 import com.mapuni.gdydcaiji.bean.EventBean;
-import com.mapuni.gdydcaiji.service.CopyService;
 import com.mapuni.gdydcaiji.utils.CustomUtils;
 import com.mapuni.gdydcaiji.utils.DialogUtils;
 import com.mapuni.gdydcaiji.utils.FileIOUtils;
@@ -107,7 +94,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         lp.width = (int) (ScreenUtils.getScreenW(this) * 0.75);
         getWindow().setAttributes(lp);
 
-        adapter = new PhotoAdapter(mContext, imgUrls);
+        adapter = new PhotoAdapter(mContext.getApplicationContext(), imgUrls);
         gvPhoto.setAdapter(adapter);
     }
 
@@ -259,6 +246,12 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected void onPause() {
         super.onPause();
         overridePendingTransition(0, R.anim.activity_dialog_out);
+        gvPhoto.removeAllViewsInLayout();
+        gvPhoto = null;
+        imgUrls.clear();
+        photoImg = null;
+        adapter = null;
+        resultBean = null;
     }
 
     @Override
