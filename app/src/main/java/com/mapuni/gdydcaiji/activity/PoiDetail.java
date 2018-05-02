@@ -265,7 +265,6 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         EvevtUpdate evevtUpdate = new EvevtUpdate();
         EventBus.getDefault().post(evevtUpdate);
         super.onPause();
-        setContentView(R.layout.activity_empty);
     }
 
     private void saveAddressAndName() {

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -246,18 +247,27 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected void onPause() {
         super.onPause();
         overridePendingTransition(0, R.anim.activity_dialog_out);
-        gvPhoto.removeAllViewsInLayout();
-        gvPhoto = null;
-        imgUrls.clear();
-        photoImg = null;
-        adapter = null;
-        resultBean = null;
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            gvPhoto.removeAllViewsInLayout();
+            gvPhoto = null;
+            imgUrls.clear();
+            photoImg = null;
+            adapter = null;
+            resultBean = null;
+            setContentView(R.layout.activity_empty);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     protected void setSpinnerData(int id, Spinner spinner) {

@@ -181,10 +181,5 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         ShowDataUtils.saveAddressOrName("address", getTextByView(etAddress));
         ShowDataUtils.saveAddressOrName("lyname", getTextByView(etName));
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        setContentView(R.layout.activity_empty);
-    }
+    
 }
