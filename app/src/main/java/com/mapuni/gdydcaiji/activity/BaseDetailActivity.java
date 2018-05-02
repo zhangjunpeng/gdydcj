@@ -73,6 +73,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected double lng;
     protected String roleid;
     private PhotoAdapter adapter;
+    private final String filePath = PathConstant.IMAGE_PATH_CACHE + "/result.txt";
 
     @Override
     protected void initView() {
@@ -102,7 +103,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     @Override
     protected void initData() {
         roleid = SPUtils.getInstance().getString("roleid");
-        resultBean = (T) getIntent().getSerializableExtra("resultBean");
+//        resultBean = (T) getIntent().getSerializableExtra("resultBean");
         if (resultBean != null) {
             //查看
 //            edit.setVisibility(View.VISIBLE);

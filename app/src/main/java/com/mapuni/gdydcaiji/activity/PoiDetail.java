@@ -107,6 +107,16 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         tvXz2.setText(getResources().getStringArray(R.array.building_xz)[2]);
     }
 
+    @Override
+    protected void initData() {
+        long bm = getIntent().getLongExtra("resultBm", -1);
+        List<TbPoint> list = tPoiInfoDao.queryBuilder().where(TbPointDao.Properties.Bm.eq(bm)).list();
+        if (!list.isEmpty()) {
+            resultBean = list.get(0);
+        }
+        super.initData();
+    }
+
     private void initListPopupWindow() {
         List<String> mAddArray = ShowDataUtils.getAddressOrNameArray("address");
         ArrayAdapter<String> lpwAdapter = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mAddArray);

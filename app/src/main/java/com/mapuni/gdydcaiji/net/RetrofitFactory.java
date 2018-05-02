@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitFactory {
 
-//    public static final String BASE_URL = "http://123.160.246.203:8055/gdwycj/post/";
+    //    public static final String BASE_URL = "http://123.160.246.203:8055/gdwycj/post/";
     public static final String BASE_URL = "http://123.160.246.203:8281/gdwycj/post/";
 
 //    public static final String BASE_URL = "http://192.168.100.15:8080/gdwycj/post/";
@@ -29,7 +29,7 @@ public class RetrofitFactory {
     /**
      * 请求超时时间
      */
-    private static final int DEFAULT_TIMEOUT = 120000;
+    private static final int DEFAULT_TIMEOUT = 300;
 
 
     public static RetrofitService create(Class<RetrofitService> service) {

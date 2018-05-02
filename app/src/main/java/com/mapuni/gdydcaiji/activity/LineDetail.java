@@ -10,7 +10,9 @@ import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
 import com.mapuni.gdydcaiji.bean.TbLine;
+import com.mapuni.gdydcaiji.bean.TbPoint;
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
+import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ShowDataUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
@@ -52,6 +54,15 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         tbLineDao = GdydApplication.getInstances().getDaoSession().getTbLineDao();
         bj = getIntent().getStringExtra("bj");
         initListPopupWindow();
+    }
+
+    protected void initData() {
+        long bm = getIntent().getLongExtra("resultBm", -1);
+        List<TbLine> list = tbLineDao.queryBuilder().where(TbLineDao.Properties.Bm.eq(bm)).list();
+        if (!list.isEmpty()) {
+            resultBean = list.get(0);
+        }
+        super.initData();
     }
 
     private void initListPopupWindow() {

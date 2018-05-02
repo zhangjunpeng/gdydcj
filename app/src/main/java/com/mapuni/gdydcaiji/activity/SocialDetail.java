@@ -10,7 +10,9 @@ import android.widget.TextView;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
+import com.mapuni.gdydcaiji.bean.TbPoint;
 import com.mapuni.gdydcaiji.bean.TbSurface;
+import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ShowDataUtils;
@@ -64,6 +66,15 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 
         bj = getIntent().getStringExtra("bj");
         initListPopupWindow();
+    }
+
+    protected void initData() {
+        long bm = getIntent().getLongExtra("resultBm", -1);
+        List<TbSurface> list = tbSurfaceDao.queryBuilder().where(TbSurfaceDao.Properties.Bm.eq(bm)).list();
+        if (!list.isEmpty()) {
+            resultBean = list.get(0);
+        }
+        super.initData();
     }
 
     private void initListPopupWindow() {

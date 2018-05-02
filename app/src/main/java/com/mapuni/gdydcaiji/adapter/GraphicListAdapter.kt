@@ -10,10 +10,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.activity.*
 import com.mapuni.gdydcaiji.bean.*
+import com.mapuni.gdydcaiji.utils.DateUtil
+import com.mapuni.gdydcaiji.utils.FileUtils
+import com.mapuni.gdydcaiji.utils.PathConstant
 import org.greenrobot.eventbus.EventBus
+import java.util.HashMap
 
 /**
  * Created by zjp on 2018/3/23.
@@ -26,20 +32,20 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
 
     private val dialog: Dialog = dialog
 
-    private val deleteList=ArrayList<Any>()
+    private val deleteList = ArrayList<Any>()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        when(viewType){
-            1->{
+        when (viewType) {
+            1 -> {
                 val view = LayoutInflater.from(context).inflate(R.layout.item_list_showgraphicinfo, parent, false)
                 return Viewholder(view)
             }
-            -1->{
+            -1 -> {
                 val view = LayoutInflater.from(context).inflate(R.layout.item_deletebutton, parent, false)
 
                 return DeleteView(view)
             }
-            else->{
+            else -> {
                 val view = LayoutInflater.from(context).inflate(R.layout.item_list_showgraphicinfo, parent, false)
 
                 return Viewholder(view)
@@ -50,19 +56,19 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
     }
 
     override fun getItemCount(): Int {
-        return infoList.size+1
+        return infoList.size + 1
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position<infoList.size){
+        return if (position < infoList.size) {
             1
-        }else{
+        } else {
             -1
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (position<infoList.size) {
+        if (position < infoList.size) {
             holder as Viewholder
             val obj = infoList[position]["obj"]
             when (obj) {
@@ -82,15 +88,15 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
                 when (obj) {
                     is TbPoint -> {
                         intent.setClass(context, PoiDetail::class.java)
-                        intent.putExtra("resultBean", obj)
+                        intent.putExtra("resultBm", obj.bm)
                     }
                     is TbLine -> {
                         intent.setClass(context, LineDetail::class.java)
-                        intent.putExtra("resultBean", obj)
+                        intent.putExtra("resultBm", obj.bm)
                     }
                     is TbSurface -> {
                         intent.setClass(context, SocialDetail::class.java)
-                        intent.putExtra("resultBean", obj)
+                        intent.putExtra("resultBm", obj.bm)
                     }
 
                 }
@@ -110,11 +116,11 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
                     }
                 }
             }
-        }else{
+        } else {
             holder as DeleteView
-            holder.deleteButton.setOnClickListener{
-                val eventDeleteInfo=EventDeleteInfo()
-                eventDeleteInfo.deleteList=deleteList
+            holder.deleteButton.setOnClickListener {
+                val eventDeleteInfo = EventDeleteInfo()
+                eventDeleteInfo.deleteList = deleteList
                 EventBus.getDefault().post(eventDeleteInfo)
 
             }
@@ -123,9 +129,10 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
 
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var name: TextView = itemView.findViewById(R.id.name_item_showgraphic)
-        var isdetet:CheckBox=itemView.findViewById(R.id.check_isdelete)
+        var isdetet: CheckBox = itemView.findViewById(R.id.check_isdelete)
     }
-    inner class DeleteView(itemView: View):RecyclerView.ViewHolder(itemView){
-        var deleteButton:Button =itemView.findViewById(R.id.button_delete_item)
+
+    inner class DeleteView(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var deleteButton: Button = itemView.findViewById(R.id.button_delete_item)
     }
 }

@@ -353,10 +353,10 @@ public class UploadDataActivity extends BaseActivity {
         } else {
 
             showResponseDialog("上传失败");
-            updataNum = 0;
-            upStartTime = null;
-            upStopTime = null;
         }
+        updataNum = 0;
+        upStartTime = null;
+        upStopTime = null;
     }
 
     private void showResponseDialog(String message) {
