@@ -267,6 +267,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
 //        data.putExtra("obj",resultBean);
 //        setResult(Activity.RESULT_OK,data);
 
+        super.submit();
         finish();
     }
 

@@ -67,6 +67,8 @@ public class RetrofitFactory {
                         return chain.proceed(mRequest);
                     }
                 })
+                .readTimeout(DEFAULT_TIMEOUT,TimeUnit.SECONDS)//设置读取超时时间  
+                .writeTimeout(DEFAULT_TIMEOUT,TimeUnit.SECONDS)//设置写的超时时间
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .build();
     }

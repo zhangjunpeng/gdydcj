@@ -185,6 +185,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         saveAddressAndName();
         EvevtUpdate evevtUpdate = new EvevtUpdate();
         EventBus.getDefault().post(evevtUpdate);
+        super.submit();
         finish();
     }
 

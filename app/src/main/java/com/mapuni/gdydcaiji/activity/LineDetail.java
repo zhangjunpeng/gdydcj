@@ -152,6 +152,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         ShowDataUtils.saveAddressOrName("lyname", getTextByView(etName));
         EvevtUpdate evevtUpdate = new EvevtUpdate();
         EventBus.getDefault().post(evevtUpdate);
+        super.submit();
         finish();
 
     }

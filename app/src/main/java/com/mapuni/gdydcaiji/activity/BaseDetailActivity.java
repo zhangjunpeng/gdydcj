@@ -234,7 +234,9 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         }
     }
 
-    protected abstract void submit();
+    protected void submit(){
+        cacheView();
+    }
 
     @Subscribe
     public void deletePhoto(EventBean event) {
@@ -260,17 +262,21 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            gvPhoto.removeAllViewsInLayout();
-            gvPhoto = null;
-            imgUrls.clear();
-            photoImg = null;
-            adapter = null;
-            resultBean = null;
-            setContentView(R.layout.activity_empty);
+            cacheView();
         }
         return super.onKeyDown(keyCode, event);
     }
 
+    //释放内存
+    private void cacheView() {
+        gvPhoto.removeAllViewsInLayout();
+        gvPhoto = null;
+        imgUrls.clear();
+        photoImg = null;
+        adapter = null;
+        resultBean = null;
+        setContentView(R.layout.activity_empty);
+    }
     protected void setSpinnerData(int id, Spinner spinner) {
         List<String> mItems = Arrays.asList(getResources().getStringArray(id));
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, R.id.tv_type, mItems);
