@@ -79,7 +79,7 @@ public class TbPoint implements Serializable {
     @Expose
     private String img;
 
-    private int flag; //是否已上传状态（1-> 已上传、0->未上传）
+    private int flag; //是否已上传状态（1-> 已上传、0->新增未上传,2->修改未上传）
 
     @Generated(hash = 1558216315)
     public TbPoint(Long id, Long bm, String lytype, String lyxz, String name,

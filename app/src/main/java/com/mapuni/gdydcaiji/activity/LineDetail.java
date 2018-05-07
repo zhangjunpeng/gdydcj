@@ -127,11 +127,12 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         resultBean.setImg(getPhotoImg());
 
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
-        resultBean.setFlag(0);
 
-        if (isInsert)
+        if (isInsert) {
+            resultBean.setFlag(0);
             tbLineDao.insert(resultBean);
-        else {
+        } else {
+            resultBean.setFlag(2);
             if (roleid.equals("6")) {
                 //外业
                 if (resultBean.getId() != null) {
@@ -156,5 +157,5 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         finish();
 
     }
-    
+
 }

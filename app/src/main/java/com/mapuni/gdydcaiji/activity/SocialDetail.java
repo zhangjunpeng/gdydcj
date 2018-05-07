@@ -160,12 +160,12 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         resultBean.setImg(getPhotoImg());
 
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
-        resultBean.setFlag(0);
-
-
-        if (isInsert)
+        
+        if (isInsert) {
+            resultBean.setFlag(0);
             tbSurfaceDao.insert(resultBean);
-        else {
+        } else {
+            resultBean.setFlag(2);
             if (roleid.equals("6")) {
                 //外业
                 if (resultBean.getId() != null) {
@@ -193,5 +193,5 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         ShowDataUtils.saveAddressOrName("address", getTextByView(etAddress));
         ShowDataUtils.saveAddressOrName("lyname", getTextByView(etName));
     }
-    
+
 }

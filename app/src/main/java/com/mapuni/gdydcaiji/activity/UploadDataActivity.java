@@ -139,7 +139,7 @@ public class UploadDataActivity extends BaseActivity {
                 Map<String, Object> map = new HashMap<>();
                 //未上传,新增
                 tbPointList1 = tbPointDao.queryBuilder()
-                        .where(TbPointDao.Properties.Flag.eq(0),  //未上传
+                        .where(TbPointDao.Properties.Flag.eq(0),  //新增未上传
                                 TbPointDao.Properties.Id.isNull(),
                                 TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbPointDao.Properties.Opttime).list();
@@ -154,9 +154,9 @@ public class UploadDataActivity extends BaseActivity {
 
 //                //未上传,修改（id不为空，flag=0）
                 tbPointList2 = tbPointDao.queryBuilder()
-                        .where(TbPointDao.Properties.Flag.eq(0),  //未上传
-                                TbPointDao.Properties.Id.isNotNull(),
-                                TbPointDao.Properties.Authflag.eq(getFlagByUser()),
+                        .where(TbPointDao.Properties.Flag.eq(2),  //修改未上传
+//                                TbPointDao.Properties.Id.isNotNull(),
+//                                TbPointDao.Properties.Authflag.eq(getFlagByUser()),
                                 TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbPointDao.Properties.Opttime).list();
 //                String buildingJson2 = gson.toJson(tbPointList2);
@@ -171,8 +171,8 @@ public class UploadDataActivity extends BaseActivity {
                 //未上传,新增
                 tbLineList1 = tbLineDao.queryBuilder()
                         .where(TbLineDao.Properties.Flag.eq(0),
-                                TbLineDao.Properties.Id.isNull()
-                                , TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                                TbLineDao.Properties.Id.isNull(),
+                                TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbLineDao.Properties.Opttime).list();
 //                String poiJson1 = gson.toJson(tbLineList1);
 //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_line.txt", poiJson);
@@ -186,9 +186,9 @@ public class UploadDataActivity extends BaseActivity {
 
                 //未上传,修改（id不为空，flag=0）
                 tbLineList2 = tbLineDao.queryBuilder()
-                        .where(TbLineDao.Properties.Flag.eq(0),
-                                TbLineDao.Properties.Id.isNotNull(),
-                                TbLineDao.Properties.Authflag.eq(getFlagByUser()),
+                        .where(TbLineDao.Properties.Flag.eq(2),
+//                                TbLineDao.Properties.Id.isNotNull(),
+//                                TbLineDao.Properties.Authflag.eq(getFlagByUser()),
                                 TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbLineDao.Properties.Opttime).list();
 //                String poiJson2 = gson.toJson(tbLineList2);
@@ -204,8 +204,8 @@ public class UploadDataActivity extends BaseActivity {
                 //未上传,新增
                 tbSurfaceList1 = tbSurfaceDao.queryBuilder()
                         .where(TbSurfaceDao.Properties.Flag.eq(0),
-                                TbSurfaceDao.Properties.Id.isNull()
-                                , TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
+                                TbSurfaceDao.Properties.Id.isNull(),
+                                TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbSurfaceDao.Properties.Opttime).list();
 //                String socialJson1 = gson.toJson(tbSurfaceList1);
 //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
@@ -219,9 +219,9 @@ public class UploadDataActivity extends BaseActivity {
 
                 //未上传,修改（id不为空，flag=0）
                 tbSurfaceList2 = tbSurfaceDao.queryBuilder()
-                        .where(TbSurfaceDao.Properties.Flag.eq(0),
-                                TbSurfaceDao.Properties.Id.isNotNull(),
-                                TbSurfaceDao.Properties.Authflag.eq(getFlagByUser()),
+                        .where(TbSurfaceDao.Properties.Flag.eq(2),
+//                                TbSurfaceDao.Properties.Id.isNotNull(),
+//                                TbSurfaceDao.Properties.Authflag.eq(getFlagByUser()),
                                 TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbSurfaceDao.Properties.Opttime).list();
 //                String socialJson2 = gson.toJson(tbSurfaceList2);

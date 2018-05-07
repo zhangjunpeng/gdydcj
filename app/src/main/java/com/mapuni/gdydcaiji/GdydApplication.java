@@ -5,10 +5,17 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.multidex.MultiDex;
 
+import com.mapuni.gdydcaiji.activity.LoginActivity;
 import com.mapuni.gdydcaiji.database.greendao.DaoMaster;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
 import com.mapuni.gdydcaiji.database.greendao.MyOpenHelper;
+import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.Utils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by yf on 2018/3/15.
@@ -28,7 +35,20 @@ public class GdydApplication extends Application {
         super.onCreate();
         instances = this;
         Utils.init(this);
+//        ThreadUtils.executeSubThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                copyDbFile(instances, "sport.db");
+//                ThreadUtils.executeMainThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setDatabase();
+//                    }
+//                });
+//            }
+//        });
         setDatabase();
+        
     }
 
     public static GdydApplication getInstances() {
@@ -63,5 +83,45 @@ public class GdydApplication extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-    
+
+    /**
+     * 将assets文件夹下文件拷贝到/databases/下
+     *
+     * @param context
+     * @param db_name
+     */
+    public static void copyDbFile(Context context, String db_name) {
+        InputStream in = null;
+        FileOutputStream out = null;
+        String path = "/data/data/" + context.getPackageName() + "/databases/";
+        File file = new File(path + db_name);
+
+        //创建文件夹
+        File filePath = new File(path);
+        if (!filePath.exists())
+            filePath.mkdirs();
+
+        if (file.exists())
+            return;
+
+        try {
+            in = context.getAssets().open(db_name); // 从assets目录下复制
+            out = new FileOutputStream(file);
+            int length = -1;
+            byte[] buf = new byte[1024];
+            while ((length = in.read(buf)) != -1) {
+                out.write(buf, 0, length);
+            }
+            out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
 }  
