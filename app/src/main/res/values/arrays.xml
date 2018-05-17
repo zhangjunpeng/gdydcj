@@ -51,4 +51,40 @@
         <item>其他</item>
     </string-array>
 
+    <string-array name="poi_item">
+        <item>ID</item>
+        <item>楼宇类型</item>
+        <item>楼宇性质</item>
+        <item>名称</item>
+        <item>分类</item>
+        <item>地址</item>
+        <item>单元号</item>
+        <item>电话</item>
+        <item>等级</item>
+        <item>楼宇层数</item>
+        <item>楼宇住户数</item>
+        <item>备注</item>
+        <item>质检结果</item>
+    </string-array>
+    
+    <string-array name="line_item">
+        <item>ID</item>
+        <item>名称</item>
+        <item>起点</item>
+        <item>终点</item>
+        <item>备注</item>
+        <item>质检结果</item>
+    </string-array>
+    
+    <string-array name="surface_item">
+        <item>ID</item>
+        <item>名称</item>
+        <item>地址</item>
+        <item>分类</item>
+        <item>物业信息</item>
+        <item>联系电话</item>
+        <item>楼栋数</item>
+        <item>备注</item>
+        <item>质检结果</item>
+    </string-array>
 </resources>

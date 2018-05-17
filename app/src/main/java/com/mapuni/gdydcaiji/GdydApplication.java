@@ -12,6 +12,8 @@ import com.mapuni.gdydcaiji.database.greendao.MyOpenHelper;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.Utils;
 
+import org.greenrobot.greendao.database.Database;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -65,6 +67,7 @@ public class GdydApplication extends Application {
         // 所以，在正式的项目中，你还应该做一层封装，来实现数据库的安全升级。  
         mHelper = new MyOpenHelper(this, "sport.db", null);
         db = mHelper.getWritableDatabase();
+//        db =mHelper.getEncryptedReadableDb("123456");
         // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。  
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();

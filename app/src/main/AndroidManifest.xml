@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.mapuni.gdydcaiji">
+    package="com.mapuni.gdydcaiji">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".GdydApplication"
@@ -19,27 +19,27 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".activity.LoginActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.DownloadMapActivity"/>
+        <activity android:name=".activity.DownloadMapActivity" />
         <activity
             android:name=".activity.CollectionActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask" />
         <activity
             android:name=".activity.PoiDetail"
-            android:theme="@style/DialogActivity"/>
+            android:theme="@style/DialogActivity" />
         <activity
             android:name=".activity.SocialDetail"
-            android:theme="@style/DialogActivity"/>
-        <activity android:name=".activity.UploadDataActivity"/>
-        <activity android:name=".activity.ImageActivity"/>
-        <activity android:name=".activity.ChooseMapActivity"/>
+            android:theme="@style/DialogActivity" />
+        <activity android:name=".activity.UploadDataActivity" />
+        <activity android:name=".activity.ImageActivity" />
+        <activity android:name=".activity.ChooseMapActivity" />
         <activity
             android:name=".activity.LineDetail"
-            android:theme="@style/DialogActivity"/>
+            android:theme="@style/DialogActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -48,17 +48,16 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activity.VillageBorderActivity"/>
-        <activity android:name=".activity.QCListActivity"/>
-        <activity android:name=".activity.CaijiQCResultActivity"/>
+        <activity android:name=".activity.VillageBorderActivity" />
+        <activity android:name=".activity.QCListActivity" />
+        <activity android:name=".activity.CaijiQCResultActivity" />
 
-        <service android:name=".service.CopyService"/>
+        <service android:name=".service.CopyService" />
 
-        <activity android:name=".activity.CheckActivity">
-        </activity>
+        <activity android:name=".activity.CheckActivity"></activity>
     </application>
 
 </manifest>

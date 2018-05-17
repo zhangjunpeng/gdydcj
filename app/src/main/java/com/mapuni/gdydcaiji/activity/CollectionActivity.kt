@@ -45,6 +45,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, OnZoomListener, OnPanListener, BubbleSeekBar.OnProgressChangedListener {
@@ -113,7 +114,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     //质检模式为1
     //外业采集模式为0
     private var MODE: Int = 0
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -186,7 +186,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 //        }
 
     }
-
 
 
     override fun onClick(v: View?) {
@@ -462,6 +461,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             //质检
             data.add("下载数据")
             data.add("删除数据")
+            data.add("导出质检数据")
         } else if ("6".equals(roleid)) {
             //外业
             data.add("纠错")
@@ -503,10 +503,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
                     showDataDateDialog()
                 }
-                5->{
+                5 -> {
                     waiYeInterface.searchFile()
                 }
-                6-> {
+                6 -> {
                     if ("2".equals(roleid)) {
                         //质检
                         startActivity(Intent(this, QCListActivity::class.java))
@@ -531,6 +531,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                             }
                         }
 
+                    }
+                }
+                8 -> {
+                    //导出质检数据
+                    ThreadUtils.executeSubThread {
+
+                        waiYeInterface.databaseToExcel()
                     }
                 }
 
@@ -808,21 +815,22 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         }
 
     }
+
     @Subscribe
-    fun showmap(eventShowMap: EventShowMap){
+    fun showmap(eventShowMap: EventShowMap) {
         mapview_collect.removeAll()
 
-        var maxExtent=mapview_collect.maxExtent
-        for (mapFilePath in eventShowMap.filePahts){
-            if (mapFilePath == eventShowMap.filePahts.last()){
+        var maxExtent = mapview_collect.maxExtent
+        for (mapFilePath in eventShowMap.filePahts) {
+            if (mapFilePath == eventShowMap.filePahts.last()) {
                 val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
                 waiYeInterface.initMapview(mapFilePath)
 
                 maxExtent.merge(layer.fullExtent)
-                mapview_collect.maxExtent=maxExtent
+                mapview_collect.maxExtent = maxExtent
 //                mapview_collect.invalidate()
 
-            }else{
+            } else {
                 val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
                 mapview_collect.addLayer(layer)
                 maxExtent.merge(layer.fullExtent)

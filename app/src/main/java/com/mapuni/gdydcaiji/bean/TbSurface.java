@@ -237,4 +237,28 @@ public class TbSurface implements Serializable {
     public void setAuthflag(String authflag) {
         this.authflag = authflag;
     }
+
+    @Override
+    public String toString() {
+        return "TbSurface{" +
+                "id=" + id +
+                ", bm=" + bm +
+                ", name='" + name + '\'' +
+                ", xqdz='" + xqdz + '\'' +
+                ", fl='" + fl + '\'' +
+                ", wyxx='" + wyxx + '\'' +
+                ", lxdh='" + lxdh + '\'' +
+                ", polyarrays='" + polyarrays + '\'' +
+                ", oprator='" + oprator + '\'' +
+                ", opttime=" + opttime +
+                ", deleteflag='" + deleteflag + '\'' +
+                ", createtime=" + createtime +
+                ", note='" + note + '\'' +
+                ", authcontent='" + authcontent + '\'' +
+                ", authflag='" + authflag + '\'' +
+                ", lds='" + lds + '\'' +
+                ", img='" + img + '\'' +
+                ", flag=" + flag +
+                '}';
+    }
 }

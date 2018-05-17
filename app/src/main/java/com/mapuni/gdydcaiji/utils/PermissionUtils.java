@@ -53,6 +53,7 @@ public class PermissionUtils {
                         File file5 = new File(PathConstant.IMAGE_PATH);
                         File file6 = new File(PathConstant.IMAGE_PATH_CACHE);
                         File file7 = new File(PathConstant.DOWNLOAD_DATA_PATH);
+                        File file8 = new File(PathConstant.QC_DATA_PATH);
                         if (!file1.exists()) {
                             file1.mkdirs();
                         }
@@ -73,6 +74,9 @@ public class PermissionUtils {
                         }
                         if (!file7.exists()) {
                             file7.mkdirs();
+                        }
+                        if (!file8.exists()) {
+                            file8.mkdirs();
                         }
 
                     }

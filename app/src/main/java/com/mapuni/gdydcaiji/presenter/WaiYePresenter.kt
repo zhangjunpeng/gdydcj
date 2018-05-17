@@ -26,10 +26,7 @@ import com.esri.core.geometry.Point
 import com.esri.core.geometry.Polygon
 import com.esri.core.geometry.Polyline
 import com.esri.core.map.Graphic
-import com.esri.core.symbol.PictureMarkerSymbol
-import com.esri.core.symbol.SimpleFillSymbol
-import com.esri.core.symbol.SimpleLineSymbol
-import com.esri.core.symbol.SimpleMarkerSymbol
+import com.esri.core.symbol.*
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.activity.DownloadMapActivity
@@ -40,12 +37,15 @@ import com.mapuni.gdydcaiji.adapter.GraphicListAdapter
 import com.mapuni.gdydcaiji.adapter.MapChoseListAdapter
 import com.mapuni.gdydcaiji.adapter.OnlyShowAdapter
 import com.mapuni.gdydcaiji.bean.*
+import com.mapuni.gdydcaiji.database.greendao.DaoSession
 import com.mapuni.gdydcaiji.database.greendao.TbLineDao
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao
 import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao
 import com.mapuni.gdydcaiji.utils.*
+import org.greenrobot.greendao.query.LazyList
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by zjp on 2018/4/13.
@@ -74,9 +74,9 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     var tbSurfaceDao: TbSurfaceDao = GdydApplication.instances.daoSession.tbSurfaceDao
 
 
-    var lineInfoList: List<TbLine>? = null
-    var pointList: List<TbPoint>? = null
-    var surfaceList: List<TbSurface>? = null
+    var lineInfoList: LazyList<TbLine>? = null
+    var pointList: LazyList<TbPoint>? = null
+    var surfaceList: LazyList<TbSurface>? = null
 
     //显示的点线面
 
@@ -232,17 +232,18 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             when (MODE) {
                 2 -> {
                     //质检
+                    GdydApplication.instances.daoSession.clear()
                     pointList = tbPointDao.queryBuilder().where(
                             TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
                             TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
-                            TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS)))
-                            .list()
+                            TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS)))
+                            .listLazy()
                     lineInfoList = tbLineDao.queryBuilder().where(
-                            TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS)))
-                            .list()
+                            TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS)))
+                            .listLazy()
                     surfaceList = tbSurfaceDao.queryBuilder().where(
-                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
-                    ).list()
+                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
+                    ).listLazy()
                 }
                 6 -> {
                     //外业
@@ -250,16 +251,16 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                             TbPointDao.Properties.Lng.between(leftTopP.x, rightTopP.x),
                             TbPointDao.Properties.Lat.between(leftTopP.y, leftBottomP.y),
                             TbPointDao.Properties.Id.isNull,
-                            TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
-                    ).list()
+                            TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
+                    ).listLazy()
                     lineInfoList = tbLineDao.queryBuilder().where(
                             TbLineDao.Properties.Id.isNull,
-                            TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
-                    ).list()
+                            TbLineDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
+                    ).listLazy()
                     surfaceList = tbSurfaceDao.queryBuilder().where(
                             TbSurfaceDao.Properties.Id.isNull,
-                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat(dateStartTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(dateStopTime + " 24:00:00", DateUtil.YMDHMS))
-                    ).list()
+                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
+                    ).listLazy()
                 }
             }
 
@@ -275,28 +276,35 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     fun addNameInMap(point: Point, name: String, currentTvColor: Int) {
 
-        val tv = TextView(context)
         if (name.isEmpty()) {
             return
         }
-        tv.text = name
-        tv.textSize = 8f
-        tv.setTextColor(currentTvColor)
-        tv.isDrawingCacheEnabled = true
-        tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
-        tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
-        val bitmap = Bitmap.createBitmap(tv.drawingCache)
-        //千万别忘最后一步
-        tv.destroyDrawingCache()
-        val picturSymbol = PictureMarkerSymbol(BitmapDrawable(context.resources, bitmap))
-        picturSymbol.offsetY = 10f
-        val nameGraphic = Graphic(point, picturSymbol)
-        graphicName.addGraphic(nameGraphic)
+        if ("samsung" == android.os.Build.BRAND) {
+            val tv = TextView(context)
+            tv.text = name
+            tv.textSize = 8f
+            tv.setTextColor(currentTvColor)
+            tv.isDrawingCacheEnabled = true
+            tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+            tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
+            val bitmap = Bitmap.createBitmap(tv.drawingCache)
+//        千万别忘最后一步
+            tv.destroyDrawingCache()
+            val picturSymbol = PictureMarkerSymbol(BitmapDrawable(context.resources, bitmap))
+            picturSymbol.offsetY = 10f
+            val nameGraphic = Graphic(point, picturSymbol)
+            graphicName.addGraphic(nameGraphic)
+        } else {
+            val textSymbol = TextSymbol(10, name, currentTvColor)
+            textSymbol.offsetY = 6f
+            val nameGraphic = Graphic(point, textSymbol)
+            graphicName.addGraphic(nameGraphic)
+        }
     }
 
 
     private fun updateGraphicInLocal(currentPloygon: Polygon) {
-        for (info: TbPoint in pointList as List) {
+        for (info: TbPoint in pointList as LazyList) {
             val point = Point(info.lng, info.lat)
             var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()) {
                 SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
@@ -310,7 +318,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             addNameInMap(point, name, currentPoiColor)
         }
 
-        for (info: TbLine in lineInfoList as List) {
+        for (info: TbLine in lineInfoList as LazyList) {
             val bj = info.polyarrays
             val polyline = Polyline()
             val points_array = bj.split(";")
@@ -342,7 +350,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
         }
 
-        for (info: TbSurface in surfaceList as List) {
+        for (info: TbSurface in surfaceList as LazyList) {
             val bj = info.polyarrays
             val tempPointList = ArrayList<Point>()
             val points_array = bj.split(";")
@@ -378,6 +386,9 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
         mapView.invalidate()
         mIsLoading = false
+        pointList?.close()
+        lineInfoList?.close()
+        surfaceList?.close()
     }
 
     private fun getPointName(info: TbPoint): String {
@@ -533,6 +544,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private lateinit var showGrahipcListDialog: Dialog
     private lateinit var recyclerView: RecyclerView
+    private lateinit var tv_title: TextView
     private fun initShowGraphicDialog() {
         showGrahipcListDialog = Dialog(context)
         showGrahipcListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -540,6 +552,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         showGrahipcListDialog.setContentView(contentView)
         showGrahipcListDialog.setCanceledOnTouchOutside(false)
         recyclerView = contentView.findViewById(R.id.recycler_dialog)
+        tv_title = contentView.findViewById(R.id.tv_dialog_title)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -555,6 +568,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         tempGraphicID = tempGraphicLayer.addGraphic(graphic)
         val uids_local = localGraphicsLayer.getGraphicIDs(v, v1, tolerance, 50)
 
+        var poiCount = 0
         if (uids_local.isEmpty()) {
             Toast.makeText(context, "选择范围内没有点", Toast.LENGTH_SHORT).show()
             val removeGraphic = RemoveGraphic()
@@ -566,6 +580,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 when (info) {
                     is TbPoint -> {
                         map["obj"] = info
+                        poiCount++
                     }
                     is TbLine -> {
                         map["obj"] = info
@@ -581,7 +596,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
 //            when(MODE){
 //                6->{
-            val graphicListAdtaper = GraphicListAdapter(context, infoList as ArrayList, showGrahipcListDialog)
+            tv_title.text = "附近要素的名称(点数量: $poiCount)"
+            val graphicListAdtaper = GraphicListAdapter(context, infoList as ArrayList, showGrahipcListDialog, MODE)
             recyclerView.adapter = graphicListAdtaper
 
 //                }
@@ -687,6 +703,40 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         pointPloygon.clear()
     }
 
+    fun databaseToExcel() {
+
+        val tbpoints = tbPointDao.queryBuilder().where(
+                TbPointDao.Properties.Flag.eq(2),
+                TbPointDao.Properties.Id.isNotNull
+        ).orderAsc(TbPointDao.Properties.Opttime).list()
+
+        val tbLines = tbLineDao.queryBuilder().where(
+                TbLineDao.Properties.Flag.eq(2),
+                TbLineDao.Properties.Id.isNotNull
+        ).orderAsc(TbLineDao.Properties.Opttime).list()
+
+        val tbSurfaces = tbSurfaceDao.queryBuilder().where(
+                TbSurfaceDao.Properties.Flag.eq(2),
+                TbSurfaceDao.Properties.Id.isNotNull
+        ).orderAsc(TbSurfaceDao.Properties.Opttime).list()
+
+        if (tbpoints.isEmpty() && tbLines.isEmpty() && tbSurfaces.isEmpty()) {
+            ThreadUtils.executeMainThread {
+                ToastUtils.showShort("无需要导出的数据")
+            }
+            return
+        }
+
+        val excelPath = PathConstant.QC_DATA_PATH + "/" + "qcdata.xls"
+        if (!File(PathConstant.QC_DATA_PATH).exists()) {
+            File(PathConstant.QC_DATA_PATH).mkdirs()
+        }
+
+        val saveToExcelUtil = SaveToExcelUtil(context, excelPath)
+        saveToExcelUtil.writeToExcel(tbpoints, tbLines, tbSurfaces)
+
+    }
+
     override fun initDialogSize(bzDialog: Dialog) {
 
         val dialogWindow = showGrahipcListDialog.window
@@ -763,7 +813,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     }
 
 
-    fun searchFile(){
+    fun searchFile() {
         ThreadUtils.executeSubThread {
             val path = PathConstant.UNDO_ZIP_PATH
             val fileDir = File(path)
@@ -785,8 +835,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             }
 
             ThreadUtils.executeMainThread {
-//                adapter.notifyDataSetChanged()
-                recyclerView_showmap.adapter=MapChoseListAdapter(context,fileDirNames,fileDirPaths,showMapListDialog)
+                //                adapter.notifyDataSetChanged()
+                recyclerView_showmap.adapter = MapChoseListAdapter(context, fileDirNames, fileDirPaths, showMapListDialog)
                 showMapListDialog.show()
             }
         }

@@ -27,7 +27,9 @@ public class PathConstant {
     public static final String IMAGE_PATH = ROOT_PATH + "/img";
     // 上传数据路径
     public static final String UPLOAD_DATA = ROOT_PATH + "/uploaddata";
-    
+
     public static final String CAPTURE_SCREEN = ROOT_PATH + "/capturescreen";
+    //导出质检数据路径
+    public static final String QC_DATA_PATH = ROOT_PATH + "/qcdata";
 
 }

@@ -27,7 +27,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //添加此行代码，可以在release包下打印log  
-            debuggable true
+//            debuggable true
 
             aaptOptions.cruncherEnabled = false
             aaptOptions.useNewCruncher = false
@@ -43,16 +43,15 @@ android {
 }
 
 dependencies {
-
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'com.esri.arcgis.android:arcgis-android:10.2.9'
-    compile 'org.greenrobot:greendao:3.2.2' // add library
+    compile 'org.greenrobot:greendao:3.2.2'
+    // add library
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.yanzhenjie:permission:1.1.2'
@@ -77,7 +76,10 @@ dependencies {
     compile('cn.qqtheme.framework:ColorPicker:latest.release') {
         exclude group: 'com.android.support'
     }
-
+    compile 'com.alibaba:fastjson:1.2.46'
+    compile 'com.alibaba:fastjson:1.1.68.android'
+    implementation files('libs/jxl.jar')
+//    compile 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
 }
 
 repositories {

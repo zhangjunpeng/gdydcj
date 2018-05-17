@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONReader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jzxiang.pickerview.TimePickerDialog;
@@ -33,6 +34,7 @@ import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
 import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.DateUtil;
+import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.StringUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
@@ -43,8 +45,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -89,6 +93,7 @@ public class QCListActivity extends BaseActivity {
     private TbLineDao tbLineDao;
     private TbSurfaceDao tbSurfaceDao;
     private final String filePath = PathConstant.DOWNLOAD_DATA_PATH + File.separator + "downloadData.txt";
+    private ProgressDialog pd;
 
     @Override
     protected int getLayoutResId() {
@@ -115,7 +120,6 @@ public class QCListActivity extends BaseActivity {
                 .size(1)
                 .colorResId(R.color.gray_line)
                 .build());//添加分隔线
-
         adapter = new FieidPersonListAdapter(res);
         mRecycleView.setAdapter(adapter);
     }
@@ -213,7 +217,7 @@ public class QCListActivity extends BaseActivity {
         fieidStr = fieidStr.substring(0, fieidStr.length() - 1);
 
         // Dialog
-        final ProgressDialog pd = new ProgressDialog(this);
+        pd = new ProgressDialog(this);
         pd.setMessage("下载中...");
         // 点击对话框以外的地方无法取消
         pd.setCanceledOnTouchOutside(false);
@@ -249,7 +253,8 @@ public class QCListActivity extends BaseActivity {
 
                     @Override
                     public void onNext(InputStream inputStream) {
-                        pd.dismiss();
+//                        pd.dismiss();
+                        pd.setMessage("处理数据中...");
                         ToastUtils.showShort("下载成功");
 //                        ThreadUtils.executeSubThread(new Runnable() {
 //                            @Override
@@ -264,7 +269,8 @@ public class QCListActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
 
-                        pd.dismiss();
+                        if (pd.isShowing())
+                            pd.dismiss();
                         ToastUtils.showShort("下载失败");
                     }
 
@@ -276,36 +282,222 @@ public class QCListActivity extends BaseActivity {
 
     }
 
-    private void insertData2DB() {
+//    private void insertData2DB() {
+//        FileInputStream fileTemp = null;
+//        try {
+//
+////            fileTemp = new FileInputStream(new File(filePath));
+////            int length = fileTemp.available();
+////            byte[] buffer = new byte[length];
+////            fileTemp.read(buffer);
+////            String json = new String(buffer);
+//            FileReader fileReader = new FileReader(filePath);
+//            JsonReader jsonReader = new JsonReader(fileReader);
+//            jsonReader.setLenient(true);
+//            Gson gson = new GsonBuilder().setDateFormat(DateUtil.YMDHMS).create();
+//            DownloadBean downloadBean = gson.fromJson(jsonReader, DownloadBean.class);
+//            List<TbPoint> tb_points = downloadBean.getTb_point();
+//            List<TbLine> tb_lines = downloadBean.getTb_line();
+//            List<TbSurface> tb_surfaces = downloadBean.getTb_surface();
+//
+//            if (tb_points != null && tb_points.size() > 0) {
+////                tbPointDao.insertInTx(tb_points);
+//                tbPointDao.insertOrReplaceInTx(tb_points);
+//            }
+//            if (tb_lines != null && tb_lines.size() > 0) {
+//                tbLineDao.insertOrReplaceInTx(tb_lines);
+//            }
+//            if (tb_surfaces != null && tb_surfaces.size() > 0) {
+//                tbSurfaceDao.insertOrReplaceInTx(tb_surfaces);
+//            }
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    private void insertData2DB2() {
         FileInputStream fileTemp = null;
+
+        FileReader fileReader = null;
+        TbPoint tbPoint = new TbPoint();
+        TbLine tbLine = new TbLine();
+        TbSurface tbSurface = new TbSurface();
         try {
+            fileReader = new FileReader(filePath);
 
-            fileTemp = new FileInputStream(new File(filePath));
-            int length = fileTemp.available();
-            byte[] buffer = new byte[length];
-            fileTemp.read(buffer);
-            String json = new String(buffer);
-            Gson gson = new GsonBuilder().setDateFormat(DateUtil.YMDHMS).create();
-            DownloadBean downloadBean = gson.fromJson(json, DownloadBean.class);
-            List<TbPoint> tb_points = downloadBean.getTb_point();
-            List<TbLine> tb_lines = downloadBean.getTb_line();
-            List<TbSurface> tb_surfaces = downloadBean.getTb_surface();
+            JSONReader jsonReader = new JSONReader(fileReader);
+            jsonReader.startObject();
+            while (jsonReader.hasNext()) {
+                String elem = jsonReader.readString();
+                if ("tb_point".equals(elem)) {
+                    jsonReader.startArray();
+                    while (jsonReader.hasNext()) {
+                        jsonReader.startObject();
+                        while (jsonReader.hasNext()) {
+                            String itemName = jsonReader.readString();
+                            Object itemValue = jsonReader.readObject();
+                            readTbPoint(tbPoint, itemName, itemValue);
+                        }
+                        jsonReader.endObject();
+                        tbPointDao.insertOrReplace(tbPoint);
+                    }
+                    jsonReader.endArray();
+                } else if ("tb_line".equals(elem)) {
+                    jsonReader.startArray();
+                    while (jsonReader.hasNext()) {
+                        jsonReader.startObject();
+                        while (jsonReader.hasNext()) {
+                            String itemName = jsonReader.readString();
+                            Object itemValue = jsonReader.readObject();
+                            readTbLine(tbLine, itemName, itemValue);
+                        }
+                        jsonReader.endObject();
+                        tbLineDao.insertOrReplace(tbLine);
+                    }
+                    jsonReader.endArray();
+                } else if ("tb_surface".equals(elem)) {
+                    jsonReader.startArray();
+                    while (jsonReader.hasNext()) {
+                        jsonReader.startObject();
+                        while (jsonReader.hasNext()) {
+                            String itemName = jsonReader.readString();
+                            Object itemValue = jsonReader.readObject();
+                            readTbSurface(tbSurface, itemName, itemValue);
+                        }
+                        jsonReader.endObject();
+                        tbSurfaceDao.insertOrReplace(tbSurface);
+                    }
+                    jsonReader.endArray();
+                } else {
+                    jsonReader.readObject();
+                }
+            }
 
-            if (tb_points != null && tb_points.size() > 0) {
-//                tbPointDao.insertInTx(tb_points);
-                tbPointDao.insertOrReplaceInTx(tb_points);
-            }
-            if (tb_lines != null && tb_lines.size() > 0) {
-                tbLineDao.insertOrReplaceInTx(tb_lines);
-            }
-            if (tb_surfaces != null && tb_surfaces.size() > 0) {
-                tbSurfaceDao.insertOrReplaceInTx(tb_surfaces);
-            }
-
-        } catch (FileNotFoundException e) {
+            jsonReader.endObject();
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+
+    }
+
+    private void readTbSurface(TbSurface tbSurface, String itemName, Object itemValue) {
+        if ("id".equals(itemName)) {
+            tbSurface.setId(Long.valueOf(itemValue.toString()));
+        } else if ("bm".equals(itemName)) {
+            tbSurface.setBm(Long.valueOf(itemValue.toString()));
+        } else if ("name".equals(itemName)) {
+            tbSurface.setName((String) itemValue);
+        } else if ("xqdz".equals(itemName)) {
+            tbSurface.setXqdz((String) itemValue);
+        } else if ("fl".equals(itemName)) {
+            tbSurface.setFl((String) itemValue);
+        } else if ("wyxx".equals(itemName)) {
+            tbSurface.setWyxx((String) itemValue);
+        } else if ("lxdh".equals(itemName)) {
+            tbSurface.setLxdh((String) itemValue);
+        } else if ("lds".equals(itemName)) {
+            tbSurface.setLds((String) itemValue);
+        } else if ("polyarrays".equals(itemName)) {
+            tbSurface.setPolyarrays((String) itemValue);
+        } else if ("oprator".equals(itemName)) {
+            tbSurface.setOprator((String) itemValue);
+        } else if ("opttime".equals(itemName)) {
+            tbSurface.setOpttime(DateUtil.getDateByFormat((String) itemValue, DateUtil.YMDHMS));
+        } else if ("deleteflag".equals(itemName)) {
+            tbSurface.setDeleteflag((String) itemValue);
+        } else if ("createtime".equals(itemName)) {
+            tbSurface.setCreatetime(DateUtil.getDateByFormat((String) itemValue, DateUtil.YMDHMS));
+        } else if ("note".equals(itemName)) {
+            tbSurface.setNote((String) itemValue);
+        } else if ("img".equals(itemName)) {
+            tbSurface.setImg((String) itemValue);
+        } else if ("authflag".equals(itemName)) {
+            tbSurface.setAuthflag((String) itemValue);
+        } else if ("authcontent".equals(itemName)) {
+            tbSurface.setAuthcontent((String) itemValue);
+        }
+    }
+
+    private void readTbLine(TbLine tbLine, String itemName, Object itemValue) {
+        if ("id".equals(itemName)) {
+            tbLine.setId(Long.valueOf(itemValue.toString()));
+        } else if ("bm".equals(itemName)) {
+            tbLine.setBm(Long.valueOf(itemValue.toString()));
+        } else if ("name".equals(itemName)) {
+            tbLine.setName((String) itemValue);
+        } else if ("sfz".equals(itemName)) {
+            tbLine.setSfz((String) itemValue);
+        } else if ("zdz".equals(itemName)) {
+            tbLine.setZdz((String) itemValue);
+        } else if ("polyarrays".equals(itemName)) {
+            tbLine.setPolyarrays((String) itemValue);
+        } else if ("oprator".equals(itemName)) {
+            tbLine.setOprator((String) itemValue);
+        } else if ("opttime".equals(itemName)) {
+            tbLine.setOpttime(DateUtil.getDateByFormat((String) itemValue, DateUtil.YMDHMS));
+        } else if ("deleteflag".equals(itemName)) {
+            tbLine.setDeleteflag((String) itemValue);
+        } else if ("createtime".equals(itemName)) {
+            tbLine.setCreatetime(DateUtil.getDateByFormat((String) itemValue, DateUtil.YMDHMS));
+        } else if ("note".equals(itemName)) {
+            tbLine.setNote((String) itemValue);
+        } else if ("img".equals(itemName)) {
+            tbLine.setImg((String) itemValue);
+        } else if ("authflag".equals(itemName)) {
+            tbLine.setAuthflag((String) itemValue);
+        } else if ("authcontent".equals(itemName)) {
+            tbLine.setAuthcontent((String) itemValue);
+        }
+    }
+
+    private void readTbPoint(TbPoint tbPoint, String itemName, Object itemValue) {
+        if ("id".equals(itemName)) {
+            tbPoint.setId(Long.valueOf(itemValue.toString()));
+        } else if ("bm".equals(itemName)) {
+            tbPoint.setBm(Long.valueOf(itemValue.toString()));
+        } else if ("lytype".equals(itemName)) {
+            tbPoint.setLytype((String) itemValue);
+        } else if ("lyxz".equals(itemName)) {
+            tbPoint.setLyxz((String) itemValue);
+        } else if ("name".equals(itemName)) {
+            tbPoint.setName((String) itemValue);
+        } else if ("fl".equals(itemName)) {
+            tbPoint.setFl((String) itemValue);
+        } else if ("dz".equals(itemName)) {
+            tbPoint.setDz((String) itemValue);
+        } else if ("dy".equals(itemName)) {
+            tbPoint.setDy((String) itemValue);
+        } else if ("lxdh".equals(itemName)) {
+            tbPoint.setLxdh((String) itemValue);
+        } else if ("dj".equals(itemName)) {
+            tbPoint.setDj((String) itemValue);
+        } else if ("lycs".equals(itemName)) {
+            tbPoint.setLycs((String) itemValue);
+        } else if ("lyzhs".equals(itemName)) {
+            tbPoint.setLyzhs((String) itemValue);
+        } else if ("lng".equals(itemName)) {
+            tbPoint.setLng(Double.parseDouble(itemValue.toString()));
+        } else if ("lat".equals(itemName)) {
+            tbPoint.setLat(Double.parseDouble(itemValue.toString()));
+        } else if ("oprator".equals(itemName)) {
+            tbPoint.setOprator((String) itemValue);
+        } else if ("opttime".equals(itemName)) {
+            tbPoint.setOpttime(DateUtil.getDateByFormat((String) itemValue, DateUtil.YMDHMS));
+        } else if ("deleteflag".equals(itemName)) {
+            tbPoint.setDeleteflag((String) itemValue);
+        } else if ("createtime".equals(itemName)) {
+            tbPoint.setCreatetime((String) itemValue);
+        } else if ("note".equals(itemName)) {
+            tbPoint.setNote((String) itemValue);
+        } else if ("img".equals(itemName)) {
+            tbPoint.setImg((String) itemValue);
+        } else if ("authflag".equals(itemName)) {
+            tbPoint.setAuthflag((String) itemValue);
+        } else if ("authcontent".equals(itemName)) {
+            tbPoint.setAuthcontent((String) itemValue);
         }
     }
 
@@ -397,8 +589,10 @@ public class QCListActivity extends BaseActivity {
             fos.close();
 
         } catch (FileNotFoundException e) {
+            deleteDownloadFile();
             ToastUtils.showShort("文件不存在");
         } catch (IOException e) {
+            deleteDownloadFile();
             ToastUtils.showShort("下载错误");
         }
 
@@ -451,19 +645,27 @@ public class QCListActivity extends BaseActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            insertData2DB();
+            insertData2DB2();
             return "done";
         }
 
         @Override
         protected void onPostExecute(String s) {
+            if (pd.isShowing())
+                pd.dismiss();
             if ("done".equals(s)) {
-                Intent intent = new Intent(QCListActivity.this, CollectionActivity.class);
-                startActivity(intent);
+                deleteDownloadFile();
+//                Intent intent = new Intent(QCListActivity.this, CollectionActivity.class);
+//                startActivity(intent);
                 finish();
             }
             super.onPostExecute(s);
         }
     }
 
+    //删除下载文件
+    private void deleteDownloadFile() {
+        if (new File(filePath).exists())
+            new File(filePath).delete();
+    }
 }

@@ -35,17 +35,14 @@ public class DbUtils {
     public int getNoUpdateNum() {
         int totalNum = 0;
         List<TbPoint> tbPointList = tbPointDao.queryBuilder()
-                .where(TbPointDao.Properties.Flag.eq(0),  //未上传
-                        TbPointDao.Properties.Id.isNotNull(),
-                        TbPointDao.Properties.Authflag.eq(getFlagByUser())).list();
+                .where(TbPointDao.Properties.Flag.eq(2),  //未上传
+                        TbPointDao.Properties.Id.isNotNull()).list();
         List<TbLine> tbLineList = tbLineDao.queryBuilder()
-                .where(TbLineDao.Properties.Flag.eq(0),
-                        TbLineDao.Properties.Id.isNotNull(),
-                        TbLineDao.Properties.Authflag.eq(getFlagByUser())).list();
+                .where(TbLineDao.Properties.Flag.eq(2),
+                        TbLineDao.Properties.Id.isNotNull()).list();
         List<TbSurface> tbSurfaceList = tbSurfaceDao.queryBuilder()
-                .where(TbSurfaceDao.Properties.Flag.eq(0),
-                        TbSurfaceDao.Properties.Id.isNotNull(),
-                        TbSurfaceDao.Properties.Authflag.eq(getFlagByUser())).list();
+                .where(TbSurfaceDao.Properties.Flag.eq(2),
+                        TbSurfaceDao.Properties.Id.isNotNull()).list();
         totalNum = tbPointList.size() + tbLineList.size() + tbSurfaceList.size();
         return totalNum;
 
@@ -61,7 +58,7 @@ public class DbUtils {
                 .where(TbLineDao.Properties.Id.isNotNull()).list());
         tbSurfaceDao.deleteInTx(tbSurfaceDao.queryBuilder()
                 .where(TbSurfaceDao.Properties.Id.isNotNull()).list());
-        
+
     }
 
     public String getFlagByUser() {

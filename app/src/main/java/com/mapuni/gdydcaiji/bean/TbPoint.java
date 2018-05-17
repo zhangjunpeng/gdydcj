@@ -304,28 +304,7 @@ public class TbPoint implements Serializable {
     public String toString() {
         return "TbPoint{" +
                 "id=" + id +
-                ", bm=" + bm +
-                ", lytype='" + lytype + '\'' +
-                ", lyxz='" + lyxz + '\'' +
                 ", name='" + name + '\'' +
-                ", fl='" + fl + '\'' +
-                ", dz='" + dz + '\'' +
-                ", dy='" + dy + '\'' +
-                ", lxdh='" + lxdh + '\'' +
-                ", dj='" + dj + '\'' +
-                ", lycs='" + lycs + '\'' +
-                ", lng=" + lng +
-                ", lat=" + lat +
-                ", oprator='" + oprator + '\'' +
-                ", opttime=" + opttime +
-                ", deleteflag='" + deleteflag + '\'' +
-                ", createtime=" + createtime +
-                ", note='" + note + '\'' +
-                ", authcontent='" + authcontent + '\'' +
-                ", authflag='" + authflag + '\'' +
-                ", lyzhs='" + lyzhs + '\'' +
-                ", img='" + img + '\'' +
-                ", flag=" + flag +
                 '}';
     }
 

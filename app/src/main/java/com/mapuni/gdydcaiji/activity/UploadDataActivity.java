@@ -92,6 +92,7 @@ public class UploadDataActivity extends BaseActivity {
     private TbPointDao tbPointDao;
     private TbLineDao tbLineDao;
     private TbSurfaceDao tbSurfaceDao;
+    private final String filePath = PathConstant.UPLOAD_DATA + "/upload.txt";
 
     @Override
     protected int getLayoutResId() {
@@ -229,7 +230,7 @@ public class UploadDataActivity extends BaseActivity {
                 map.put("tb_surface_modify", tbSurfaceList2);
 
                 String json = gson.toJson(map);
-                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/upload.txt", json);
+                FileUtils.writeFile(filePath, json);
                 if (tbSurfaceList2 != null && tbSurfaceList2.size() > 0) {
                     updataNum += tbSurfaceList2.size();
                     upStartTime = upStartTime == null ? tbSurfaceList2.get(0).getOpttime() : new Date(Math.min(upStartTime.getTime(), tbSurfaceList2.get(0).getOpttime().getTime()));
@@ -301,6 +302,7 @@ public class UploadDataActivity extends BaseActivity {
                     updataNum = 0;
                     upStartTime = null;
                     upStopTime = null;
+                    deleteUpdateFile();
                     return;
                 }
                 processData(body);
@@ -322,6 +324,7 @@ public class UploadDataActivity extends BaseActivity {
                 updataNum = 0;
                 upStartTime = null;
                 upStopTime = null;
+                deleteUpdateFile();
 
             }
         });
@@ -357,6 +360,13 @@ public class UploadDataActivity extends BaseActivity {
         updataNum = 0;
         upStartTime = null;
         upStopTime = null;
+        deleteUpdateFile();
+    }
+
+    //删除上传文件
+    private void deleteUpdateFile() {
+        if (new File(filePath).exists())
+            new File(filePath).delete();
     }
 
     private void showResponseDialog(String message) {
@@ -592,4 +602,9 @@ public class UploadDataActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        deleteUpdateFile();
+    }
 }
