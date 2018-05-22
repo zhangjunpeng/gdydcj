@@ -483,7 +483,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 }
                 2 -> {
                     ThreadUtils.executeSubThread {
-                        FileUtils.copyFile(GdydApplication.getInstances().db.path, PathConstant.DATABASE_PATH + "/sport.db") { true }
+                        FileUtils.copyFile(GdydApplication.getInstances().dbPath, PathConstant.DATABASE_PATH + "/sport.db") { true }
                         ThreadUtils.executeMainThread {
                             ToastUtils.showShort("备份成功")
                         }

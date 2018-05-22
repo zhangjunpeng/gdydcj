@@ -79,7 +79,7 @@ dependencies {
     compile 'com.alibaba:fastjson:1.2.46'
     compile 'com.alibaba:fastjson:1.1.68.android'
     implementation files('libs/jxl.jar')
-//    compile 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
 }
 
 repositories {

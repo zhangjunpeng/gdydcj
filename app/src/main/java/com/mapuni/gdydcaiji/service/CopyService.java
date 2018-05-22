@@ -43,7 +43,7 @@ public class CopyService extends Service {
                     @Override
                     public void run() {
 
-                        FileUtils.copyFile(GdydApplication.getInstances().getDb().getPath(), PathConstant.DATABASE_PATH + "/sport.db", new FileUtils.OnReplaceListener() {
+                        FileUtils.copyFile(GdydApplication.getInstances().getDbPath(), PathConstant.DATABASE_PATH + "/sport.db", new FileUtils.OnReplaceListener() {
                             @Override
                             public boolean onReplace() {
                                 return true;

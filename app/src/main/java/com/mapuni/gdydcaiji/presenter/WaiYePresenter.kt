@@ -127,17 +127,17 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         for (i in 0 until 12) {
             point_bz_array.add(false)
         }
-        point_bz_array[0] = true
+//        point_bz_array[0] = true
 
         for (i in 0 until 4) {
             line_bz_array.add(false)
         }
-        line_bz_array[0] = true
+//        line_bz_array[0] = true
 
         for (i in 0 until 7) {
             surface_bz_array.add(false)
         }
-        surface_bz_array[0] = true
+//        surface_bz_array[0] = true
     }
 
 
