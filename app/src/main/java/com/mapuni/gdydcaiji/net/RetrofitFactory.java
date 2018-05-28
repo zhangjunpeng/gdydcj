@@ -23,6 +23,7 @@ public class RetrofitFactory {
 
     //    public static final String BASE_URL = "http://123.160.246.203:8055/gdwycj/post/";
     public static final String BASE_URL = "http://123.160.246.203:8281/gdwycj/post/";
+//    public static final String BASE_URL = "http://192.168.120.213:8080/gdwycj/post/";
 
 //    public static final String BASE_URL = "http://192.168.100.15:8080/gdwycj/post/";
 
@@ -50,14 +51,14 @@ public class RetrofitFactory {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-//                LogUtils.d("request:" + message);
+                LogUtils.d("request:" + message);
             }
         });
         //日志显示级别
-//        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient
                 .Builder()
-//                .addInterceptor(loggingInterceptor)
+                .addInterceptor(loggingInterceptor)
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {

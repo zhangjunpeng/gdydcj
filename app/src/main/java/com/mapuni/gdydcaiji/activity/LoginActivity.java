@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
     private void login(final String username, final String password) {
         if (username.equals(spUsername) && password.equals(spPassword)) {
             String roleid = SPUtils.getInstance().getString("roleid");
-            if ("2".equals(roleid) || "6".equals(roleid)) {
+            if ("2".equals(roleid) || "6".equals(roleid) || "8".equals(roleid)) {
                 ToastUtils.showShort("登录成功");
                 // 保存信息
                 boolean isChecked = cbRemember.isChecked();
@@ -119,12 +119,12 @@ public class LoginActivity extends AppCompatActivity {
                     // 不记住密码
                     SPUtils.getInstance().put("isRemember", isChecked);
                 }
-                
+
                 startActivity(new Intent(LoginActivity.this, CollectionActivity.class));
                 finish();
                 return;
             }
-            
+
         }
         final Call<LoginBean> call = RetrofitFactory.create(RetrofitService.class)
                 .login(username, password);
@@ -154,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 //                assert loginBean != null;
                 if (loginBean != null) {
                     if ("登录成功".equals(loginBean.getMsg())) {
-                        if (!"2".equals(loginBean.getUser().getRoleid()) && !"6".equals(loginBean.getUser().getRoleid())) {
+                        if (!"2".equals(loginBean.getUser().getRoleid()) && !"6".equals(loginBean.getUser().getRoleid()) && !"8".equals(loginBean.getUser().getRoleid())) {
                             ToastUtils.showShort("仅限外业或采集人员登录");
                             return;
                         }

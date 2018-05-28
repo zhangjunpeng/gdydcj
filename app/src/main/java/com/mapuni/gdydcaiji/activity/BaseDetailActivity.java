@@ -69,8 +69,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected boolean isInsert;
     protected List<String> imgUrls = new ArrayList<>();
     protected String photoImg;
-    protected double lat;
-    protected double lng;
+    
     protected String roleid;
     private PhotoAdapter adapter;
     private final String filePath = PathConstant.IMAGE_PATH_CACHE + "/result.txt";
@@ -104,23 +103,14 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected void initData() {
         roleid = SPUtils.getInstance().getString("roleid");
 //        resultBean = (T) getIntent().getSerializableExtra("resultBean");
+        
         if (resultBean != null) {
             //查看
-//            edit.setVisibility(View.VISIBLE);
-//            cover.setVisibility(View.VISIBLE);
-//            btnSave.setVisibility(View.GONE);
-//            isEdit = false;
             isInsert = false;
 
             showData();
         } else {
             //新增
-            lat = getIntent().getDoubleExtra("lat", 0);
-            lng = getIntent().getDoubleExtra("lng", 0);
-//            edit.setVisibility(View.GONE);
-//            cover.setVisibility(View.GONE);
-//            btnSave.setVisibility(View.VISIBLE);
-//            isEdit = true;
             isInsert = true;
         }
     }

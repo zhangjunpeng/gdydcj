@@ -129,7 +129,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
                 tvZjjgzs.setText(resultBean.getAuthcontent());
             }
 
-        } else if (roleid.equals("2")) {
+        } else if (roleid.equals("2") || roleid.equals("8")) {
             //质检
             if (resultBean.getId() != null) {
                 llZj.setVisibility(View.VISIBLE);
@@ -172,7 +172,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
                     resultBean.setAuthflag("0");
                 }
 
-            } else if (roleid.equals("2")) {
+            } else if (roleid.equals("2") || roleid.equals("8")) {
                 //质检
                 if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
                     resultBean.setAuthcontent(getTextByView(etZjjg));

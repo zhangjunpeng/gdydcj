@@ -77,6 +77,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
 
     private TbPointDao tPoiInfoDao;
     private String lyType = "", lyXz = "";
+    protected double lat;
+    protected double lng;
 //    private String address;
 
     @Override
@@ -110,6 +112,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     @Override
     protected void initData() {
         long bm = getIntent().getLongExtra("resultBm", -1);
+        lat = getIntent().getDoubleExtra("lat", 0);
+        lng = getIntent().getDoubleExtra("lng", 0);
         List<TbPoint> list = tPoiInfoDao.queryBuilder().where(TbPointDao.Properties.Bm.eq(bm)).list();
         if (!list.isEmpty()) {
             resultBean = list.get(0);
@@ -201,7 +205,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
                 tvZjjgzs.setText(resultBean.getAuthcontent());
             }
 
-        } else if (roleid.equals("2")) {
+        } else if (roleid.equals("2") || roleid.equals("8")) {
             //质检
             if (resultBean.getId() != null) {
                 llZj.setVisibility(View.VISIBLE);
@@ -218,11 +222,17 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         if (resultBean == null) {
 
             resultBean = new TbPoint();
-            resultBean.setLat(lat);
-            resultBean.setLng(lng);
+//            resultBean.setLat(lat);
+//            resultBean.setLng(lng);
             resultBean.setOprator(SPUtils.getInstance().getString("username"));
         }
 
+        if (lat != 0) {
+            resultBean.setLat(lat);
+        }
+        if (lng != 0) {
+            resultBean.setLng(lng);
+        }
         resultBean.setName(getTextByView(etLyName));
 //        resultBean.setLytype(spLyType.getSelectedItemPosition() == 0 ? "" : getResources().getStringArray(R.array.building_types)[spLyType.getSelectedItemPosition()]);
         resultBean.setLytype(lyType);
@@ -251,7 +261,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
                     resultBean.setAuthflag("0");
                 }
 
-            } else if (roleid.equals("2")) {
+            } else if (roleid.equals("2") || roleid.equals("8")) {
                 //质检
                 if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
                     resultBean.setAuthcontent(getTextByView(etZjjg));

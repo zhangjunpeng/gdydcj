@@ -36,6 +36,7 @@ import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.DateUtil;
 import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
+import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.StringUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
@@ -127,7 +128,8 @@ public class QCListActivity extends BaseActivity {
     @Override
     protected void initData() {
 
-        RetrofitFactory.create(RetrofitService.class).getFieidPersonList()
+        int userId = SPUtils.getInstance().getInt("userId");
+        RetrofitFactory.create(RetrofitService.class).getFieidPersonList(userId + "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<FieidPerson>>() {

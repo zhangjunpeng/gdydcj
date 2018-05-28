@@ -186,12 +186,13 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                     //移点
                     currentPoi!!.lat = point.y
                     currentPoi!!.lng = point.x
-                    intent1.putExtra("resultBean", currentPoi)
+//                    intent1.putExtra("resultBean", currentPoi)
+                    intent1.putExtra("resultBm", currentPoi!!.bm)
                     currentPoi = null
-                } else {
-                    intent1.putExtra("lat", point.y)
-                    intent1.putExtra("lng", point.x)
                 }
+                intent1.putExtra("lat", point.y)
+                intent1.putExtra("lng", point.x)
+                
                 addOnePointInMap(point)
                 context.startActivity(intent1)
             }
@@ -230,7 +231,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             val rightTopP = currentPloygon.getPoint(1)
             val leftBottomP = currentPloygon.getPoint(2)
             when (MODE) {
-                2 -> {
+                2, 8 -> {
                     //质检
                     GdydApplication.instances.daoSession.clear()
                     pointList = tbPointDao.queryBuilder().where(
@@ -514,14 +515,15 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 val intent1 = Intent(context, PoiDetail::class.java)
                 if (currentPoi != null) {
                     //移点
-                    currentPoi!!.lat = center.y
-                    currentPoi!!.lng = center.x
-                    intent1.putExtra("resultBean", currentPoi)
+//                    currentPoi!!.lat = center.y
+//                    currentPoi!!.lng = center.x
+//                    intent1.putExtra("resultBean", currentPoi)
+                    intent1.putExtra("resultBm", currentPoi!!.bm)
                     currentPoi = null
-                } else {
-                    intent1.putExtra("lat", center.y)
-                    intent1.putExtra("lng", center.x)
                 }
+                intent1.putExtra("lat", center.y)
+                intent1.putExtra("lng", center.x)
+
                 addOnePointInMap(center)
 
                 context.startActivity(intent1)

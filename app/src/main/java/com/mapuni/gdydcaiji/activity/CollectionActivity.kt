@@ -457,7 +457,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         ryPpw.setAdapter(adapter)
 
         var roleid = SPUtils.getInstance().getString("roleid")
-        if ("2".equals(roleid)) {
+        if ("2".equals(roleid) || "8".equals(roleid)) {
             //质检
             data.add("下载数据")
             data.add("删除数据")
@@ -507,7 +507,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     waiYeInterface.searchFile()
                 }
                 6 -> {
-                    if ("2".equals(roleid)) {
+                    if ("2".equals(roleid) || "8".equals(roleid)) {
                         //质检
                         startActivity(Intent(this, QCListActivity::class.java))
                     } else if ("6".equals(roleid)) {
@@ -731,7 +731,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             waiYeInterface.targetCode = 0
             waiYeInterface.currentCode = waiYeInterface.targetCode
             upDateView()
-            waiYeInterface.setCurrentPoi(eventYd.tbPoint);
+            waiYeInterface.setCurrentPoi(eventYd.tbPoint)
         }
     }
 

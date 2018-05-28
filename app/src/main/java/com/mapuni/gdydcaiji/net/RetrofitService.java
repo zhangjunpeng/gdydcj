@@ -53,7 +53,7 @@ public interface RetrofitService {
      * @return
      */
     @GET("building/treePerson")
-    Observable<List<FieidPerson>> getFieidPersonList();
+    Observable<List<FieidPerson>> getFieidPersonList(@Query("id") String id);
 
     /**
      * 获取外业人员列表

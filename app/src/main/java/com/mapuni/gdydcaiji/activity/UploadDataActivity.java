@@ -564,7 +564,7 @@ public class UploadDataActivity extends BaseActivity {
         if (roleid.equals("6")) {
             //外业
             flag = "0";
-        } else if (roleid.equals("2")) {
+        } else if (roleid.equals("2") || roleid.equals("8")) {
             //质检
             flag = "1";
         }

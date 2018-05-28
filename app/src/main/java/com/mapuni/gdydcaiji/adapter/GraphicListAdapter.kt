@@ -78,13 +78,13 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
             when (obj) {
                 is TbPoint -> {
 //                    if (MODE == 2 && obj.authcontent)
-                    holder.name.text = obj.name + "(点" + if (MODE == 2 && !TextUtils.isEmpty(obj.authcontent)) "/已质检)" else ")"
+                    holder.name.text = obj.name + "(点" + if ((MODE == 2 || MODE == 8) && !TextUtils.isEmpty(obj.authcontent)) "/已质检)" else ")"
                 }
                 is TbLine -> {
-                    holder.name.text = obj.name + "(线" + if (MODE == 2 && !TextUtils.isEmpty(obj.authcontent)) "/已质检)" else ")"
+                    holder.name.text = obj.name + "(线" + if ((MODE == 2 || MODE == 8) && !TextUtils.isEmpty(obj.authcontent)) "/已质检)" else ")"
                 }
                 is TbSurface -> {
-                    holder.name.text = obj.name + "(面" + if (MODE == 2 && !TextUtils.isEmpty(obj.authcontent)) "/已质检)" else ")"
+                    holder.name.text = obj.name + "(面" + if ((MODE == 2 || MODE == 8) && !TextUtils.isEmpty(obj.authcontent)) "/已质检)" else ")"
                 }
 
             }

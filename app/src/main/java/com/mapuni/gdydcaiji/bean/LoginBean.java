@@ -74,7 +74,7 @@ public class LoginBean {
          * name : 手机端测试
          * password : E10ADC3949BA59ABBE56E057F20F883E
          * phone : 
-         * roleid : 1   //2-》质检  6-》外业
+         * roleid : 1   //2,8-》质检  6-》外业
          * sex : 
          * updateTime1 : 
          * updateUsername : admin
