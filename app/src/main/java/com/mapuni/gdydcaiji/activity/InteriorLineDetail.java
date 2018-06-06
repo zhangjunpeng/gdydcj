@@ -9,10 +9,8 @@ import android.widget.TextView;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
-import com.mapuni.gdydcaiji.bean.TbLine;
-import com.mapuni.gdydcaiji.bean.TbPoint;
-import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
-import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
+import com.mapuni.gdydcaiji.bean.InLine;
+import com.mapuni.gdydcaiji.database.greendao.InLineDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ShowDataUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
@@ -28,7 +26,7 @@ import butterknife.BindView;
  * Created by yf on 2018/4/2.
  */
 
-public class LineDetail extends BaseDetailActivity<TbLine> {
+public class InteriorLineDetail extends BaseDetailActivity<InLine> {
     @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.et_name)
@@ -39,7 +37,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
     ClearEditText etZd;
     @BindView(R.id.et_bz)
     ClearEditText etBz;
-    private TbLineDao tbLineDao;
+    private InLineDao tbLineDao;
     private String bj;
 
     @Override
@@ -51,14 +49,14 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
     protected void initView() {
         super.initView();
         title.setText("线采集");
-        tbLineDao = GdydApplication.getInstances().getDaoSession().getTbLineDao();
+        tbLineDao = GdydApplication.getInstances().getDaoSession().getInLineDao();
         bj = getIntent().getStringExtra("bj");
         initListPopupWindow();
     }
 
     protected void initData() {
         long bm = getIntent().getLongExtra("resultBm", -1);
-        List<TbLine> list = tbLineDao.queryBuilder().where(TbLineDao.Properties.Bm.eq(bm)).list();
+        List<InLine> list = tbLineDao.queryBuilder().where(InLineDao.Properties.Bm.eq(bm)).list();
         if (!list.isEmpty()) {
             resultBean = list.get(0);
         }
@@ -94,28 +92,28 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             photoImg = resultBean.getImg();
         }
-        if (roleid.equals("6")) {
-            //外业
-            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
-                tvZjjgzs.setVisibility(View.VISIBLE);
-                tvZjjgzs.setText(resultBean.getAuthcontent());
-            }
-
-        } else if (roleid.equals("2") || roleid.equals("8")) {
-            //质检
-            if (resultBean.getId() != null) {
-                llZj.setVisibility(View.VISIBLE);
-                etZjjg.setText(resultBean.getAuthcontent());
-                cover.setVisibility(View.VISIBLE);
-            }
-        }
+//        if (roleid.equals("6")) {
+//            //外业
+//            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
+//                tvZjjgzs.setVisibility(View.VISIBLE);
+//                tvZjjgzs.setText(resultBean.getAuthcontent());
+//            }
+//
+//        } else if (roleid.equals("2") || roleid.equals("8")) {
+//            //质检
+//            if (resultBean.getId() != null) {
+//                llZj.setVisibility(View.VISIBLE);
+//                etZjjg.setText(resultBean.getAuthcontent());
+//                cover.setVisibility(View.VISIBLE);
+//            }
+//        }
         super.showData();
     }
 
     @Override
     protected void submit() {
         if (resultBean == null) {
-            resultBean = new TbLine();
+            resultBean = new InLine();
             resultBean.setPolyarrays(bj);
             resultBean.setOprator(SPUtils.getInstance().getString("username"));
         }
@@ -137,19 +135,19 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
                 resultBean.setFlag(0);
             } else
                 resultBean.setFlag(2);
-            if (roleid.equals("6")) {
-                //外业
-                if (resultBean.getId() != null) {
-                    resultBean.setAuthflag("0");
-                }
-
-            } else if (roleid.equals("2") || roleid.equals("8")) {
-                //质检
-                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
-                    resultBean.setAuthcontent(getTextByView(etZjjg));
-                    resultBean.setAuthflag("1");
-                }
-            }
+//            if (roleid.equals("6")) {
+//                //外业
+//                if (resultBean.getId() != null) {
+//                    resultBean.setAuthflag("0");
+//                }
+//
+//            } else if (roleid.equals("2") || roleid.equals("8")) {
+//                //质检
+//                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+//                    resultBean.setAuthcontent(getTextByView(etZjjg));
+//                    resultBean.setAuthflag("1");
+//                }
+//            }
             tbLineDao.update(resultBean);
         }
 

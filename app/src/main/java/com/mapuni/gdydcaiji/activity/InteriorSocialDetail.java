@@ -10,10 +10,8 @@ import android.widget.TextView;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
-import com.mapuni.gdydcaiji.bean.TbPoint;
-import com.mapuni.gdydcaiji.bean.TbSurface;
-import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
-import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
+import com.mapuni.gdydcaiji.bean.InSurface;
+import com.mapuni.gdydcaiji.database.greendao.InSurfaceDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ShowDataUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
@@ -30,7 +28,7 @@ import butterknife.BindView;
  * 小区、学校、医院采集
  */
 
-public class SocialDetail extends BaseDetailActivity<TbSurface> {
+public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
     @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.et_name)
@@ -48,7 +46,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
     @BindView(R.id.et_bz)
     ClearEditText etBz;
 
-    private TbSurfaceDao tbSurfaceDao;
+    private InSurfaceDao tbSurfaceDao;
 
     private String bj;
 
@@ -61,7 +59,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
     protected void initView() {
         super.initView();
         title.setText("面采集");
-        tbSurfaceDao = GdydApplication.getInstances().getDaoSession().getTbSurfaceDao();
+        tbSurfaceDao = GdydApplication.getInstances().getDaoSession().getInSurfaceDao();
         setSpinnerData(R.array.social_type, spFl);
 
         bj = getIntent().getStringExtra("bj");
@@ -70,7 +68,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 
     protected void initData() {
         long bm = getIntent().getLongExtra("resultBm", -1);
-        List<TbSurface> list = tbSurfaceDao.queryBuilder().where(TbSurfaceDao.Properties.Bm.eq(bm)).list();
+        List<InSurface> list = tbSurfaceDao.queryBuilder().where(InSurfaceDao.Properties.Bm.eq(bm)).list();
         if (!list.isEmpty()) {
             resultBean = list.get(0);
         }
@@ -122,28 +120,28 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             photoImg = resultBean.getImg();
         }
-        if (roleid.equals("6")) {
-            //外业
-            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
-                tvZjjgzs.setVisibility(View.VISIBLE);
-                tvZjjgzs.setText(resultBean.getAuthcontent());
-            }
-
-        } else if (roleid.equals("2") || roleid.equals("8")) {
-            //质检
-            if (resultBean.getId() != null) {
-                llZj.setVisibility(View.VISIBLE);
-                etZjjg.setText(resultBean.getAuthcontent());
-                cover.setVisibility(View.VISIBLE);
-            }
-        }
+//        if (roleid.equals("6")) {
+//            //外业
+//            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
+//                tvZjjgzs.setVisibility(View.VISIBLE);
+//                tvZjjgzs.setText(resultBean.getAuthcontent());
+//            }
+//
+//        } else if (roleid.equals("2") || roleid.equals("8")) {
+//            //质检
+//            if (resultBean.getId() != null) {
+//                llZj.setVisibility(View.VISIBLE);
+//                etZjjg.setText(resultBean.getAuthcontent());
+//                cover.setVisibility(View.VISIBLE);
+//            }
+//        }
         super.showData();
     }
 
     @Override
     protected void submit() {
         if (resultBean == null) {
-            resultBean = new TbSurface();
+            resultBean = new InSurface();
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
             resultBean.setPolyarrays(bj);
@@ -170,19 +168,19 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
                 resultBean.setFlag(0);
             } else
                 resultBean.setFlag(2);
-            if (roleid.equals("6")) {
-                //外业
-                if (resultBean.getId() != null) {
-                    resultBean.setAuthflag("0");
-                }
-
-            } else if (roleid.equals("2") || roleid.equals("8")) {
-                //质检
-                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
-                    resultBean.setAuthcontent(getTextByView(etZjjg));
-                    resultBean.setAuthflag("1");
-                }
-            }
+//            if (roleid.equals("6")) {
+//                //外业
+//                if (resultBean.getId() != null) {
+//                    resultBean.setAuthflag("0");
+//                }
+//
+//            } else if (roleid.equals("2") || roleid.equals("8")) {
+//                //质检
+//                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+//                    resultBean.setAuthcontent(getTextByView(etZjjg));
+//                    resultBean.setAuthflag("1");
+//                }
+//            }
             tbSurfaceDao.update(resultBean);
         }
 

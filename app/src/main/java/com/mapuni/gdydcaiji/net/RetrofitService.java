@@ -1,6 +1,7 @@
 package com.mapuni.gdydcaiji.net;
 
 import com.mapuni.gdydcaiji.bean.FieidPerson;
+import com.mapuni.gdydcaiji.bean.HomeArea;
 import com.mapuni.gdydcaiji.bean.LoginBean;
 import com.mapuni.gdydcaiji.bean.MapBean;
 import com.mapuni.gdydcaiji.bean.UploadBean;
@@ -56,7 +57,7 @@ public interface RetrofitService {
     Observable<List<FieidPerson>> getFieidPersonList(@Query("id") String id);
 
     /**
-     * 获取外业人员列表
+     * 下载数据
      *
      * @return
      */
@@ -67,6 +68,17 @@ public interface RetrofitService {
                                           @Query("endTime") String endTime,
                                           @Query("status") String status//0->未审核状态；1->错误的状态
     );
+
+    /**
+     * 获取区域列表
+     *
+     * @return
+     */
+    @GET("building/getHomeArea")
+    Observable<HomeArea> getHomeAreaList();
+
+    @GET("building/selectByHomeArea")
+    Observable<ResponseBody> downloadAreaData(@Query("homearea") String homearea);
 
     /**
      * 大文件官方建议用 @Streaming 来进行注解，不然会出现IO异常，小文件可以忽略不注入
@@ -82,6 +94,11 @@ public interface RetrofitService {
     @Multipart
     @POST("building/importData")
     Call<UploadBean> upload(@PartMap Map<String, RequestBody> files);
+
+    // 上传内业处理数据
+    @Multipart
+    @POST("building/importMobileData")
+    Call<UploadBean> uploadMobileData(@PartMap Map<String, RequestBody> files);
 }
 
 

@@ -43,8 +43,10 @@
         <item>景点</item>
         <item>宾馆酒店</item>
         <item>小区</item>
-        <item>楼栋</item>
-        <item>购物广场</item>
+        <!--<item>楼栋</item>-->
+        <item>商业楼宇</item>
+        <!--<item>购物广场</item>-->
+        <item>大型商贸场所</item>
         <item>学校</item>
         <item>医院</item>
         <item>村名</item>

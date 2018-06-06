@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -25,18 +24,14 @@ import com.esri.android.map.LocationDisplayManager
 import com.esri.android.map.ags.ArcGISLocalTiledLayer
 import com.esri.android.map.event.OnPanListener
 import com.esri.android.map.event.OnSingleTapListener
-import com.esri.android.map.event.OnStatusChangedListener
 import com.esri.android.map.event.OnZoomListener
 import com.esri.android.runtime.ArcGISRuntime
-import com.jzxiang.pickerview.TimePickerDialog
-import com.jzxiang.pickerview.data.Type
 import com.mapuni.gdydcaiji.GdydApplication
 import com.mapuni.gdydcaiji.R
 import com.mapuni.gdydcaiji.adapter.BZRecyAdapter
 import com.mapuni.gdydcaiji.adapter.PpwAdapter
 import com.mapuni.gdydcaiji.bean.*
-import com.mapuni.gdydcaiji.presenter.WaiYePresenter
-import com.mapuni.gdydcaiji.service.CopyService
+import com.mapuni.gdydcaiji.presenter.InteriorPresenter
 import com.mapuni.gdydcaiji.utils.*
 import com.xw.repo.BubbleSeekBar
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration
@@ -46,10 +41,11 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
-
-class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, OnZoomListener, OnPanListener, BubbleSeekBar.OnProgressChangedListener {
+/**
+ * 编辑内业上传的数据
+ */
+class EditInteriorActivity : AppCompatActivity(), View.OnClickListener, OnSingleTapListener, OnZoomListener, OnPanListener, BubbleSeekBar.OnProgressChangedListener {
 
 
     private var mIsLoading: Boolean = false
@@ -87,14 +83,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mStartY = 0f
         if (!mIsLoading) {
             mIsLoading = true
-            waiYeInterface.updateGraphic()
+            interiorPresenter.updateGraphic()
         }
     }
 
 
     lateinit var alertDialog: AlertDialog
     private var tolerance: Int = 20
-    private var mExitTime: Long = 0
     private var mapFileName: String? = null
     private var mapFilePath: String = ""
 
@@ -106,16 +101,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     lateinit var instance: Activity
 
-    private lateinit var waiYeInterface: WaiYePresenter
+    private lateinit var interiorPresenter: InteriorPresenter
 
     private lateinit var bzRecyAdapter_point: BZRecyAdapter
     private lateinit var bzRecyAdapter_line: BZRecyAdapter
     private lateinit var bzRecyAdapter_surface: BZRecyAdapter
-
-    //质检模式为1
-    //外业采集模式为0
-    private var MODE: Int = 0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,18 +113,16 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         PermissionUtils.requestAllPermission(this)
         instance = this
 
-        MODE = SPUtils.getInstance().getString("roleid").toInt()
         ArcGISRuntime.setClientId("uK0DxqYT0om1UXa9")//加入arcgis研发验证码
         EventBus.getDefault().register(this)
 
-        val intent = Intent(this, CopyService::class.java)
-        startService(intent)
+//        val intent = Intent(this, CopyService::class.java)
+//        startService(intent)
         //获取系统服务（SENSOR_SERVICE)返回一个SensorManager 对象 
         manager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        waiYeInterface = WaiYePresenter(this, mapview_collect)
-
+        interiorPresenter = InteriorPresenter(this, mapview_collect)
         lay_title.isClickable = true
-        tv_title.text = "采集界面"
+        tv_title.text = "处理内业数据"
         initMapView()
         initBZDialog()
         initToolsPopWindow()
@@ -172,10 +160,10 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         mapFilePath = SPUtils.getInstance().getString("checkedMapPath", "")
         if (!TextUtils.isEmpty(mapFileName) && !TextUtils.isEmpty(mapFilePath)
                 && File(mapFilePath).exists()) {
-            waiYeInterface.initMapview(mapFilePath)
+            interiorPresenter.initMapview(mapFilePath)
         } else {
             // 获取所有地图文件
-            waiYeInterface.getAllFiles()
+            interiorPresenter.getAllFiles()
         }
 
         mapview_collect.onSingleTapListener = this
@@ -195,22 +183,22 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         if (v is View) {
             when (v.id) {
                 R.id.poi_collect -> {
-                    waiYeInterface.targetCode = 0
+                    interiorPresenter.targetCode = 0
                     beginPOICollect()
                 }
                 R.id.line_collect -> {
-                    waiYeInterface.targetCode = 1
+                    interiorPresenter.targetCode = 1
                     beigonLineCollect()
                 }
                 R.id.newploygon_collect -> {
-                    waiYeInterface.targetCode = 2
+                    interiorPresenter.targetCode = 2
                     beginpolygonCollect()
                 }
                 R.id.tianjia_collect -> {
-                    waiYeInterface.addPointInMap(mapview_collect.center)
+                    interiorPresenter.addPointInMap(mapview_collect.center)
                 }
                 R.id.selectpoint_collect -> {
-                    waiYeInterface.targetCode = 3
+                    interiorPresenter.targetCode = 3
                     beiginSelectPoint()
                 }
                 R.id.iv_amplify -> {
@@ -232,26 +220,26 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private fun beigonLineCollect() {
         //开始范围选择
-        if (waiYeInterface.currentCode == 2 && waiYeInterface.pointPloygon.size > 2) {
+        if (interiorPresenter.currentCode == 2 && interiorPresenter.pointPloygon.size > 2) {
             showConfirmDiaolog()
-        } else if (waiYeInterface.currentCode == 0 && waiYeInterface.getCurrentPoi() != null) {
+        } else if (interiorPresenter.currentCode == 0 && interiorPresenter.getCurrentPoi() != null) {
             //移点
             showYidianDialog()
         } else {
-            waiYeInterface.currentCode = waiYeInterface.targetCode
+            interiorPresenter.currentCode = interiorPresenter.targetCode
             upDateView()
         }
     }
 
 
     private fun beginpolygonCollect() {
-        if (waiYeInterface.currentCode == 1 && waiYeInterface.pointPloyline.size > 1) {
+        if (interiorPresenter.currentCode == 1 && interiorPresenter.pointPloyline.size > 1) {
             showConfirmDiaolog()
-        } else if (waiYeInterface.currentCode == 0 && waiYeInterface.getCurrentPoi() != null) {
+        } else if (interiorPresenter.currentCode == 0 && interiorPresenter.getCurrentPoi() != null) {
             //移点
             showYidianDialog()
         } else {
-            waiYeInterface.currentCode = waiYeInterface.targetCode
+            interiorPresenter.currentCode = interiorPresenter.targetCode
             upDateView()
         }
     }
@@ -259,35 +247,35 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     private fun beginPOICollect() {
         //开始范围选择
-        if (waiYeInterface.currentCode == 1 && waiYeInterface.pointPloyline.size > 1) {
+        if (interiorPresenter.currentCode == 1 && interiorPresenter.pointPloyline.size > 1) {
             showConfirmDiaolog()
 
-        } else if (waiYeInterface.currentCode == 2 && waiYeInterface.pointPloygon.size > 2) {
+        } else if (interiorPresenter.currentCode == 2 && interiorPresenter.pointPloygon.size > 2) {
             showConfirmDiaolog()
         } else {
-            waiYeInterface.currentCode = waiYeInterface.targetCode
+            interiorPresenter.currentCode = interiorPresenter.targetCode
             upDateView()
         }
     }
 
     private fun beiginSelectPoint() {
-        if (waiYeInterface.currentCode == 1 && waiYeInterface.pointPloyline.size > 1) {
+        if (interiorPresenter.currentCode == 1 && interiorPresenter.pointPloyline.size > 1) {
             showConfirmDiaolog()
-        } else if (waiYeInterface.currentCode == 2 && waiYeInterface.pointPloygon.size > 2) {
+        } else if (interiorPresenter.currentCode == 2 && interiorPresenter.pointPloygon.size > 2) {
             showConfirmDiaolog()
-        } else if (waiYeInterface.currentCode == 0 && waiYeInterface.getCurrentPoi() != null) {
+        } else if (interiorPresenter.currentCode == 0 && interiorPresenter.getCurrentPoi() != null) {
             //移点
             showYidianDialog()
         } else {
-            waiYeInterface.currentCode = waiYeInterface.targetCode
+            interiorPresenter.currentCode = interiorPresenter.targetCode
             upDateView()
         }
     }
 
     private fun upDateView() {
-        waiYeInterface.deleteLineOrGon()
+        interiorPresenter.deleteLineOrGon()
         tianjia_collect.visibility = View.VISIBLE
-        when (waiYeInterface.currentCode) {
+        when (interiorPresenter.currentCode) {
             0 -> {
 
                 if (popupWindow.isShowing) {
@@ -347,16 +335,16 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         builder.setPositiveButton("确定") { dialog, _ ->
             //跳转保存页
             dialog.dismiss()
-            waiYeInterface.baocunPopwindow()
+            interiorPresenter.baocunPopwindow()
 
 
         }.setNegativeButton("取消") { dialog, _ ->
             //            cleanNotSave()
             dialog.dismiss()
-            waiYeInterface.pointPloyline.clear()
-            waiYeInterface.pointPloygon.clear()
-            waiYeInterface.updateGraphic()
-            when (waiYeInterface.targetCode) {
+            interiorPresenter.pointPloyline.clear()
+            interiorPresenter.pointPloygon.clear()
+            interiorPresenter.updateGraphic()
+            when (interiorPresenter.targetCode) {
                 0 -> {
                     beginPOICollect()
                 }
@@ -385,9 +373,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         builder.setPositiveButton("确定") { dialog, _ ->
             //跳转保存页
             dialog.dismiss()
-            waiYeInterface.setCurrentPoiNull()
-            waiYeInterface.updateGraphic()
-            when (waiYeInterface.targetCode) {
+            interiorPresenter.setCurrentPoiNull()
+            interiorPresenter.updateGraphic()
+            when (interiorPresenter.targetCode) {
                 0 -> {
                     beginPOICollect()
                 }
@@ -415,7 +403,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
 
     private fun singleTapOnCollection(v: Float, v1: Float) {
-        waiYeInterface.singleTapOnCollection(v, v1, tolerance)
+        interiorPresenter.singleTapOnCollection(v, v1, tolerance)
     }
 
 
@@ -424,7 +412,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     }
 
     override fun postAction(p0: Float, p1: Float, p2: Double) {
-        waiYeInterface.updateGraphic()
+        interiorPresenter.updateGraphic()
     }
 
 
@@ -432,16 +420,16 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     fun onEventMainThread(eventBean: EventBean) {
         if ("download".equals(eventBean.beanStr))
         // 下载成功
-            waiYeInterface.getAllFiles()
+            interiorPresenter.getAllFiles()
     }
 
     private fun showMenuPop(view: View?) {
         val inflate = LayoutInflater.from(this).inflate(R.layout.ppw_menu2, null, false)
         val ryPpw = inflate.findViewById<RecyclerView>(R.id.ry_ppw)
 
-        ryPpw.setLayoutManager(LinearLayoutManager(this))
+        ryPpw.layoutManager = LinearLayoutManager(this)
         ryPpw.setHasFixedSize(true)
-        ryPpw.setNestedScrollingEnabled(false)
+        ryPpw.isNestedScrollingEnabled = false
         ryPpw.addItemDecoration(HorizontalDividerItemDecoration.Builder(this)
                 .size(1)
                 .colorResId(R.color.gray_line)
@@ -452,25 +440,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         data.add("选择地图")
         data.add("备份")
         data.add("标注设置")
-        data.add("数据设置")
+//        data.add("数据设置")
         data.add("多地图选择")
-
-//        data.add("质检")
+        data.add("下载数据")
+        data.add("返回采集数据")
 
         var adapter = PpwAdapter(R.layout.item_ppw, data)
         ryPpw.adapter = adapter
-
-        var roleid = SPUtils.getInstance().getString("roleid")
-        if ("2" == roleid || "8" == roleid) {
-            //质检
-            data.add("下载数据")
-            data.add("删除数据")
-            data.add("导出质检数据")
-        } else if ("6" == roleid) {
-            //外业
-            data.add("处理内业数据")
-            data.add("纠错")
-        }
 
         val ppw = PopupWindow(inflate, view!!.width, ScreenUtils.dp2px(this, (37 * data.size - 1).toFloat()), true)
         ppw.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.white)))
@@ -481,7 +457,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             ppw.dismiss()
             when (position) {
                 0 -> {
-                    startActivity(Intent(this, UploadDataActivity::class.java))
+                    interiorPresenter.createFile()
                 }
                 1 -> {
                     startActivity(Intent(this, ChooseMapActivity::class.java))
@@ -497,60 +473,29 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 3 -> {
                     bzDialog.show()
                     bzDialog.findViewById<Spinner>(R.id.spinener_bz_dialog).setSelection(0)
-                    bzRecyAdapter_point = BZRecyAdapter(this, 0, waiYeInterface.currentPoiColor, waiYeInterface.point_bz_array)
-                    bzRecyAdapter_line = BZRecyAdapter(this, 1, waiYeInterface.currentLineColor, waiYeInterface.line_bz_array)
-                    bzRecyAdapter_surface = BZRecyAdapter(this, 2, waiYeInterface.currentSurfaceColor, waiYeInterface.surface_bz_array)
+                    bzRecyAdapter_point = BZRecyAdapter(this, 0, interiorPresenter.currentPoiColor, interiorPresenter.point_bz_array)
+                    bzRecyAdapter_line = BZRecyAdapter(this, 1, interiorPresenter.currentLineColor, interiorPresenter.line_bz_array)
+                    bzRecyAdapter_surface = BZRecyAdapter(this, 2, interiorPresenter.currentSurfaceColor, interiorPresenter.surface_bz_array)
 
                     recyclerView_bz.adapter = bzRecyAdapter_point
                 }
                 4 -> {
-                    //设置数据时间
-
-                    showDataDateDialog()
+                    interiorPresenter.searchFile()
                 }
                 5 -> {
-                    waiYeInterface.searchFile()
+                    //下载数据
+                    startActivity(Intent(this, DownloadInteriorDataActivity::class.java))
                 }
                 6 -> {
-                    if ("2" == roleid || "8" == roleid) {
-                        //质检下载数据
-                        startActivity(Intent(this, QCListActivity::class.java))
-                    } else if ("6" == roleid) {
-                        //处理内业上传的数据
-                        startActivity(Intent(this, EditInteriorActivity::class.java))
-                    }
+                    finish()
                 }
-                7 -> {
-                    if ("2" == roleid || "8" == roleid) {
-                        //质检删除数据
-                        ThreadUtils.executeSubThread {
-
-                            if (DbUtils().noUpdateNum == 0) {
-                                DbUtils().deleteData()
-                                ThreadUtils.executeMainThread {
-                                    ToastUtils.showShort("删除成功")
-                                    waiYeInterface.updateGraphic()
-                                }
-                            } else {
-                                ThreadUtils.executeMainThread {
-                                    showWarnDialog()
-                                }
-                            }
-
-                        }
-                    } else if ("6" == roleid) {
-                        //外业纠错
-                        startActivity(Intent(this, CheckActivity::class.java))
-                    }
-
-                }
-                8 -> {
-                    //导出质检数据
-                    ThreadUtils.executeSubThread {
-
-                        waiYeInterface.databaseToExcel()
-                    }
-                }
+//                8 -> {
+//                    //导出质检数据
+//                    ThreadUtils.executeSubThread {
+//
+//                        waiYeInterface.databaseToExcel()
+//                    }
+//                }
 
             }
         }
@@ -561,70 +506,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         val y = location[1] - ppw.height
         ppw.showAtLocation(view, Gravity.NO_GRAVITY, location[0], y)
     }
-
-    private fun showWarnDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("提示")
-                .setCancelable(false)
-                .setMessage("当前有未上传的质检数据，是否仍然删除")
-                .setPositiveButton("确定") { dialog, which ->
-                    ThreadUtils.executeSubThread {
-                        DbUtils().deleteData()
-                        ThreadUtils.executeMainThread {
-                            ToastUtils.showShort("删除成功")
-                            waiYeInterface.updateGraphic()
-                        }
-                    }
-                }
-                .setNegativeButton("取消", null)
-        builder.show()
-    }
-
-    /**
-     * 设置数据时间对话框
-     */
-    private fun showDataDateDialog() {
-        var dialog = Dialog(instance)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val contentView = LayoutInflater.from(instance).inflate(R.layout.dialog_data_date, null, false)
-        dialog.setContentView(contentView)
-        dialog.setCanceledOnTouchOutside(false)
-        val attributes = dialog.window!!.attributes
-        attributes.width = (ScreenUtils.getScreenW(this) * 0.75).toInt()
-
-        val et_start_time = contentView.findViewById<TextView>(R.id.et_start_time)
-        val et_stop_time = contentView.findViewById<TextView>(R.id.et_stop_time)
-        val btn_sure = contentView.findViewById<Button>(R.id.btn_sure)
-        et_start_time.setText(waiYeInterface.dateStartTime)
-        et_stop_time.setText(waiYeInterface.dateStopTime)
-        et_start_time.setOnClickListener {
-            showDatePickerDialog(et_start_time)
-        }
-        et_stop_time.setOnClickListener {
-            showDatePickerDialog(et_stop_time)
-        }
-        btn_sure.setOnClickListener {
-            if (StringUtils.isEmpty(et_start_time.getText().toString())) {
-                ToastUtils.showShort("请选择开始时间")
-                showDatePickerDialog(et_start_time)
-                return@setOnClickListener
-            }
-            if (StringUtils.isEmpty(et_stop_time.getText().toString())) {
-                ToastUtils.showShort("请选择结束时间")
-                showDatePickerDialog(et_stop_time)
-                return@setOnClickListener
-            }
-
-            waiYeInterface.dateStartTime = et_start_time.text.toString()
-            waiYeInterface.dateStopTime = et_stop_time.text.toString()
-            waiYeInterface.updateGraphic()
-            dialog.dismiss()
-
-        }
-        dialog.show()
-
-    }
-
 
     private fun initBZDialog() {
         bzDialog = Dialog(instance)
@@ -666,33 +547,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.repeatCount == 0) {
-            exit()
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
-    /**
-     * 点击两次退出
-     *
-     * @return
-     */
-    fun exit() {
-        if (System.currentTimeMillis() - mExitTime > 2000) {
-            ToastUtils.showShort("再点一次退出")
-            mExitTime = System.currentTimeMillis()
-        } else {
-            finish()
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
-        val intent = Intent(this, CopyService::class.java)
-        stopService(intent)
+//        val intent = Intent(this, CopyService::class.java)
+//        stopService(intent)
     }
 
 
@@ -707,13 +566,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         manager!!.registerListener(listener, magneticSensor, SensorManager.SENSOR_DELAY_GAME)
         manager!!.registerListener(listener, accelerometerSensor, SensorManager.SENSOR_DELAY_GAME)
 
-        waiYeInterface.initDialogSize(bzDialog)
+        interiorPresenter.initDialogSize(bzDialog)
     }
 
 
     @Subscribe
     fun onDeleteInfo(eventDeleteInfo: EventDeleteInfo) {
-        waiYeInterface.deleteInfo(eventDeleteInfo)
+        interiorPresenter.deleteInfo(eventDeleteInfo)
 //        showGrahipcListDialog.dismiss()
     }
 
@@ -725,24 +584,24 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 
     @Subscribe
     fun onCompleteBZ(eventBZ: EventBZ) {
-        waiYeInterface.onCompleteBZ(eventBZ)
+        interiorPresenter.onCompleteBZ(eventBZ)
         bzDialog.dismiss()
     }
 
     @Subscribe
     fun onUPDataGraphic(eventUpdate: EvevtUpdate) {
-        waiYeInterface.pointPloyline.clear()
-        waiYeInterface.pointPloygon.clear()
-        waiYeInterface.updateGraphic()
+        interiorPresenter.pointPloyline.clear()
+        interiorPresenter.pointPloygon.clear()
+        interiorPresenter.updateGraphic()
     }
 
     @Subscribe
-    fun onPoiYd(eventYd: EventYD) {
-        if (eventYd.tbPoint != null) {
-            waiYeInterface.targetCode = 0
-            waiYeInterface.currentCode = waiYeInterface.targetCode
+    fun onPoiYd(eventYd: EventYDInterior) {
+        if (eventYd.inPoint != null) {
+            interiorPresenter.targetCode = 0
+            interiorPresenter.currentCode = interiorPresenter.targetCode
             upDateView()
-            waiYeInterface.setCurrentPoi(eventYd.tbPoint)
+            interiorPresenter.setCurrentPoi(eventYd.inPoint)
         }
     }
 
@@ -816,13 +675,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         val quxiao = popupWindow.contentView.findViewById<TextView>(R.id.chanel_collect)
         val houtui = popupWindow.contentView.findViewById<TextView>(R.id.houtui_collect)
         baocun.setOnClickListener {
-            waiYeInterface.baocunPopwindow()
+            interiorPresenter.baocunPopwindow()
         }
         quxiao.setOnClickListener {
-            waiYeInterface.quxiaoPopWindow()
+            interiorPresenter.quxiaoPopWindow()
         }
         houtui.setOnClickListener {
-            waiYeInterface.huituiPopWindow()
+            interiorPresenter.huituiPopWindow()
         }
 
     }
@@ -835,7 +694,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         for (mapFilePath in eventShowMap.filePahts) {
             if (mapFilePath == eventShowMap.filePahts.last()) {
                 val layer = ArcGISLocalTiledLayer("file://$mapFilePath/layers")
-                waiYeInterface.initMapview(mapFilePath)
+                interiorPresenter.initMapview(mapFilePath)
 
                 maxExtent.merge(layer.fullExtent)
                 mapview_collect.maxExtent = maxExtent
@@ -849,43 +708,6 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
             }
         }
 
-
-    }
-
-    /**
-     * 显示时间选择框
-     */
-    protected fun showDatePickerDialog(tv: TextView) {
-        // 回显时间，展示选择框
-        val calendar = GregorianCalendar()
-        val text = tv.text.toString()
-        if (!TextUtils.isEmpty(text)) {
-            val date = DateUtil.getDateByFormat(text, DateUtil.YMD)
-            calendar.time = date ?: Date()
-        }
-
-        val _100year = 100L * 365 * 1000 * 60 * 60 * 24L//100年
-        val mDialogYearMonthDay = TimePickerDialog.Builder()
-                .setCallBack { timePickerView, millseconds -> tv.text = DateUtil.getStringByFormat(millseconds, DateUtil.YMD) }
-                .setCancelStringId("取消")
-                .setSureStringId("确定")
-                .setTitleStringId("选择日期")
-                .setYearText("年")
-                .setMonthText("月")
-                .setDayText("日")
-                .setCyclic(false)
-                .setMinMillseconds(System.currentTimeMillis() - _100year)//设置最小时间
-                //                .setMinMillseconds(System.currentTimeMillis())//设置最小时间为当前时间
-                //                .setMaxMillseconds(System.currentTimeMillis() + _100year)//设置最大时间+100年
-                .setMaxMillseconds(System.currentTimeMillis())//设置最大时间是当前时间
-                .setCurrentMillseconds(calendar.timeInMillis)//设置当前时间
-                .setThemeColor(resources.getColor(R.color.color_deep_sky_blue))
-                .setType(Type.YEAR_MONTH_DAY)
-                .setWheelItemTextNormalColor(resources.getColor(R.color.timetimepicker_default_text_color))
-                .setWheelItemTextSelectorColor(resources.getColor(R.color.timepicker_toolbar_bg))
-                .setWheelItemTextSize(16)
-                .build()
-        mDialogYearMonthDay.show(supportFragmentManager, javaClass.simpleName)
 
     }
 

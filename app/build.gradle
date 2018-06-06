@@ -17,7 +17,7 @@ android {
 
     greendao {
         //版本号，升级时可配置
-        schemaVersion 2
+        schemaVersion 3
         daoPackage 'com.mapuni.gdydcaiji.database.greendao'
         targetGenDir 'src/main/java/'
     }

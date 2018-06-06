@@ -86,6 +86,15 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
                 is TbSurface -> {
                     holder.name.text = obj.name + "(面" + if ((MODE == 2 || MODE == 8) && !TextUtils.isEmpty(obj.authcontent)) "/已质检)" else ")"
                 }
+                is InPoint -> {
+                    holder.name.text = obj.name + "(点)"
+                }
+                is InLine -> {
+                    holder.name.text = obj.name + "(线)"
+                }
+                is InSurface -> {
+                    holder.name.text = obj.name + "(面)"
+                }
 
             }
             holder.itemView.setOnClickListener {
@@ -103,7 +112,18 @@ class GraphicListAdapter(context: Context, list: List<Map<String, Any>>, dialog:
                         intent.setClass(context, SocialDetail::class.java)
                         intent.putExtra("resultBm", obj.bm)
                     }
-
+                    is InPoint -> {
+                        intent.setClass(context, InteriorPoiDetail::class.java)
+                        intent.putExtra("resultBm", obj.bm)
+                    }
+                    is InLine -> {
+                        intent.setClass(context, InteriorLineDetail::class.java)
+                        intent.putExtra("resultBm", obj.bm)
+                    }
+                    is InSurface -> {
+                        intent.setClass(context, InteriorSocialDetail::class.java)
+                        intent.putExtra("resultBm", obj.bm)
+                    }
                 }
                 context.startActivity(intent)
                 if (dialog != null && dialog.isShowing) {

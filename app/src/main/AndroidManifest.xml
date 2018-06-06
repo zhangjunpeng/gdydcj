@@ -58,6 +58,14 @@
         <service android:name=".service.CopyService" />
 
         <activity android:name=".activity.CheckActivity"></activity>
+        <activity android:name=".activity.EditInteriorActivity" />
+        <activity android:name=".activity.InteriorPoiDetail"
+            android:theme="@style/DialogActivity" />
+        <activity android:name=".activity.InteriorLineDetail"
+            android:theme="@style/DialogActivity" />
+        <activity android:name=".activity.InteriorSocialDetail"
+            android:theme="@style/DialogActivity" />
+        <activity android:name=".activity.DownloadInteriorDataActivity" />
     </application>
 
 </manifest>

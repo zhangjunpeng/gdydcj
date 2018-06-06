@@ -16,9 +16,10 @@ import android.widget.Toast;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventYD;
+import com.mapuni.gdydcaiji.bean.EventYDInterior;
 import com.mapuni.gdydcaiji.bean.EvevtUpdate;
-import com.mapuni.gdydcaiji.bean.TbPoint;
-import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
+import com.mapuni.gdydcaiji.bean.InPoint;
+import com.mapuni.gdydcaiji.database.greendao.InPointDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ShowDataUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
@@ -32,10 +33,10 @@ import butterknife.BindView;
 
 /**
  * Created by yf on 2018/3/21.
- * poi采集
+ * 内业数据处理poi采集
  */
 
-public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnClickListener {
+public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements View.OnClickListener {
     @BindView(R.id.tv_title)
     TextView title;
     @BindView(R.id.et_lyName)
@@ -75,7 +76,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     @BindView(R.id.edit)
     TextView edit;
 
-    private TbPointDao tPoiInfoDao;
+    private InPointDao tPoiInfoDao;
     private String lyType = "", lyXz = "";
     protected double lat;
     protected double lng;
@@ -91,7 +92,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         super.initView();
 
         title.setText("POI点采集");
-        tPoiInfoDao = GdydApplication.getInstances().getDaoSession().getTbPointDao();
+        tPoiInfoDao = GdydApplication.getInstances().getDaoSession().getInPointDao();
 //        setSpinnerData(R.array.building_types, spLyType);
 //        setSpinnerData(R.array.building_xz, spLyxz);
         setSpinnerData(R.array.building_fl, spLyfl);
@@ -114,7 +115,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         long bm = getIntent().getLongExtra("resultBm", -1);
         lat = getIntent().getDoubleExtra("lat", 0);
         lng = getIntent().getDoubleExtra("lng", 0);
-        List<TbPoint> list = tPoiInfoDao.queryBuilder().where(TbPointDao.Properties.Bm.eq(bm)).list();
+        List<InPoint> list = tPoiInfoDao.queryBuilder().where(InPointDao.Properties.Bm.eq(bm)).list();
         if (!list.isEmpty()) {
             resultBean = list.get(0);
         }
@@ -161,7 +162,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().post(new EventYD(resultBean));
+                EventBus.getDefault().post(new EventYDInterior(resultBean));
                 finish();
             }
         });
@@ -204,21 +205,21 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             photoImg = resultBean.getImg();
         }
-        if (roleid.equals("6")) {
-            //外业
-            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
-                tvZjjgzs.setVisibility(View.VISIBLE);
-                tvZjjgzs.setText(resultBean.getAuthcontent());
-            }
-
-        } else if (roleid.equals("2") || roleid.equals("8")) {
-            //质检
-            if (resultBean.getId() != null) {
-                llZj.setVisibility(View.VISIBLE);
-                etZjjg.setText(resultBean.getAuthcontent());
-                cover.setVisibility(View.VISIBLE);
-            }
-        }
+//        if (roleid.equals("6")) {
+//            //外业
+//            if (resultBean.getId() != null && !TextUtils.isEmpty(resultBean.getAuthcontent())) {
+//                tvZjjgzs.setVisibility(View.VISIBLE);
+//                tvZjjgzs.setText(resultBean.getAuthcontent());
+//            }
+//
+//        } else if (roleid.equals("2") || roleid.equals("8")) {
+//            //质检
+//            if (resultBean.getId() != null) {
+//                llZj.setVisibility(View.VISIBLE);
+//                etZjjg.setText(resultBean.getAuthcontent());
+//                cover.setVisibility(View.VISIBLE);
+//            }
+//        }
         super.showData();
     }
 
@@ -227,7 +228,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     protected void submit() {
         if (resultBean == null) {
 
-            resultBean = new TbPoint();
+            resultBean = new InPoint();
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
             resultBean.setOprator(SPUtils.getInstance().getString("username"));
@@ -265,19 +266,19 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
                 resultBean.setFlag(0);
             } else
                 resultBean.setFlag(2);
-            if (roleid.equals("6")) {
-                //外业
-                if (resultBean.getId() != null) {
-                    resultBean.setAuthflag("0");
-                }
-
-            } else if (roleid.equals("2") || roleid.equals("8")) {
-                //质检
-                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
-                    resultBean.setAuthcontent(getTextByView(etZjjg));
-                    resultBean.setAuthflag("1");
-                }
-            }
+//            if (roleid.equals("6")) {
+//                //外业
+//                if (resultBean.getId() != null) {
+//                    resultBean.setAuthflag("0");
+//                }
+//
+//            } else if (roleid.equals("2") || roleid.equals("8")) {
+//                //质检
+//                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+//                    resultBean.setAuthcontent(getTextByView(etZjjg));
+//                    resultBean.setAuthflag("1");
+//                }
+//            }
 
             tPoiInfoDao.update(resultBean);
         }

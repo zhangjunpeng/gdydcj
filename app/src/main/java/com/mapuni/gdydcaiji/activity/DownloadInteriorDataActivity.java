@@ -12,32 +12,30 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONReader;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.mapuni.gdydcaiji.GdydApplication;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.adapter.FieidPersonListAdapter;
+import com.mapuni.gdydcaiji.adapter.HomeAreaAdapter;
 import com.mapuni.gdydcaiji.adapter.Level0Item;
 import com.mapuni.gdydcaiji.adapter.Level1Item;
-import com.mapuni.gdydcaiji.bean.DownloadBean;
 import com.mapuni.gdydcaiji.bean.FieidPerson;
-import com.mapuni.gdydcaiji.bean.TbLine;
-import com.mapuni.gdydcaiji.bean.TbPoint;
-import com.mapuni.gdydcaiji.bean.TbSurface;
+import com.mapuni.gdydcaiji.bean.HomeArea;
+import com.mapuni.gdydcaiji.bean.InLine;
+import com.mapuni.gdydcaiji.bean.InPoint;
+import com.mapuni.gdydcaiji.bean.InSurface;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
-import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
-import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
-import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
+import com.mapuni.gdydcaiji.database.greendao.InLineDao;
+import com.mapuni.gdydcaiji.database.greendao.InPointDao;
+import com.mapuni.gdydcaiji.database.greendao.InSurfaceDao;
 import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.DateUtil;
 import com.mapuni.gdydcaiji.utils.LogUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.SPUtils;
-import com.mapuni.gdydcaiji.utils.StringUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -49,7 +47,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,10 +65,10 @@ import okhttp3.ResponseBody;
 
 /**
  * Created by yf on 2018/4/11.
- * 质检人员列表
+ * 下载内业数据
  */
 
-public class QCListActivity extends BaseActivity {
+public class DownloadInteriorDataActivity extends BaseActivity {
     @BindView(R.id.back)
     ImageView back;
     @BindView(R.id.tv_title)
@@ -80,25 +77,25 @@ public class QCListActivity extends BaseActivity {
     TextView edit;
     @BindView(R.id.mRecycleview)
     RecyclerView mRecycleView;
-    @BindView(R.id.et_start_time)
-    TextView etStartTime;
-    @BindView(R.id.et_stop_time)
-    TextView etStopTime;
+//    @BindView(R.id.et_start_time)
+//    TextView etStartTime;
+//    @BindView(R.id.et_stop_time)
+//    TextView etStopTime;
 
     //    private List<FieidPerson> fieidPersonList = new ArrayList<>();
-    private ArrayList res = new ArrayList<>();
-    private FieidPersonListAdapter adapter;
+    private ArrayList<String> res = new ArrayList<>();
+    private HomeAreaAdapter adapter;
 
 
-    private TbPointDao tbPointDao;
-    private TbLineDao tbLineDao;
-    private TbSurfaceDao tbSurfaceDao;
-    private final String filePath = PathConstant.DOWNLOAD_DATA_PATH + File.separator + "downloadData.txt";
+    private InPointDao tbPointDao;
+    private InLineDao tbLineDao;
+    private InSurfaceDao tbSurfaceDao;
+    private final String filePath = PathConstant.DOWNLOAD_DATA_PATH + File.separator + "downloadInteriorData.txt";
     private ProgressDialog pd;
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_download_tree;
+        return R.layout.activity_download;
     }
 
     @Override
@@ -109,9 +106,9 @@ public class QCListActivity extends BaseActivity {
         back.setVisibility(View.VISIBLE);
 
         DaoSession daoSession = GdydApplication.getInstances().getDaoSession();
-        tbPointDao = daoSession.getTbPointDao();
-        tbLineDao = daoSession.getTbLineDao();
-        tbSurfaceDao = daoSession.getTbSurfaceDao();
+        tbPointDao = daoSession.getInPointDao();
+        tbLineDao = daoSession.getInLineDao();
+        tbSurfaceDao = daoSession.getInSurfaceDao();
 
 
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -121,59 +118,34 @@ public class QCListActivity extends BaseActivity {
                 .size(1)
                 .colorResId(R.color.gray_line)
                 .build());//添加分隔线
-        adapter = new FieidPersonListAdapter(res);
+        adapter = new HomeAreaAdapter();
         mRecycleView.setAdapter(adapter);
     }
 
     @Override
     protected void initData() {
 
-        int userId = SPUtils.getInstance().getInt("userId");
-        RetrofitFactory.create(RetrofitService.class).getFieidPersonList(userId + "")
+//        int userId = SPUtils.getInstance().getInt("userId");
+        RetrofitFactory.create(RetrofitService.class).getHomeAreaList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<FieidPerson>>() {
+                .subscribe(new Observer<HomeArea>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(final List<FieidPerson> fieidPeople) {
+                    public void onNext(final HomeArea homeArea) {
 
 //                        fieidPersonList.addAll(fieidPeople);
-                        if (fieidPeople == null || fieidPeople.size() == 0) {
+                        if (homeArea.getData() == null || homeArea.getData().size() == 0) {
                             showEmptyPage();
                             return;
                         }
 
-                        ThreadUtils.executeSubThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (int i = 0; i < fieidPeople.size(); i++) {
-                                    if (fieidPeople.get(i).getLevel() == 1) {
-                                        res.add(new Level0Item(fieidPeople.get(i).getName(), fieidPeople.get(i).getId()));
-                                    }
-                                }
-
-                                for (int i = 0; i < res.size(); i++) {
-                                    Level0Item level0Item = (Level0Item) res.get(i);
-                                    for (int j = 0; j < fieidPeople.size(); j++) {
-                                        if (fieidPeople.get(j).getLevel() == 2 && fieidPeople.get(j).getPid().equals(level0Item.getId())) {
-                                            level0Item.addSubItem(new Level1Item(fieidPeople.get(j).getName()));
-                                        }
-                                    }
-                                }
-
-                                ThreadUtils.executeMainThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                });
-                            }
-                        });
-
+                        adapter.setNewData(homeArea.getData());
+//                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -195,25 +167,15 @@ public class QCListActivity extends BaseActivity {
     }
 
     private void downloadData() {
-        if (StringUtils.isEmpty(etStartTime.getText().toString().trim())) {
-            ToastUtils.showShort("请选择下载开始时间");
-            showDatePickerDialog(etStartTime);
-            return;
-        }
-        if (StringUtils.isEmpty(etStopTime.getText().toString().trim())) {
-            ToastUtils.showShort("请选择下载结束时间");
-            showDatePickerDialog(etStopTime);
-            return;
-        }
 
-        List<String> fieidIds = adapter.getFieidIds();
-        if (fieidIds.size() == 0) {
-            ToastUtils.showShort("请先选择要下载的人员");
+        List<String> areaNames = adapter.getAreaNames();
+        if (areaNames.size() == 0) {
+            ToastUtils.showShort("请先选择要下载的区域");
             return;
         }
         String fieidStr = "";
-        for (int i = 0; i < fieidIds.size(); i++) {
-            fieidStr += "'" + fieidIds.get(i) + "'" + ",";
+        for (int i = 0; i < areaNames.size(); i++) {
+            fieidStr += areaNames.get(i) + ",";
         }
 
         fieidStr = fieidStr.substring(0, fieidStr.length() - 1);
@@ -228,7 +190,7 @@ public class QCListActivity extends BaseActivity {
         pd.show();
 
         RetrofitFactory.create(RetrofitService.class)
-                .downloadData(fieidStr + "", etStartTime.getText().toString().trim() + " 00:00:00", etStopTime.getText().toString().trim() + " 23:59:59", 0 + "")
+                .downloadAreaData(fieidStr)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .map(new Function<ResponseBody, InputStream>() {
@@ -324,6 +286,7 @@ public class QCListActivity extends BaseActivity {
         FileInputStream fileTemp = null;
 
         FileReader fileReader = null;
+        
         try {
             fileReader = new FileReader(filePath);
 
@@ -331,11 +294,11 @@ public class QCListActivity extends BaseActivity {
             jsonReader.startObject();
             while (jsonReader.hasNext()) {
                 String elem = jsonReader.readString();
-                if ("tb_point".equals(elem)) {
+                if ("data".equals(elem)) {
                     jsonReader.startArray();
                     while (jsonReader.hasNext()) {
                         jsonReader.startObject();
-                        TbPoint tbPoint = new TbPoint();
+                        InPoint tbPoint = new InPoint();
                         while (jsonReader.hasNext()) {
                             String itemName = jsonReader.readString();
                             Object itemValue = jsonReader.readObject();
@@ -349,7 +312,7 @@ public class QCListActivity extends BaseActivity {
                     jsonReader.startArray();
                     while (jsonReader.hasNext()) {
                         jsonReader.startObject();
-                        TbLine tbLine = new TbLine();
+                        InLine tbLine = new InLine();
                         while (jsonReader.hasNext()) {
                             String itemName = jsonReader.readString();
                             Object itemValue = jsonReader.readObject();
@@ -363,7 +326,7 @@ public class QCListActivity extends BaseActivity {
                     jsonReader.startArray();
                     while (jsonReader.hasNext()) {
                         jsonReader.startObject();
-                        TbSurface tbSurface = new TbSurface();
+                        InSurface tbSurface = new InSurface();
                         while (jsonReader.hasNext()) {
                             String itemName = jsonReader.readString();
                             Object itemValue = jsonReader.readObject();
@@ -385,11 +348,10 @@ public class QCListActivity extends BaseActivity {
 
     }
 
-    private void readTbSurface(TbSurface tbSurface, String itemName, Object itemValue) {
+    private void readTbSurface(InSurface tbSurface, String itemName, Object itemValue) {
         if ("id".equals(itemName)) {
             tbSurface.setId(Long.valueOf(itemValue.toString()));
         }
-        //主键不要，避免数据覆盖丢失
 //        else if ("bm".equals(itemName)) {
 //            tbSurface.setBm(Long.valueOf(itemValue.toString()));
 //        } 
@@ -423,10 +385,12 @@ public class QCListActivity extends BaseActivity {
             tbSurface.setAuthflag((String) itemValue);
         } else if ("authcontent".equals(itemName)) {
             tbSurface.setAuthcontent((String) itemValue);
+        } else if ("homearea".equals(itemName)) {
+            tbSurface.setHomearea((String) itemValue);
         }
     }
 
-    private void readTbLine(TbLine tbLine, String itemName, Object itemValue) {
+    private void readTbLine(InLine tbLine, String itemName, Object itemValue) {
         if ("id".equals(itemName)) {
             tbLine.setId(Long.valueOf(itemValue.toString()));
         }
@@ -457,10 +421,12 @@ public class QCListActivity extends BaseActivity {
             tbLine.setAuthflag((String) itemValue);
         } else if ("authcontent".equals(itemName)) {
             tbLine.setAuthcontent((String) itemValue);
+        } else if ("homearea".equals(itemName)) {
+            tbLine.setHomearea((String) itemValue);
         }
     }
 
-    private void readTbPoint(TbPoint tbPoint, String itemName, Object itemValue) {
+    private void readTbPoint(InPoint tbPoint, String itemName, Object itemValue) {
         if ("id".equals(itemName)) {
             tbPoint.setId(Long.valueOf(itemValue.toString()));
         }
@@ -498,7 +464,7 @@ public class QCListActivity extends BaseActivity {
         } else if ("deleteflag".equals(itemName)) {
             tbPoint.setDeleteflag((String) itemValue);
         } else if ("createtime".equals(itemName)) {
-            tbPoint.setCreatetime((String) itemValue);
+            tbPoint.setCreatetime(DateUtil.getDateByFormat((String) itemValue, DateUtil.YMDHMS));
         } else if ("note".equals(itemName)) {
             tbPoint.setNote((String) itemValue);
         } else if ("img".equals(itemName)) {
@@ -507,6 +473,8 @@ public class QCListActivity extends BaseActivity {
             tbPoint.setAuthflag((String) itemValue);
         } else if ("authcontent".equals(itemName)) {
             tbPoint.setAuthcontent((String) itemValue);
+        } else if ("homearea".equals(itemName)) {
+            tbPoint.setHomearea((String) itemValue);
         }
     }
 
@@ -550,7 +518,7 @@ public class QCListActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.back, R.id.edit, R.id.et_start_time, R.id.et_stop_time})
+    @OnClick({R.id.back, R.id.edit})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.back:
@@ -559,12 +527,12 @@ public class QCListActivity extends BaseActivity {
             case R.id.edit:
                 downloadData();
                 break;
-            case R.id.et_start_time:
-                showDatePickerDialog(etStartTime);
-                break;
-            case R.id.et_stop_time:
-                showDatePickerDialog(etStopTime);
-                break;
+//            case R.id.et_start_time:
+//                showDatePickerDialog(etStartTime);
+//                break;
+//            case R.id.et_stop_time:
+//                showDatePickerDialog(etStopTime);
+//                break;
         }
     }
 
@@ -664,7 +632,7 @@ public class QCListActivity extends BaseActivity {
                 pd.dismiss();
             if ("done".equals(s)) {
                 deleteDownloadFile();
-//                Intent intent = new Intent(QCListActivity.this, CollectionActivity.class);
+//                Intent intent = new Intent(DownloadInteriorDataActivity.this, EditInteriorActivity.class);
 //                startActivity(intent);
                 finish();
             }
