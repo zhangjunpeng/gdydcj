@@ -69,7 +69,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected boolean isInsert;
     protected List<String> imgUrls = new ArrayList<>();
     protected String photoImg;
-    
+
     protected String roleid;
     private PhotoAdapter adapter;
     private final String filePath = PathConstant.IMAGE_PATH_CACHE + "/result.txt";
@@ -103,7 +103,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     protected void initData() {
         roleid = SPUtils.getInstance().getString("roleid");
 //        resultBean = (T) getIntent().getSerializableExtra("resultBean");
-        
+
         if (resultBean != null) {
             //查看
             isInsert = false;
@@ -224,7 +224,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         }
     }
 
-    protected void submit(){
+    protected void submit() {
         cacheView();
     }
 
@@ -267,6 +267,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
         resultBean = null;
         setContentView(R.layout.activity_empty);
     }
+
     protected void setSpinnerData(int id, Spinner spinner) {
         List<String> mItems = Arrays.asList(getResources().getStringArray(id));
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, R.id.tv_type, mItems);

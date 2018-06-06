@@ -341,15 +341,15 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
                 when(info){
                     is TbPoint -> {
                         intent.setClass(context, PoiDetail::class.java)
-                        intent.putExtra("resultBean", info)
+                        intent.putExtra("resultBm", info.bm)
                     }
                     is TbLine -> {
                         intent.setClass(context, LineDetail::class.java)
-                        intent.putExtra("resultBean", info)
+                        intent.putExtra("resultBm", info.bm)
                     }
                     is TbSurface -> {
                         intent.setClass(context, SocialDetail::class.java)
-                        intent.putExtra("resultBean", info)
+                        intent.putExtra("resultBm", info.bm)
                     }
                 }
                 context.startActivity(intent)
