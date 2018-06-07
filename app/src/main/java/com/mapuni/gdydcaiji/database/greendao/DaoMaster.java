@@ -21,22 +21,22 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
-        TbLineDao.createTable(db, ifNotExists);
-        TbPointDao.createTable(db, ifNotExists);
-        TbSurfaceDao.createTable(db, ifNotExists);
         InLineDao.createTable(db, ifNotExists);
         InPointDao.createTable(db, ifNotExists);
         InSurfaceDao.createTable(db, ifNotExists);
+        TbLineDao.createTable(db, ifNotExists);
+        TbPointDao.createTable(db, ifNotExists);
+        TbSurfaceDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
-        TbLineDao.dropTable(db, ifExists);
-        TbPointDao.dropTable(db, ifExists);
-        TbSurfaceDao.dropTable(db, ifExists);
         InLineDao.dropTable(db, ifExists);
         InPointDao.dropTable(db, ifExists);
         InSurfaceDao.dropTable(db, ifExists);
+        TbLineDao.dropTable(db, ifExists);
+        TbPointDao.dropTable(db, ifExists);
+        TbSurfaceDao.dropTable(db, ifExists);
     }
 
     /**
@@ -55,12 +55,12 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
-        registerDaoClass(TbLineDao.class);
-        registerDaoClass(TbPointDao.class);
-        registerDaoClass(TbSurfaceDao.class);
         registerDaoClass(InLineDao.class);
         registerDaoClass(InPointDao.class);
         registerDaoClass(InSurfaceDao.class);
+        registerDaoClass(TbLineDao.class);
+        registerDaoClass(TbPointDao.class);
+        registerDaoClass(TbSurfaceDao.class);
     }
 
     public DaoSession newSession() {
