@@ -184,8 +184,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 val intent1 = Intent(context, PoiDetail::class.java)
                 if (currentPoi != null) {
                     //移点
-                    currentPoi!!.lat = point.y
-                    currentPoi!!.lng = point.x
+//                    currentPoi!!.lat = point.y
+//                    currentPoi!!.lng = point.x
 //                    intent1.putExtra("resultBean", currentPoi)
                     intent1.putExtra("resultBm", currentPoi!!.bm)
                     currentPoi = null

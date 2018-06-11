@@ -198,12 +198,10 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
     fun addPointInMap(point: Point) {
         when (currentCode) {
             0 -> {
-                val intent1 = Intent(context, PoiDetail::class.java)
+
+                val intent1 = Intent(context, InteriorPoiDetail::class.java)
                 if (currentPoi != null) {
                     //移点
-                    currentPoi!!.lat = point.y
-                    currentPoi!!.lng = point.x
-//                    intent1.putExtra("resultBean", currentPoi)
                     intent1.putExtra("resultBm", currentPoi!!.bm)
                     currentPoi = null
                 }
@@ -211,7 +209,9 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                 intent1.putExtra("lng", point.x)
 
                 addOnePointInMap(point)
+
                 context.startActivity(intent1)
+                
             }
             1 -> {
                 addPolyLineInMap(point)
