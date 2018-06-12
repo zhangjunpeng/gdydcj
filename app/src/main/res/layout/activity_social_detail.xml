@@ -114,6 +114,22 @@
                             android:inputType="number" />
 
                     </LinearLayout>
+                    
+                    <LinearLayout
+                        android:id="@+id/ll_ssqy"
+                        style="@style/HorizontalLinearLayout"
+                        android:visibility="gone">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="所属区域" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/et_ssqy"
+                            style="@style/CollectEditText"
+                            android:singleLine="false" />
+
+                    </LinearLayout>
 
                     <LinearLayout style="@style/HorizontalLinearLayout">
 
@@ -124,7 +140,7 @@
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_bz"
                             style="@style/CollectEditText"
-                            android:singleLine="false"/>
+                            android:singleLine="false" />
 
                     </LinearLayout>
 

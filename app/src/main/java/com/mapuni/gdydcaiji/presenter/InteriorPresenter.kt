@@ -102,6 +102,8 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
     var infoList: ArrayList<Map<String, Any>>? = null
     var infoMap: HashMap<Int, Any> = HashMap()
 
+    private var updataNum = 0
+
 
     //graphiclayer定义
     private var graphicsLayer: GraphicsLayer = GraphicsLayer()
@@ -121,7 +123,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
     var currentLineColor: Int = -1
     var currentSurfaceColor: Int = -1
 
-//    var dateStartTime: String
+    //    var dateStartTime: String
 //    var dateStopTime: String
     private val fileDirNames = ArrayList<String>()
     private val fileDirPaths = ArrayList<String>()
@@ -211,7 +213,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                 addOnePointInMap(point)
 
                 context.startActivity(intent1)
-                
+
             }
             1 -> {
                 addPolyLineInMap(point)
@@ -461,7 +463,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                 is InSurface -> {
                     inSurfaceDao.delete(obj)
                 }
-                
+
             }
         }
         updateGraphic()
@@ -784,11 +786,18 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                     .orderAsc(InPointDao.Properties.Opttime).list()
             map["tb_point"] = tbPointList1
 
+            if (tbPointList1 != null && tbPointList1.size > 0) {
+                updataNum += tbPointList1.size
+            }
 //                //未上传,修改（id不为空，flag=0）
             tbPointList2 = inPointDao.queryBuilder()
                     .where(InPointDao.Properties.Flag.eq(2))//修改未上传
                     .orderAsc(InPointDao.Properties.Opttime).list()
             map["tb_point_modify"] = tbPointList2
+
+            if (tbPointList2 != null && tbPointList2.size > 0) {
+                updataNum += tbPointList2.size
+            }
 
             //未上传,新增
             tbLineList1 = inLineDao.queryBuilder()
@@ -800,6 +809,10 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 
             map["tb_line"] = tbLineList1
 
+            if (tbLineList1 != null && tbLineList1.size > 0) {
+                updataNum += tbLineList1.size
+            }
+
             //未上传,修改（id不为空，flag=0）
             tbLineList2 = inLineDao.queryBuilder()
                     .where(InLineDao.Properties.Flag.eq(2))
@@ -808,6 +821,10 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_line.txt", poiJson);
 
             map["tb_line_modify"] = tbLineList2
+
+            if (tbLineList2 != null && tbLineList2.size > 0) {
+                updataNum += tbLineList2.size
+            }
 
             //未上传,新增
             tbSurfaceList1 = inSurfaceDao.queryBuilder()
@@ -818,6 +835,10 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
             map["tb_surface"] = tbSurfaceList1
 
+            if (tbSurfaceList1 != null && tbSurfaceList1.size > 0) {
+                updataNum += tbSurfaceList1.size
+            }
+
             //未上传,修改（id不为空，flag=0）
             tbSurfaceList2 = inSurfaceDao.queryBuilder()
                     .where(InSurfaceDao.Properties.Flag.eq(2))
@@ -825,6 +846,10 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 //                String socialJson2 = gson.toJson(tbSurfaceList2);
 //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
             map["tb_surface_modify"] = tbSurfaceList2
+
+            if (tbSurfaceList2 != null && tbSurfaceList2.size > 0) {
+                updataNum += tbSurfaceList2.size
+            }
 
             val json = gson.toJson(map)
             FileUtils.writeFile(filePath, json)
@@ -853,6 +878,10 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
             }
         }
 
+        if (updataNum == 0) {
+            ToastUtils.showShort("没有新数据")
+            return
+        }
 
         val call = RetrofitFactory.create(RetrofitService::class.java).uploadMobileData(map)
         // Dialog
@@ -875,6 +904,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                 val body = response.body()
                 if (body == null) {
                     showResponseDialog("上传失败")
+                    updataNum = 0
                     deleteUpdateFile()
                     return
                 }
@@ -883,16 +913,17 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 
             override fun onFailure(call: Call<UploadBean>, t: Throwable) {
                 t.printStackTrace()
+                if (pd.isShowing) {
+                    pd.dismiss()
+                }
                 if (!call.isCanceled) {
                     // 非点击取消
-                    //LogUtils.d(t.getMessage());
-                    if (pd.isShowing) {
-                        pd.dismiss()
-                    }
                     ToastUtils.showShort("网络错误")
                 } else {
                     ToastUtils.showShort("上传取消")
                 }
+                updataNum = 0
+                deleteUpdateFile()
             }
         })
 
@@ -905,12 +936,13 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
      */
     private fun processData(body: UploadBean) {
         if (body.isStatus) {
-            showResponseDialog("上传成功")
+            showResponseDialog("上传成功\n总数：$updataNum")
             ThreadUtils.executeSubThread { updateData() }
 
         } else {
             showResponseDialog("上传失败")
         }
+        updataNum = 0
         deleteUpdateFile()
     }
 
@@ -925,7 +957,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
         dialog = builder.create()
         dialog.show()
     }
-    
+
     /**
      * 将flag标记为1
      */
@@ -1051,5 +1083,5 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
         if (File(filePath).exists())
             File(filePath).delete()
     }
-    
+
 }

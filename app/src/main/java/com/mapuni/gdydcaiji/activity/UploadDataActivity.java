@@ -311,12 +311,12 @@ public class UploadDataActivity extends BaseActivity {
             @Override
             public void onFailure(Call<UploadBean> call, Throwable t) {
                 t.printStackTrace();
+                if (pd.isShowing()) {
+                    pd.dismiss();
+                }
                 if (!call.isCanceled()) {
                     // 非点击取消
                     //LogUtils.d(t.getMessage());
-                    if (pd.isShowing()) {
-                        pd.dismiss();
-                    }
                     ToastUtils.showShort("网络错误");
                 } else {
                     ToastUtils.showShort("上传取消");

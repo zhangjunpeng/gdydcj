@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -43,6 +44,10 @@ public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
     ClearEditText etLxdh;
     @BindView(R.id.et_lds)
     ClearEditText etLds;
+    @BindView(R.id.ll_ssqy)
+    LinearLayout llSsqy;
+    @BindView(R.id.et_ssqy)
+    AutoCompleteTextView etSsqy;
     @BindView(R.id.et_bz)
     ClearEditText etBz;
 
@@ -59,6 +64,7 @@ public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
     protected void initView() {
         super.initView();
         title.setText("面采集");
+        llSsqy.setVisibility(View.VISIBLE);
         tbSurfaceDao = GdydApplication.getInstances().getDaoSession().getInSurfaceDao();
         setSpinnerData(R.array.social_type, spFl);
 
@@ -85,6 +91,11 @@ public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
         ArrayAdapter<String> lpwAdapter2 = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mNameArray);
         lpwAdapter2.setDropDownViewResource(R.layout.item_spinner_dropdown);
         etName.setAdapter(lpwAdapter2);
+
+        List<String> mAreaArray = ShowDataUtils.getAddressOrNameArray("homearea");
+        ArrayAdapter<String> lpwAdapter3 = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mAreaArray);
+        lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etSsqy.setAdapter(lpwAdapter3);
     }
 
     @Override
@@ -106,6 +117,14 @@ public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
                 view.showDropDown();
             }
         });
+
+        etSsqy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
+            }
+        });
     }
 
     @Override
@@ -116,6 +135,7 @@ public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
         etWyxx.setText(resultBean.getWyxx());
         etLxdh.setText(resultBean.getLxdh());
         etLds.setText(resultBean.getLds());
+        etSsqy.setText(resultBean.getHomearea());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             photoImg = resultBean.getImg();
@@ -154,6 +174,7 @@ public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
         resultBean.setWyxx(getTextByView(etWyxx));
         resultBean.setLxdh(getTextByView(etLxdh));
         resultBean.setLds(getTextByView(etLds));
+        resultBean.setHomearea(getTextByView(etSsqy));
         resultBean.setNote(getTextByView(etBz));
         resultBean.setImg(getPhotoImg());
 

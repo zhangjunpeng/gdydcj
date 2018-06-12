@@ -144,6 +144,11 @@ public class DownloadInteriorDataActivity extends BaseActivity {
                             return;
                         }
 
+                        String homeAreaStr = "";
+                        for (HomeArea.HomeAreaBean bean : homeArea.getData()) {
+                            homeAreaStr += bean.getHomearea() + ";";
+                        }
+                        SPUtils.getInstance().put("homearea", homeAreaStr.substring(0, homeAreaStr.length() - 1));
                         adapter.setNewData(homeArea.getData());
 //                        adapter.notifyDataSetChanged();
                     }
@@ -286,7 +291,7 @@ public class DownloadInteriorDataActivity extends BaseActivity {
         FileInputStream fileTemp = null;
 
         FileReader fileReader = null;
-        
+
         try {
             fileReader = new FileReader(filePath);
 

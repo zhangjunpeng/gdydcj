@@ -484,7 +484,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                     startActivity(Intent(this, UploadDataActivity::class.java))
                 }
                 1 -> {
-                    startActivity(Intent(this, ChooseMapActivity::class.java))
+                    var intent = Intent(this, ChooseMapActivity::class.java)
+                    intent.putExtra("from","CollectionActivity")
+                    startActivity(intent)
                 }
                 2 -> {
                     ThreadUtils.executeSubThread {

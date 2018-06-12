@@ -460,7 +460,9 @@ class EditInteriorActivity : AppCompatActivity(), View.OnClickListener, OnSingle
                     interiorPresenter.createFile()
                 }
                 1 -> {
-                    startActivity(Intent(this, ChooseMapActivity::class.java))
+                    var intent = Intent(this, ChooseMapActivity::class.java)
+                    intent.putExtra("from", "EditInteriorActivity")
+                    startActivity(intent)
                 }
                 2 -> {
                     ThreadUtils.executeSubThread {
@@ -487,7 +489,7 @@ class EditInteriorActivity : AppCompatActivity(), View.OnClickListener, OnSingle
                     startActivity(Intent(this, DownloadInteriorDataActivity::class.java))
                 }
                 6 -> {
-                    finish()
+                    startActivity(Intent(this, CollectionActivity::class.java))
                 }
 //                8 -> {
 //                    //导出质检数据
@@ -644,6 +646,12 @@ class EditInteriorActivity : AppCompatActivity(), View.OnClickListener, OnSingle
         }
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            startActivity(Intent(this, CollectionActivity::class.java))
+        }
+        return super.onKeyDown(keyCode, event)
+    }
 
     override fun getProgressOnActionUp(bubbleSeekBar: BubbleSeekBar?, progress: Int, progressFloat: Float) {
     }

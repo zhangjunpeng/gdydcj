@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,10 @@ public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements Vi
     ClearEditText etLyzhs;
     @BindView(R.id.iv_calculator)
     ImageView ivCalculator;
+    @BindView(R.id.ll_ssqy)
+    LinearLayout llSsqy;
+    @BindView(R.id.et_ssqy)
+    AutoCompleteTextView etSsqy;
     @BindView(R.id.et_bz)
     ClearEditText etBz;
     @BindView(R.id.tv_type0)
@@ -91,6 +96,7 @@ public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements Vi
     protected void initView() {
         super.initView();
 
+        llSsqy.setVisibility(View.VISIBLE);
         title.setText("POI点采集");
         tPoiInfoDao = GdydApplication.getInstances().getDaoSession().getInPointDao();
 //        setSpinnerData(R.array.building_types, spLyType);
@@ -132,6 +138,11 @@ public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements Vi
         ArrayAdapter<String> lpwAdapter2 = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mNameArray);
         lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         etLyName.setAdapter(lpwAdapter2);
+
+        List<String> mAreaArray = ShowDataUtils.getAddressOrNameArray("homearea");
+        ArrayAdapter<String> lpwAdapter3 = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mAreaArray);
+        lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etSsqy.setAdapter(lpwAdapter3);
     }
 
     @Override
@@ -152,6 +163,15 @@ public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements Vi
                 view.showDropDown();
             }
         });
+        
+        etSsqy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
+            }
+        });
+        
         ivCalculator.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,6 +222,7 @@ public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements Vi
         etLycs.setText(resultBean.getLycs());
         etLyzhs.setText(resultBean.getLyzhs());
         etBz.setText(resultBean.getNote());
+        etSsqy.setText(resultBean.getHomearea());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             photoImg = resultBean.getImg();
         }
@@ -252,9 +273,9 @@ public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements Vi
         resultBean.setDj(spDj.getSelectedItemPosition() == 0 ? "" : getResources().getStringArray(R.array.poi_mjdj)[spDj.getSelectedItemPosition()]);
         resultBean.setLycs(getTextByView(etLycs));
         resultBean.setLyzhs(getTextByView(etLyzhs));
+        resultBean.setHomearea(getTextByView(etSsqy));
         resultBean.setNote(getTextByView(etBz));
         resultBean.setImg(getPhotoImg());
-
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
 
         if (isInsert) {

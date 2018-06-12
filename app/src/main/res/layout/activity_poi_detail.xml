@@ -208,8 +208,8 @@
 
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_tele"
-                            style="@style/CollectEditText" 
-                            android:inputType="phone"/>
+                            style="@style/CollectEditText"
+                            android:inputType="phone" />
 
                     </LinearLayout>
 
@@ -233,7 +233,7 @@
 
                         <com.mapuni.gdydcaiji.view.ClearEditText
                             android:id="@+id/et_lycs"
-                            style="@style/CollectEditText"/>
+                            style="@style/CollectEditText" />
 
                     </LinearLayout>
 
@@ -247,7 +247,7 @@
                             android:id="@+id/et_lyzhs"
                             style="@style/CollectEditText"
                             android:layout_weight="6"
-                            android:inputType="number"/>
+                            android:inputType="number" />
 
                         <ImageView
                             android:id="@+id/iv_calculator"
@@ -258,6 +258,22 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:id="@+id/ll_ssqy"
+                        style="@style/HorizontalLinearLayout"
+                        android:visibility="gone">
+
+                        <TextView
+                            style="@style/HintText"
+                            android:text="所属区域" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/et_ssqy"
+                            style="@style/CollectEditText"
+                            android:singleLine="false" />
+
+                    </LinearLayout>
+                    
                     <LinearLayout style="@style/HorizontalLinearLayout">
 
                         <TextView

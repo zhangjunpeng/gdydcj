@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mapuni.gdydcaiji.GdydApplication;
@@ -35,6 +36,10 @@ public class InteriorLineDetail extends BaseDetailActivity<InLine> {
     ClearEditText etQd;
     @BindView(R.id.et_zd)
     ClearEditText etZd;
+    @BindView(R.id.ll_ssqy)
+    LinearLayout llSsqy;
+    @BindView(R.id.et_ssqy)
+    AutoCompleteTextView etSsqy;
     @BindView(R.id.et_bz)
     ClearEditText etBz;
     private InLineDao tbLineDao;
@@ -49,6 +54,7 @@ public class InteriorLineDetail extends BaseDetailActivity<InLine> {
     protected void initView() {
         super.initView();
         title.setText("线采集");
+        llSsqy.setVisibility(View.VISIBLE);
         tbLineDao = GdydApplication.getInstances().getDaoSession().getInLineDao();
         bj = getIntent().getStringExtra("bj");
         initListPopupWindow();
@@ -69,12 +75,25 @@ public class InteriorLineDetail extends BaseDetailActivity<InLine> {
         ArrayAdapter<String> lpwAdapter = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mNameArray);
         lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         etName.setAdapter(lpwAdapter);
+
+        List<String> mAreaArray = ShowDataUtils.getAddressOrNameArray("homearea");
+        ArrayAdapter<String> lpwAdapter3 = new ArrayAdapter<>(this, R.layout.item_listpopupwindow, mAreaArray);
+        lpwAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        etSsqy.setAdapter(lpwAdapter3);
     }
 
     @Override
     protected void initListener() {
         super.initListener();
         etName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                view.showDropDown();
+            }
+        });
+
+        etSsqy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 AutoCompleteTextView view = (AutoCompleteTextView) v;
@@ -88,6 +107,7 @@ public class InteriorLineDetail extends BaseDetailActivity<InLine> {
         etName.setText(resultBean.getName());
         etQd.setText(resultBean.getSfz());
         etZd.setText(resultBean.getZdz());
+        etSsqy.setText(resultBean.getHomearea());
         etBz.setText(resultBean.getNote());
         if (!TextUtils.isEmpty(resultBean.getImg())) {
             photoImg = resultBean.getImg();
@@ -121,6 +141,7 @@ public class InteriorLineDetail extends BaseDetailActivity<InLine> {
         resultBean.setName(getTextByView(etName));
         resultBean.setSfz(getTextByView(etQd));
         resultBean.setZdz(getTextByView(etZd));
+        resultBean.setHomearea(getTextByView(etSsqy));
         resultBean.setNote(getTextByView(etBz));
         resultBean.setImg(getPhotoImg());
 

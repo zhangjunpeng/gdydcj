@@ -43,6 +43,7 @@ public class ChooseMapActivity extends BaseActivity {
     private List<String> fileDirNames = new ArrayList<>();
     private List<String> fileDirPaths = new ArrayList<>();
     private ChooseMapAdapter adapter;
+    private String from;
 
     @Override
     protected int getLayoutResId() {
@@ -56,6 +57,7 @@ public class ChooseMapActivity extends BaseActivity {
         back.setVisibility(View.VISIBLE);
         edit.setVisibility(View.VISIBLE);
         edit.setText("增加");
+        from = getIntent().getStringExtra("from");
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
         mRecycleView.setHasFixedSize(true);
         mRecycleView.setNestedScrollingEnabled(false);
@@ -91,7 +93,12 @@ public class ChooseMapActivity extends BaseActivity {
                 adapter.notifyDataSetChanged();
                 EventChangeMap eventChangeMap=new EventChangeMap();
                 EventBus.getDefault().post(eventChangeMap);
-                openActivity(mContext, CollectionActivity.class);
+                if("EditInteriorActivity".equals(from)){
+                    openActivity(mContext, EditInteriorActivity.class);
+                }else{
+//                    "CollectionActivity".equals(from)
+                    openActivity(mContext, CollectionActivity.class);
+                }
                 finish();
             }
         });
