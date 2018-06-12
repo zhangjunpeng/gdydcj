@@ -301,10 +301,10 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
     private fun updateGraphicInLocal(currentPloygon: Polygon) {
         for (info: InPoint in pointList as LazyList) {
             val point = Point(info.lng, info.lat)
-            var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()) {
-                SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
-            } else {
+            var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.flag == 0 && info.id != null) {
                 SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
+            } else {
+                SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             }
             var graphic = Graphic(point, simpleMarkerSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
@@ -331,7 +331,12 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                 }
 
             }
-            val simpleLineSymbol = SimpleLineSymbol(Color.RED, 2f, SimpleLineSymbol.STYLE.SOLID)
+            var simpleLineSymbol = if (info.flag == 0 && info.id != null) {
+                //下载下来的内业数据且未做更改
+                SimpleLineSymbol(Color.RED, 2f, SimpleLineSymbol.STYLE.SOLID)
+            } else {
+                SimpleLineSymbol(Color.BLUE, 2f, SimpleLineSymbol.STYLE.SOLID)
+            }
             val graphic = Graphic(polyline, simpleLineSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
             infoMap[uid] = info
@@ -359,7 +364,12 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                 tempPointList.add(point)
             }
 
-            val fillSymbol = SimpleFillSymbol(Color.argb(100, 255, 0, 0))
+            var fillSymbol = if (info.flag == 0 && info.id != null) {
+                //下载下来的内业数据且未做更改
+                SimpleFillSymbol(Color.argb(100, 255, 0, 0))
+            } else {
+                SimpleFillSymbol(Color.argb(100, 0, 0, 255))
+            }
             val polygon = Polygon()
             polygon.startPath(tempPointList[0])
             for (i in 1 until tempPointList.size) {
@@ -786,7 +796,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                     .orderAsc(InPointDao.Properties.Opttime).list()
             map["tb_point"] = tbPointList1
 
-            if (tbPointList1 != null && tbPointList1.size > 0) {
+            if (tbPointList1.size > 0) {
                 updataNum += tbPointList1.size
             }
 //                //未上传,修改（id不为空，flag=0）
@@ -795,7 +805,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
                     .orderAsc(InPointDao.Properties.Opttime).list()
             map["tb_point_modify"] = tbPointList2
 
-            if (tbPointList2 != null && tbPointList2.size > 0) {
+            if (tbPointList2.size > 0) {
                 updataNum += tbPointList2.size
             }
 
@@ -809,7 +819,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 
             map["tb_line"] = tbLineList1
 
-            if (tbLineList1 != null && tbLineList1.size > 0) {
+            if (tbLineList1.size > 0) {
                 updataNum += tbLineList1.size
             }
 
@@ -822,7 +832,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 
             map["tb_line_modify"] = tbLineList2
 
-            if (tbLineList2 != null && tbLineList2.size > 0) {
+            if (tbLineList2.size > 0) {
                 updataNum += tbLineList2.size
             }
 
@@ -835,7 +845,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
             map["tb_surface"] = tbSurfaceList1
 
-            if (tbSurfaceList1 != null && tbSurfaceList1.size > 0) {
+            if (tbSurfaceList1.size > 0) {
                 updataNum += tbSurfaceList1.size
             }
 
@@ -847,7 +857,7 @@ class InteriorPresenter(context: Activity, mapView: MapView) : ZhiJianInterface 
 //                FileUtils.writeFile(PathConstant.UPLOAD_DATA + "/tb_surface.txt", socialJson);
             map["tb_surface_modify"] = tbSurfaceList2
 
-            if (tbSurfaceList2 != null && tbSurfaceList2.size > 0) {
+            if (tbSurfaceList2.size > 0) {
                 updataNum += tbSurfaceList2.size
             }
 

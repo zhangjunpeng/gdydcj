@@ -632,7 +632,7 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
 
     private fun updateSurface() {
 
-        if (tbSurfaceList2 != null && tbSurfaceList2.size > 0) {
+        if (tbSurfaceList2.size > 0) {
             for (i in tbSurfaceList2.indices) {
                 tbSurfaceList2[i].flag = 1
             }
@@ -644,7 +644,7 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
     private fun updateLine() {
 
 
-        if (tbLineList2 != null && tbLineList2.size > 0) {
+        if (tbLineList2.size > 0) {
             for (i in tbLineList2.indices) {
                 tbLineList2[i].flag = 1
             }
@@ -655,7 +655,7 @@ class CheckPresenter(context: Activity, mapView: MapView,recyler_check:RecyclerV
     private fun updatePoi() {
 
 
-        if (tbPointList2 != null && tbPointList2.size > 0) {
+        if (tbPointList2.size > 0) {
             for (i in tbPointList2.indices) {
                 tbPointList2[i].flag = 1
             }
