@@ -7,15 +7,14 @@ import android.support.multidex.MultiDex;
 import com.mapuni.gdydcaiji.database.greendao.DaoMaster;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
 import com.mapuni.gdydcaiji.database.greendao.MyOpenHelper;
-import com.mapuni.gdydcaiji.utils.EncryptUtils;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.Utils;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.database.EncryptedDatabase;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,20 +41,10 @@ public class GdydApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instances = this;
+        //发布前删除
+//        CrashReport.setIsDevelopmentDevice(this, true);
+        CrashReport.initCrashReport(getApplicationContext(), "3637144ca2", false);
         Utils.init(this);
-//        ThreadUtils.executeSubThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                copyDbFile(instances, "sport.db");
-//                ThreadUtils.executeMainThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        setDatabase();
-//                    }
-//                });
-//            }
-//        });
-
 
         boolean dbisen = SPUtils.getInstance().getBoolean("dbisen");
         if (getDatabasePath(OLD_DB_NAME).getAbsoluteFile().exists() && !dbisen) {
@@ -77,6 +66,8 @@ public class GdydApplication extends Application {
         }
 
     }
+
+
 
     public static GdydApplication getInstances() {
         return instances;
