@@ -82,8 +82,6 @@ public class GdydApplication extends Application {
         // 注意：默认的 DaoMaster.DevOpenHelper 会在数据库升级时，删除所有的表，意味着这将导致数据的丢失。  
         // 所以，在正式的项目中，你还应该做一层封装，来实现数据库的安全升级。  
         mHelper = new MyOpenHelper(this, ENCRYPTED_DB_NAME, null);
-//        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "sporten.db");
-//        db = mHelper.getWritableDatabase();
         db = mHelper.getEncryptedWritableDb(DB_KEY);
         // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。  
         mDaoMaster = new DaoMaster(db);

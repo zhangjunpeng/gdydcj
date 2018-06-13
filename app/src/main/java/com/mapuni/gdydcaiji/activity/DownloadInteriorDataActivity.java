@@ -180,7 +180,7 @@ public class DownloadInteriorDataActivity extends BaseActivity {
         }
         String fieidStr = "";
         for (int i = 0; i < areaNames.size(); i++) {
-            fieidStr += areaNames.get(i) + ",";
+            fieidStr += "'" + areaNames.get(i) + "',";
         }
 
         fieidStr = fieidStr.substring(0, fieidStr.length() - 1);
@@ -299,7 +299,7 @@ public class DownloadInteriorDataActivity extends BaseActivity {
             jsonReader.startObject();
             while (jsonReader.hasNext()) {
                 String elem = jsonReader.readString();
-                if ("data".equals(elem)) {
+                if ("tb_point".equals(elem)) {
                     jsonReader.startArray();
                     while (jsonReader.hasNext()) {
                         jsonReader.startObject();
