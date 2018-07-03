@@ -192,7 +192,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 }
                 intent1.putExtra("lat", point.y)
                 intent1.putExtra("lng", point.x)
-                
+
                 addOnePointInMap(point)
                 context.startActivity(intent1)
             }
@@ -224,9 +224,18 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         grahicGonUid = drawGon(pointPloygon)
     }
 
+    fun getCurrentExtent(): Polygon {
+        var currentExtent = mapView.extent
+        if (currentExtent == null) {
+            getCurrentExtent()
+        }
+        return currentExtent
+    }
+
     inner class UPDateGraphicTask : AsyncTask<String, Void, Polygon>() {
         override fun doInBackground(vararg params: String?): Polygon {
-            val currentPloygon = mapView.extent
+            var currentPloygon = getCurrentExtent()
+            
             val leftTopP = currentPloygon.getPoint(0)
             val rightTopP = currentPloygon.getPoint(1)
             val leftBottomP = currentPloygon.getPoint(2)
@@ -387,7 +396,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
         mapView.invalidate()
         mIsLoading = false
-        
+
     }
 
     private fun getPointName(info: TbPoint): String {
