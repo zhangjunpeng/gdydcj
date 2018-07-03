@@ -387,9 +387,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
         mapView.invalidate()
         mIsLoading = false
-        pointList?.close()
-        lineInfoList?.close()
-        surfaceList?.close()
+        
     }
 
     private fun getPointName(info: TbPoint): String {

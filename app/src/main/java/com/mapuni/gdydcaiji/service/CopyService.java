@@ -8,11 +8,16 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.mapuni.gdydcaiji.GdydApplication;
+import com.mapuni.gdydcaiji.utils.FileIOUtils;
 import com.mapuni.gdydcaiji.utils.FileUtils;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,20 +45,29 @@ public class CopyService extends Service {
             @Override
             public void run() {
                 ThreadUtils.executeSubThread(new Runnable() {
+
                     @Override
                     public void run() {
 
-                        FileUtils.copyFile(GdydApplication.getInstances().getDbPath(), PathConstant.DATABASE_PATH + "/sport.db", new FileUtils.OnReplaceListener() {
-                            @Override
-                            public boolean onReplace() {
-                                return true;
+                        String filePath = PathConstant.DATABASE_PATH + "/sport" + System.currentTimeMillis() + ".db";
+                        try {
+                            FileIOUtils.writeFileFromIS(filePath, new FileInputStream(FileUtils.getFileByPath(GdydApplication.getInstances().getDbPath())));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                        List<File> files = FileUtils.listFilesInDir(PathConstant.DATABASE_PATH);
+                        for (File file :
+                                files) {
+                            if (!file.getName().equals(new File(filePath).getName())) {
+                                file.delete();
                             }
-                        });
+                        }
                     }
                 });
             }
         }, 0, 60 * 60 * 1000);
         return super.onStartCommand(intent, flags, startId);
     }
-    
+
 }

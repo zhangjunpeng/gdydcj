@@ -338,29 +338,38 @@ public class UploadDataActivity extends BaseActivity {
      */
     private void processData(UploadBean body) {
         if (body.isStatus()) {
-            showResponseDialog("上传成功\n" + "总数：" + updataNum + "\n" + DateUtil.getStringByFormat(upStartTime, DateUtil.YMDHMS) + "\n" + DateUtil.getStringByFormat(upStopTime, DateUtil.YMDHMS));
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    captureScreen();
-                }
-            }, 100);
-
             ThreadUtils.executeSubThread(new Runnable() {
                 @Override
                 public void run() {
                     updateData();
+                    ThreadUtils.executeMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showResponseDialog("上传成功\n" + "总数：" + updataNum + "\n" + DateUtil.getStringByFormat(upStartTime, DateUtil.YMDHMS) + "\n" + DateUtil.getStringByFormat(upStopTime, DateUtil.YMDHMS));
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    captureScreen();
+                                }
+                            }, 100);
+                            updataNum = 0;
+                            upStartTime = null;
+                            upStopTime = null;
+                            deleteUpdateFile();
+                        }
+                    });
                 }
             });
 
         } else {
 
             showResponseDialog("上传失败");
+            updataNum = 0;
+            upStartTime = null;
+            upStopTime = null;
+            deleteUpdateFile();
         }
-        updataNum = 0;
-        upStartTime = null;
-        upStopTime = null;
-        deleteUpdateFile();
+        
     }
 
     //删除上传文件
@@ -495,6 +504,9 @@ public class UploadDataActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.btn_save:
+                updataNum = 0;
+                upStartTime = null;
+                upStopTime = null;
                 createFiles();
                 break;
             case R.id.et_start_time:

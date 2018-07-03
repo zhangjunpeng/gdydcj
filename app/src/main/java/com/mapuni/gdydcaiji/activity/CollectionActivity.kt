@@ -45,6 +45,8 @@ import kotlinx.android.synthetic.main.layout_title.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -485,12 +487,30 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 }
                 1 -> {
                     var intent = Intent(this, ChooseMapActivity::class.java)
-                    intent.putExtra("from","CollectionActivity")
+                    intent.putExtra("from", "CollectionActivity")
                     startActivity(intent)
                 }
                 2 -> {
                     ThreadUtils.executeSubThread {
-                        FileUtils.copyFile(GdydApplication.getInstances().dbPath, PathConstant.DATABASE_PATH + "/sport.db") { true }
+
+                        val currentDir = DateUtil.getStringByFormat(System.currentTimeMillis(), DateUtil.YMD).replace(
+                                "-",
+                                ""
+                        )
+                        val filePath = PathConstant.DATABASE_PATH + "/$currentDir/sport" + System.currentTimeMillis() + ".db"
+                        try {
+                            FileIOUtils.writeFileFromIS(filePath, FileInputStream(FileUtils.getFileByPath(GdydApplication.getInstances().dbPath)!!))
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        }
+
+                        val files = FileUtils.listFilesInDir(PathConstant.DATABASE_PATH + "/" + currentDir)
+                        for (file in files) {
+                            if (file.name != File(filePath).name) {
+                                file.delete()
+                            }
+                        }
+
                         ThreadUtils.executeMainThread {
                             ToastUtils.showShort("备份成功")
                         }
@@ -695,6 +715,9 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         EventBus.getDefault().unregister(this)
         val intent = Intent(this, CopyService::class.java)
         stopService(intent)
+        waiYeInterface.pointList?.close()
+        waiYeInterface.lineInfoList?.close()
+        waiYeInterface.surfaceList?.close()
     }
 
 
