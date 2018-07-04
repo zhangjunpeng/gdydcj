@@ -93,6 +93,8 @@ public class UploadDataActivity extends BaseActivity {
     private TbLineDao tbLineDao;
     private TbSurfaceDao tbSurfaceDao;
     private final String filePath = PathConstant.UPLOAD_DATA + "/upload.txt";
+    private ProgressDialog pd;
+    private Call<UploadBean> call;
 
     @Override
     protected int getLayoutResId() {
@@ -131,6 +133,7 @@ public class UploadDataActivity extends BaseActivity {
             showDatePickerDialog(etStopTime);
             return;
         }
+        showProgressDialog();
 
         ThreadUtils.executeSubThread(new Runnable() {
             @Override
@@ -269,35 +272,24 @@ public class UploadDataActivity extends BaseActivity {
 
         if (updataNum == 0) {
             ToastUtils.showShort("没有新数据");
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
             return;
         }
 
-        final Call<UploadBean> call = RetrofitFactory.create(RetrofitService.class).upload(map);
-        // Dialog
-        final ProgressDialog pd = new ProgressDialog(mContext);
-        pd.setMessage("正在上传...");
-        // 点击对话框以外的地方无法取消
-        pd.setCanceledOnTouchOutside(false);
-        // 点击返回按钮无法取消
-        pd.setCancelable(false);
-        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                call.cancel();
-            }
-        });
-        pd.show();
+        call = RetrofitFactory.create(RetrofitService.class).upload(map);
 
         call.enqueue(new Callback<UploadBean>() {
             @Override
             public void onResponse(@NonNull Call<UploadBean> call, @NonNull Response<UploadBean> response) {
                 LogUtils.d("onResponse" + response.body());
-
-                if (pd.isShowing()) {
-                    pd.dismiss();
-                }
+                
                 UploadBean body = response.body();
                 if (body == null) {
+                    if (pd.isShowing()) {
+                        pd.dismiss();
+                    }
                     showResponseDialog("上传失败");
                     updataNum = 0;
                     upStartTime = null;
@@ -331,6 +323,25 @@ public class UploadDataActivity extends BaseActivity {
 
     }
 
+    @NonNull
+    private void showProgressDialog() {
+        // Dialog
+        pd = new ProgressDialog(mContext);
+        pd.setMessage("正在上传...");
+        // 点击对话框以外的地方无法取消
+        pd.setCanceledOnTouchOutside(false);
+        // 点击返回按钮无法取消
+        pd.setCancelable(false);
+        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (call != null)
+                    call.cancel();
+            }
+        });
+        pd.show();
+    }
+
     /**
      * 处理数据
      *
@@ -345,6 +356,9 @@ public class UploadDataActivity extends BaseActivity {
                     ThreadUtils.executeMainThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (pd.isShowing()) {
+                                pd.dismiss();
+                            }
                             showResponseDialog("上传成功\n" + "总数：" + updataNum + "\n" + DateUtil.getStringByFormat(upStartTime, DateUtil.YMDHMS) + "\n" + DateUtil.getStringByFormat(upStopTime, DateUtil.YMDHMS));
                             new Timer().schedule(new TimerTask() {
                                 @Override
@@ -369,7 +383,7 @@ public class UploadDataActivity extends BaseActivity {
             upStopTime = null;
             deleteUpdateFile();
         }
-        
+
     }
 
     //删除上传文件
