@@ -145,6 +145,7 @@ public class UploadDataActivity extends BaseActivity {
                 tbPointList1 = tbPointDao.queryBuilder()
                         .where(TbPointDao.Properties.Flag.eq(0),  //新增未上传
                                 TbPointDao.Properties.Id.isNull(),
+                                TbPointDao.Properties.Lat.notEq(0.0),
                                 TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbPointDao.Properties.Opttime).list();
 //                String buildingJson1 = gson.toJson(tbPointList1);
@@ -161,6 +162,7 @@ public class UploadDataActivity extends BaseActivity {
                         .where(TbPointDao.Properties.Flag.eq(2),  //修改未上传
 //                                TbPointDao.Properties.Id.isNotNull(),
 //                                TbPointDao.Properties.Authflag.eq(getFlagByUser()),
+                                TbPointDao.Properties.Lat.notEq(0.0),
                                 TbPointDao.Properties.Opttime.between(DateUtil.getDateByFormat(startTime + " 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat(stopTime + " 24:00:00", DateUtil.YMDHMS)))
                         .orderAsc(TbPointDao.Properties.Opttime).list();
 //                String buildingJson2 = gson.toJson(tbPointList2);
@@ -284,7 +286,7 @@ public class UploadDataActivity extends BaseActivity {
             @Override
             public void onResponse(@NonNull Call<UploadBean> call, @NonNull Response<UploadBean> response) {
                 LogUtils.d("onResponse" + response.body());
-                
+
                 UploadBean body = response.body();
                 if (body == null) {
                     if (pd.isShowing()) {

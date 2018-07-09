@@ -112,8 +112,8 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
     @Override
     protected void initData() {
         long bm = getIntent().getLongExtra("resultBm", -1);
-        lat = getIntent().getDoubleExtra("lat", 0);
-        lng = getIntent().getDoubleExtra("lng", 0);
+        lat = getIntent().getDoubleExtra("lat", 0.0);
+        lng = getIntent().getDoubleExtra("lng", 0.0);
         List<TbPoint> list = tPoiInfoDao.queryBuilder().where(TbPointDao.Properties.Bm.eq(bm)).list();
         if (!list.isEmpty()) {
             resultBean = list.get(0);
@@ -233,10 +233,10 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
             resultBean.setOprator(SPUtils.getInstance().getString("username"));
         }
 
-        if (lat != 0) {
+        if (lat != 0.0) {
             resultBean.setLat(lat);
         }
-        if (lng != 0) {
+        if (lng != 0.0) {
             resultBean.setLng(lng);
         }
         resultBean.setName(getTextByView(etLyName));
