@@ -21,6 +21,7 @@ import com.mapuni.gdydcaiji.bean.TbPoint;
 import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ShowDataUtils;
+import com.mapuni.gdydcaiji.utils.ToastUtils;
 import com.mapuni.gdydcaiji.view.ClearEditText;
 
 import org.greenrobot.eventbus.EventBus;
@@ -114,6 +115,10 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         long bm = getIntent().getLongExtra("resultBm", -1);
         lat = getIntent().getDoubleExtra("lat", 0);
         lng = getIntent().getDoubleExtra("lng", 0);
+        if (lat>200||lng>200){
+
+            ToastUtils.showLong("坐标异常");
+        }
         List<TbPoint> list = tPoiInfoDao.queryBuilder().where(TbPointDao.Properties.Bm.eq(bm)).list();
         if (!list.isEmpty()) {
             resultBean = list.get(0);
