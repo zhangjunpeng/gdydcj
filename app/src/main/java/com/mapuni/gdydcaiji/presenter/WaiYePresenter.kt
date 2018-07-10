@@ -179,6 +179,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     }
 
     override fun addPointInMap(point: Point) {
+
+        if (point.x>200||point.y>200){
+            ToastUtils.showLong("经纬度错误")
+            return
+        }
         when (currentCode) {
             0 -> {
                 val intent1 = Intent(context, PoiDetail::class.java)
@@ -517,6 +522,10 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     override fun singleTapOnCollection(v: Float, v1: Float, tolerance: Int) {
         val center = mapView.toMapPoint(v, v1)
+        if (center.x>200||center.y>200){
+            ToastUtils.showLong("经纬度错误")
+            return
+        }
         when (currentCode) {
             0 -> {
                 val intent1 = Intent(context, PoiDetail::class.java)
