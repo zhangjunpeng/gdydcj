@@ -13,7 +13,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_LOGS"
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
 
     <application
@@ -37,6 +38,7 @@
             android:launchMode="singleTask" />
         <activity
             android:name=".activity.PoiDetail"
+            android:launchMode="singleTop"
             android:theme="@style/DialogActivity" />
         <activity
             android:name=".activity.SocialDetail"
@@ -66,11 +68,15 @@
 
         <activity android:name=".activity.CheckActivity"></activity>
         <activity android:name=".activity.EditInteriorActivity" />
-        <activity android:name=".activity.InteriorPoiDetail"
+        <activity
+            android:name=".activity.InteriorPoiDetail"
+            android:launchMode="singleTop"
             android:theme="@style/DialogActivity" />
-        <activity android:name=".activity.InteriorLineDetail"
+        <activity
+            android:name=".activity.InteriorLineDetail"
             android:theme="@style/DialogActivity" />
-        <activity android:name=".activity.InteriorSocialDetail"
+        <activity
+            android:name=".activity.InteriorSocialDetail"
             android:theme="@style/DialogActivity" />
         <activity android:name=".activity.DownloadInteriorDataActivity" />
     </application>
