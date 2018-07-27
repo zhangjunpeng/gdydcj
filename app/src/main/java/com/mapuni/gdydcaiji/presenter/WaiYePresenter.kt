@@ -523,7 +523,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     override fun singleTapOnCollection(v: Float, v1: Float, tolerance: Int) {
         val center = mapView.toMapPoint(v, v1)
         if (center.x>200||center.y>200){
-            ToastUtils.showLong("经纬度错误")
+            ToastUtils.showLong("经纬度异常，请重启软件或设备")
             return
         }
         when (currentCode) {
