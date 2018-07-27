@@ -6,7 +6,9 @@ import android.support.multidex.MultiDex;
 
 import com.mapuni.gdydcaiji.database.greendao.DaoMaster;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
+import com.mapuni.gdydcaiji.database.greendao.GreenDaoContext;
 import com.mapuni.gdydcaiji.database.greendao.MyOpenHelper;
+import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
 import com.mapuni.gdydcaiji.utils.Utils;
@@ -46,27 +48,26 @@ public class GdydApplication extends Application {
         CrashReport.initCrashReport(getApplicationContext(), "3637144ca2", false);
         Utils.init(this);
 
-        boolean dbisen = SPUtils.getInstance().getBoolean("dbisen");
-        if (getDatabasePath(OLD_DB_NAME).getAbsoluteFile().exists() && !dbisen) {
-            ThreadUtils.executeSubThread(new Runnable() {
-                @Override
-                public void run() {
-                    encrypt(ENCRYPTED_DB_NAME, OLD_DB_NAME, DB_KEY);
-                    SPUtils.getInstance().put("dbisen", true);
-                    ThreadUtils.executeMainThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setDatabase();
-                        }
-                    });
-                }
-            });
-        } else {
-            setDatabase();
-        }
+//        boolean dbisen = SPUtils.getInstance().getBoolean("dbisen");
+//        if (getDatabasePath(OLD_DB_NAME).getAbsoluteFile().exists() && !dbisen) {
+//            ThreadUtils.executeSubThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    encrypt(ENCRYPTED_DB_NAME, OLD_DB_NAME, DB_KEY);
+//                    SPUtils.getInstance().put("dbisen", true);
+//                    ThreadUtils.executeMainThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            setDatabase();
+//                        }
+//                    });
+//                }
+//            });
+//        } else {
+//            setDatabase();
+//        }
 
     }
-
 
 
     public static GdydApplication getInstances() {
@@ -76,13 +77,18 @@ public class GdydApplication extends Application {
     /**
      * 设置greenDao
      */
-    private void setDatabase() {
+    public void setDatabase() {
         // 通过 DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的 SQLiteOpenHelper 对象。  
         // 可能你已经注意到了，你并不需要去编写「CREATE TABLE」这样的 SQL 语句，因为 greenDAO 已经帮你做了。  
         // 注意：默认的 DaoMaster.DevOpenHelper 会在数据库升级时，删除所有的表，意味着这将导致数据的丢失。  
         // 所以，在正式的项目中，你还应该做一层封装，来实现数据库的安全升级。  
-        mHelper = new MyOpenHelper(this, ENCRYPTED_DB_NAME, null);
-        db = mHelper.getEncryptedWritableDb(DB_KEY);
+//        mHelper = new MyOpenHelper(this, ENCRYPTED_DB_NAME, null);
+        mHelper = new MyOpenHelper(new GreenDaoContext(), OLD_DB_NAME, null);
+        try {
+            db = mHelper.getEncryptedWritableDb(DB_KEY);
+        } catch (Exception e) {
+            db = mHelper.getWritableDb();
+        }
         // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。  
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
@@ -97,9 +103,9 @@ public class GdydApplication extends Application {
 //    }
 
     public String getDbPath() {
-        return getDatabasePath(ENCRYPTED_DB_NAME).getAbsolutePath();
+//        return getDatabasePath(ENCRYPTED_DB_NAME).getAbsolutePath();
+        return PathConstant.QC_DATABASE_PATH + File.separator + OLD_DB_NAME;
     }
-
 
     @Override
     protected void attachBaseContext(Context base) {

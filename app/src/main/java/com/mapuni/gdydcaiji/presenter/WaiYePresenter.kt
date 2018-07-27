@@ -180,7 +180,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     override fun addPointInMap(point: Point) {
 
-        if (point.x>200||point.y>200){
+        if (point.x > 200 || point.y > 200) {
             ToastUtils.showLong("经纬度错误")
             return
         }
@@ -240,7 +240,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     inner class UPDateGraphicTask : AsyncTask<String, Void, Polygon>() {
         override fun doInBackground(vararg params: String?): Polygon {
             var currentPloygon = getCurrentExtent()
-            
+
             val leftTopP = currentPloygon.getPoint(0)
             val rightTopP = currentPloygon.getPoint(1)
             val leftBottomP = currentPloygon.getPoint(2)
@@ -522,8 +522,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     override fun singleTapOnCollection(v: Float, v1: Float, tolerance: Int) {
         val center = mapView.toMapPoint(v, v1)
-        if (center.x>200||center.y>200){
-            ToastUtils.showLong("经纬度异常，请重启软件或设备")
+        if (center.x > 200 || center.y > 200) {
+            ToastUtils.showLong("经纬度错误")
             return
         }
         when (currentCode) {
@@ -724,18 +724,21 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     fun databaseToExcel() {
 
         val tbpoints = tbPointDao.queryBuilder().where(
-                TbPointDao.Properties.Flag.eq(2),
-                TbPointDao.Properties.Id.isNotNull
+//                TbPointDao.Properties.Flag.eq(2),
+//                TbPointDao.Properties.Id.isNotNull
+                TbPointDao.Properties.Authcontent.notEq("")
         ).orderAsc(TbPointDao.Properties.Opttime).list()
 
         val tbLines = tbLineDao.queryBuilder().where(
-                TbLineDao.Properties.Flag.eq(2),
-                TbLineDao.Properties.Id.isNotNull
+//                TbLineDao.Properties.Flag.eq(2),
+//                TbLineDao.Properties.Id.isNotNull
+                TbLineDao.Properties.Authcontent.notEq("")
         ).orderAsc(TbLineDao.Properties.Opttime).list()
 
         val tbSurfaces = tbSurfaceDao.queryBuilder().where(
-                TbSurfaceDao.Properties.Flag.eq(2),
-                TbSurfaceDao.Properties.Id.isNotNull
+//                TbSurfaceDao.Properties.Flag.eq(2),
+//                TbSurfaceDao.Properties.Id.isNotNull
+                TbSurfaceDao.Properties.Authcontent.notEq("")
         ).orderAsc(TbSurfaceDao.Properties.Opttime).list()
 
         if (tbpoints.isEmpty() && tbLines.isEmpty() && tbSurfaces.isEmpty()) {

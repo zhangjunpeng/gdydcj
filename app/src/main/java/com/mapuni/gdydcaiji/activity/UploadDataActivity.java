@@ -379,6 +379,9 @@ public class UploadDataActivity extends BaseActivity {
 
         } else {
 
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
             showResponseDialog("上传失败");
             updataNum = 0;
             upStartTime = null;

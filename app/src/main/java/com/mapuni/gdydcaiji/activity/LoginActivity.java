@@ -18,6 +18,7 @@ import com.mapuni.gdydcaiji.bean.LoginBean;
 import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.LogUtils;
+import com.mapuni.gdydcaiji.utils.PermissionUtils;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        PermissionUtils.requestAllPermission(this);
         // 用户名&密码回显
         boolean isRemember = SPUtils.getInstance().getBoolean("isRemember", false);
         cbRemember.setChecked(isRemember);

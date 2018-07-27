@@ -115,7 +115,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         long bm = getIntent().getLongExtra("resultBm", -1);
         lat = getIntent().getDoubleExtra("lat", 0);
         lng = getIntent().getDoubleExtra("lng", 0);
-        if (lat>200||lng>200){
+        if (lat > 200 || lng > 200) {
 
             ToastUtils.showLong("坐标异常");
         }
@@ -219,7 +219,12 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
 
         } else if (roleid.equals("2") || roleid.equals("8")) {
             //质检
-            if (resultBean.getId() != null) {
+//            if (resultBean.getId() != null) {
+//                llZj.setVisibility(View.VISIBLE);
+//                etZjjg.setText(resultBean.getAuthcontent());
+//                cover.setVisibility(View.VISIBLE);
+//            }
+            if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
                 cover.setVisibility(View.VISIBLE);
@@ -244,10 +249,6 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         }
         if (lng != 0.0) {
             resultBean.setLng(lng);
-        }
-        if (lat>200||lng>200){
-            ToastUtils.showLong("经纬度异常，请重启软件或设备");
-            return;
         }
         resultBean.setName(getTextByView(etLyName));
 //        resultBean.setLytype(spLyType.getSelectedItemPosition() == 0 ? "" : getResources().getStringArray(R.array.building_types)[spLyType.getSelectedItemPosition()]);
@@ -283,7 +284,12 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
 
             } else if (roleid.equals("2") || roleid.equals("8")) {
                 //质检
-                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+//                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+//                    resultBean.setAuthcontent(getTextByView(etZjjg));
+//                    resultBean.setAuthflag("1");
+//                }
+
+                if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username")) && !TextUtils.isEmpty(etZjjg.getText())) {
                     resultBean.setAuthcontent(getTextByView(etZjjg));
                     resultBean.setAuthflag("1");
                 }

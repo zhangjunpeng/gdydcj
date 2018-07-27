@@ -103,7 +103,13 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 
         } else if (roleid.equals("2") || roleid.equals("8")) {
             //质检
-            if (resultBean.getId() != null) {
+//            if (resultBean.getId() != null) {
+//                llZj.setVisibility(View.VISIBLE);
+//                etZjjg.setText(resultBean.getAuthcontent());
+//                cover.setVisibility(View.VISIBLE);
+//            }
+
+            if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
                 cover.setVisibility(View.VISIBLE);
@@ -145,7 +151,12 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 
             } else if (roleid.equals("2") || roleid.equals("8")) {
                 //质检
-                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+//                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+//                    resultBean.setAuthcontent(getTextByView(etZjjg));
+//                    resultBean.setAuthflag("1");
+//                }
+
+                if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username")) && !TextUtils.isEmpty(etZjjg.getText())) {
                     resultBean.setAuthcontent(getTextByView(etZjjg));
                     resultBean.setAuthflag("1");
                 }

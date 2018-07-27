@@ -15,11 +15,11 @@ public class MyOpenHelper extends DaoMaster.OpenHelper {
 
     @Override
     public void onCreate(Database db) {
-        if (GdydApplication.getInstances().getDatabasePath(GdydApplication.OLD_DB_NAME).exists()) {
-            DaoMaster.createAllTables(db, true);
-        } else {
+//        if (GdydApplication.getInstances().getDatabasePath(GdydApplication.OLD_DB_NAME).exists()) {
+//            DaoMaster.createAllTables(db, true);
+//        } else {
             super.onCreate(db);
-        }
+//        }
     }
 
     /**

@@ -122,7 +122,7 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
-        PermissionUtils.requestAllPermission(this)
+//        PermissionUtils.requestAllPermission(this)
         instance = this
 
         MODE = SPUtils.getInstance().getString("roleid").toInt()
@@ -465,8 +465,8 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         var roleid = SPUtils.getInstance().getString("roleid")
         if ("2" == roleid || "8" == roleid) {
             //质检
-            data.add("下载数据")
-            data.add("删除数据")
+//            data.add("下载数据")
+//            data.add("删除数据")
             data.add("导出质检数据")
         } else if ("6" == roleid) {
             //外业
@@ -536,43 +536,48 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 6 -> {
                     if ("2" == roleid || "8" == roleid) {
                         //质检下载数据
-                        startActivity(Intent(this, QCListActivity::class.java))
+//                        startActivity(Intent(this, QCListActivity::class.java))
+                        //导出质检数据
+                        ThreadUtils.executeSubThread {
+
+                            waiYeInterface.databaseToExcel()
+                        }
                     } else if ("6" == roleid) {
                         //处理内业上传的数据
                         startActivity(Intent(this, EditInteriorActivity::class.java))
                     }
                 }
                 7 -> {
-                    if ("2" == roleid || "8" == roleid) {
-                        //质检删除数据
-                        ThreadUtils.executeSubThread {
-
-                            if (DbUtils().noUpdateNum == 0) {
-                                DbUtils().deleteData()
-                                ThreadUtils.executeMainThread {
-                                    ToastUtils.showShort("删除成功")
-                                    waiYeInterface.updateGraphic()
-                                }
-                            } else {
-                                ThreadUtils.executeMainThread {
-                                    showWarnDialog()
-                                }
-                            }
-
-                        }
-                    } else if ("6" == roleid) {
+//                    if ("2" == roleid || "8" == roleid) {
+//                        //质检删除数据
+//                        ThreadUtils.executeSubThread {
+//
+//                            if (DbUtils().noUpdateNum == 0) {
+//                                DbUtils().deleteData()
+//                                ThreadUtils.executeMainThread {
+//                                    ToastUtils.showShort("删除成功")
+//                                    waiYeInterface.updateGraphic()
+//                                }
+//                            } else {
+//                                ThreadUtils.executeMainThread {
+//                                    showWarnDialog()
+//                                }
+//                            }
+//
+//                        }
+//                    } else if ("6" == roleid) {
                         //外业纠错
                         startActivity(Intent(this, CheckActivity::class.java))
-                    }
+//                    }
 
                 }
-                8 -> {
-                    //导出质检数据
-                    ThreadUtils.executeSubThread {
-
-                        waiYeInterface.databaseToExcel()
-                    }
-                }
+//                8 -> {
+//                    //导出质检数据
+//                    ThreadUtils.executeSubThread {
+//
+//                        waiYeInterface.databaseToExcel()
+//                    }
+//                }
 
             }
         }
