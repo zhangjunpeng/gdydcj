@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="choose">
+        <item>否</item>
+        <item>是</item>
+    </string-array>
+    <string-array name="building_types">
+        <item>单栋单用户</item>
+        <item>单栋多用户</item>
+        <item>多栋单用户</item>
+        <item>多栋多用户</item>
+    </string-array>
+
+    <string-array name="building_xz">
+        <item>商用</item>
+        <item>家用</item>
+        <item>商住一体</item>
+    </string-array>
+
+    <string-array name="social_type">
+        <item>小区</item>
+        <item>学校</item>
+        <item>医院</item>
+        <item>其他</item>
+    </string-array>
+
+    <string-array name="village_type">
+        <item>自然村</item>
+        <item>行政村</item>
+    </string-array>
+
+    <string-array name="poi_mjdj">
+        <item>请选择</item>
+        <item>3A</item>
+        <item>4A</item>
+        <item>5A</item>
+        <item>三甲</item>
+        <item>二甲</item>
+    </string-array>
+
+    <string-array name="building_fl">
+        <item>美食</item>
+        <item>景点</item>
+        <item>宾馆酒店</item>
+        <item>小区</item>
+        <!--<item>楼栋</item>-->
+        <item>商业楼宇</item>
+        <!--<item>购物广场</item>-->
+        <item>大型商贸场所</item>
+        <item>学校</item>
+        <item>医院</item>
+        <item>村名</item>
+        <item>其他</item>
+    </string-array>
+
+    <string-array name="poi_item">
+        <item>ID</item>
+        <item>楼宇类型</item>
+        <item>楼宇性质</item>
+        <item>名称</item>
+        <item>分类</item>
+        <item>地址</item>
+        <item>单元号</item>
+        <item>电话</item>
+        <item>等级</item>
+        <item>楼宇层数</item>
+        <item>楼宇住户数</item>
+        <item>备注</item>
+        <item>质检结果</item>
+    </string-array>
+    
+    <string-array name="line_item">
+        <item>ID</item>
+        <item>名称</item>
+        <item>起点</item>
+        <item>终点</item>
+        <item>备注</item>
+        <item>质检结果</item>
+    </string-array>
+    
+    <string-array name="surface_item">
+        <item>ID</item>
+        <item>名称</item>
+        <item>地址</item>
+        <item>分类</item>
+        <item>物业信息</item>
+        <item>联系电话</item>
+        <item>楼栋数</item>
+        <item>备注</item>
+        <item>质检结果</item>
+    </string-array>
+</resources>

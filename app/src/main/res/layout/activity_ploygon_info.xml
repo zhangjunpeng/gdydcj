@@ -1,0 +1,163 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/titlebar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/rl_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/rl_edit_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp">
+
+                    <TextView
+                        android:id="@+id/tv_point_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:text="名称"
+                        android:textColor="#515151"
+                        android:textSize="18sp"/>
+
+                    <AutoCompleteTextView
+                        android:id="@+id/name_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/tv_point_name"
+                        android:layout_alignBottom="@+id/tv_point_name"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:background="@null"
+                        android:textSize="18sp"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_alignParentBottom="true"
+                        android:background="#969696"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/address_edit_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp">
+
+                    <TextView
+                        android:id="@+id/tv_point_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:text="地址"
+                        android:textColor="#515151"
+                        android:textSize="18sp"/>
+
+                    <AutoCompleteTextView
+                        android:id="@+id/address_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/tv_point_address"
+                        android:layout_alignBottom="@+id/tv_point_address"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:background="@null"
+                        android:textSize="18sp"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_alignParentBottom="true"
+                        android:background="#969696"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp">
+
+                    <TextView
+                        android:id="@+id/tv_big_class"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:text="类型"
+                        android:textColor="#515151"
+                        android:textSize="18sp"/>
+
+                    <Spinner
+                        android:id="@+id/spinner_big"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:layout_toRightOf="@id/tv_big_class"
+                        android:textSize="18sp"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_alignParentBottom="true"
+                        android:background="#969696"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/country_edit_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp">
+
+                    <TextView
+                        android:id="@+id/tv_point_country"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        android:text="村庄边界 "
+                        android:textColor="#515151"
+                        android:textSize="18sp"/>
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#515151"
+                        android:textSize="18sp"
+                        android:text="地图采集"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="50dp"
+                        />
+                </RelativeLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_alignParentBottom="true"
+                    android:background="#969696" />
+                <Button
+                    android:id="@+id/delete_save_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/selector_btn_confirm"
+                    android:gravity="center"
+                    android:text="删  除"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>

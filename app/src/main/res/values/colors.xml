@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#a2a2a2</color>
+
+    <!-- 提示字体颜色 -->
+    <color name="hintTextColor">#CCCCCC</color>
+    <color name="login_bg">#0090fe</color>
+    <!-- 登录normal -->
+    <color name="loginNormal">#00BFFF</color>
+    <!-- 登录Press -->
+    <color name="loginPress">#00aafb</color>
+    <color name="mapbtnPress">#66CCCCCC</color>
+    <color name="mapbtnNormal">#FFCCCCCC</color>
+    <color name="gray_line">#D4D3D7</color>
+    <color name="darkgray">#A9A9A9</color><!--暗灰色 -->
+    <color name="black_text">#333333</color>
+    <color name="color_deep_sky_blue">#00BFFF</color>
+    <color name="color_black">#000000</color>
+
+    <color name="themeColor">#FD9230</color>
+    <color name="themeColor_press">#FBB06C</color>
+    <color name="color_red">#ff0000</color>
+    <color name="common_bg">#efeff4</color>
+    <color name="light_gray_text">#999999</color>
+    <color name="poi_tv_normal">#dddddd</color>
+
+</resources>
