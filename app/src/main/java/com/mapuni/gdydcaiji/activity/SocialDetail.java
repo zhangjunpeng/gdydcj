@@ -62,6 +62,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         super.initView();
         title.setText("面采集");
         tbSurfaceDao = GdydApplication.getInstances().getDaoSession().getTbSurfaceDao();
+        tbSurfaceDao.detachAll();
         setSpinnerData(R.array.social_type, spFl);
 
         bj = getIntent().getStringExtra("bj");

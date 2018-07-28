@@ -259,6 +259,12 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                     surfaceList = tbSurfaceDao.queryBuilder().where(
                             TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
                     ).listLazy()
+//                    surfaceList = tbSurfaceDao.queryBuilder().where(
+//                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
+//                    ).
+                    for (item in surfaceList!!){
+                        item.img=""
+                    }
                 }
                 6 -> {
                     //外业
@@ -283,7 +289,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         }
 
         override fun onPostExecute(result: Polygon) {
-            updateGraphicInLocal(result)
+            updateGraphicInLocal()
             super.onPostExecute(result)
         }
 
@@ -294,7 +300,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         if (name.isEmpty()) {
             return
         }
-        if ("samsung" == android.os.Build.BRAND) {
+//        if ("samsung" == android.os.Build.BRAND) {
             val tv = TextView(context)
             tv.text = name
             tv.textSize = 8f
@@ -309,16 +315,17 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             picturSymbol.offsetY = 10f
             val nameGraphic = Graphic(point, picturSymbol)
             graphicName.addGraphic(nameGraphic)
-        } else {
-            val textSymbol = TextSymbol(10, name, currentTvColor)
-            textSymbol.offsetY = 6f
-            val nameGraphic = Graphic(point, textSymbol)
-            graphicName.addGraphic(nameGraphic)
-        }
+        bitmap.recycle()
+//        } else {
+//            val textSymbol = TextSymbol(10, name, currentTvColor)
+//            textSymbol.offsetY = 6f
+//            val nameGraphic = Graphic(point, textSymbol)
+//            graphicName.addGraphic(nameGraphic)
+//        }
     }
 
 
-    private fun updateGraphicInLocal(currentPloygon: Polygon) {
+    private fun updateGraphicInLocal() {
         for (info: TbPoint in pointList as LazyList) {
             val point = Point(info.lng, info.lat)
             var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()) {
@@ -349,8 +356,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 } else {
                     polyline.lineTo(point)
                 }
-
             }
+
             val simpleLineSymbol = SimpleLineSymbol(Color.RED, 2f, SimpleLineSymbol.STYLE.SOLID)
             val graphic = Graphic(polyline, simpleLineSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
@@ -816,7 +823,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     private fun showNotHaveMapDialog() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("无地图文件，请先下载地图")
-        builder.setPositiveButton("确定") { dialog, which -> context.startActivity(Intent(context, DownloadMapActivity::class.java)) }
+        builder.setPositiveButton("确定") { _, _ -> context.startActivity(Intent(context, DownloadMapActivity::class.java)) }
         builder.setNegativeButton("取消", null)
         builder.show()
     }
