@@ -236,7 +236,9 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
             resultBean = new TbPoint();
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
-            resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            if (TextUtils.isEmpty(resultBean.getOprator())) {
+                resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            }
         }
 
         if (lat != 0.0) {

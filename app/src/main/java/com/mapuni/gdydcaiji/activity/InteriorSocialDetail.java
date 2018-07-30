@@ -165,7 +165,9 @@ public class InteriorSocialDetail extends BaseDetailActivity<InSurface> {
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
             resultBean.setPolyarrays(bj);
-            resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            if (TextUtils.isEmpty(resultBean.getOprator())) {
+                resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            }
         }
 
         resultBean.setName(getTextByView(etName));

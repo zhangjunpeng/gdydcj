@@ -135,7 +135,9 @@ public class InteriorLineDetail extends BaseDetailActivity<InLine> {
         if (resultBean == null) {
             resultBean = new InLine();
             resultBean.setPolyarrays(bj);
-            resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            if(TextUtils.isEmpty(resultBean.getOprator())){
+                resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            }
         }
 
         resultBean.setName(getTextByView(etName));

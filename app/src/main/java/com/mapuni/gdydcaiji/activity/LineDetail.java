@@ -117,7 +117,9 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         if (resultBean == null) {
             resultBean = new TbLine();
             resultBean.setPolyarrays(bj);
-            resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            if (TextUtils.isEmpty(resultBean.getOprator())) {
+                resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            }
         }
 
         resultBean.setName(getTextByView(etName));

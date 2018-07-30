@@ -252,7 +252,9 @@ public class InteriorPoiDetail extends BaseDetailActivity<InPoint> implements Vi
             resultBean = new InPoint();
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
-            resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            if (TextUtils.isEmpty(resultBean.getOprator())) {
+                resultBean.setOprator(SPUtils.getInstance().getString("username"));
+            }
         }
 
         if (lat != 0) {
