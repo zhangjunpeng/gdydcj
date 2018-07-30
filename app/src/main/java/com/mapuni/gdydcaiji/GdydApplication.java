@@ -7,14 +7,16 @@ import android.support.multidex.MultiDex;
 import com.mapuni.gdydcaiji.database.greendao.DaoMaster;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
 import com.mapuni.gdydcaiji.database.greendao.MyOpenHelper;
+import com.mapuni.gdydcaiji.utils.EncryptUtils;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
+import com.mapuni.gdydcaiji.utils.ToastUtils;
 import com.mapuni.gdydcaiji.utils.Utils;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.EncryptedDatabase;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +29,7 @@ import java.io.InputStream;
 
 public class GdydApplication extends Application {
     private MyOpenHelper mHelper;
-    private Database db;
+    private android.database.sqlite.SQLiteDatabase db;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
     public static final String DB_KEY = "147258";
@@ -41,33 +43,54 @@ public class GdydApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instances = this;
-        //发布前删除
-//        CrashReport.setIsDevelopmentDevice(this, true);
-        CrashReport.initCrashReport(getApplicationContext(), "3637144ca2", false);
         Utils.init(this);
+//        ThreadUtils.executeSubThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                copyDbFile(instances, "sport.db");
+//                ThreadUtils.executeMainThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setDatabase();
+//                    }
+//                });
+//            }
+//        });
 
-        boolean dbisen = SPUtils.getInstance().getBoolean("dbisen");
-        if (getDatabasePath(OLD_DB_NAME).getAbsoluteFile().exists() && !dbisen) {
-            ThreadUtils.executeSubThread(new Runnable() {
-                @Override
-                public void run() {
-                    encrypt(ENCRYPTED_DB_NAME, OLD_DB_NAME, DB_KEY);
-                    SPUtils.getInstance().put("dbisen", true);
-                    ThreadUtils.executeMainThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setDatabase();
-                        }
-                    });
-                }
-            });
-        } else {
-            setDatabase();
-        }
+        ThreadUtils.executeSubThread(new Runnable() {
+            @Override
+            public void run() {
+                copyDbFile(getApplicationContext(), "test.db");
+                ThreadUtils.executeMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setDatabase();
+                    }
+                });
+            }
+        });
+
+
+//        boolean dbisen = SPUtils.getInstance().getBoolean("dbisen");
+//        if (getDatabasePath(OLD_DB_NAME).getAbsoluteFile().exists() && !dbisen) {
+//            ThreadUtils.executeSubThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    encrypt(ENCRYPTED_DB_NAME, OLD_DB_NAME, DB_KEY);
+//                    SPUtils.getInstance().put("dbisen", true);
+//                    ThreadUtils.executeMainThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            setDatabase();
+//                        }
+//                    });
+//                }
+//            });
+//        } else {
+//            setDatabase();
+//        }
 
     }
-
-
 
     public static GdydApplication getInstances() {
         return instances;
@@ -81,8 +104,12 @@ public class GdydApplication extends Application {
         // 可能你已经注意到了，你并不需要去编写「CREATE TABLE」这样的 SQL 语句，因为 greenDAO 已经帮你做了。  
         // 注意：默认的 DaoMaster.DevOpenHelper 会在数据库升级时，删除所有的表，意味着这将导致数据的丢失。  
         // 所以，在正式的项目中，你还应该做一层封装，来实现数据库的安全升级。  
-        mHelper = new MyOpenHelper(this, ENCRYPTED_DB_NAME, null);
-        db = mHelper.getEncryptedWritableDb(DB_KEY);
+//        mHelper = new MyOpenHelper(this, ENCRYPTED_DB_NAME, null);
+//        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "test.db",null);
+        MyOpenHelper helper = new MyOpenHelper(this, "test.db", null);
+        db = helper.getWritableDatabase();
+//        db = mHelper.getWritableDatabase();
+//        db = mHelper.getEncryptedWritableDb(DB_KEY);
         // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。  
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
@@ -97,7 +124,9 @@ public class GdydApplication extends Application {
 //    }
 
     public String getDbPath() {
-        return getDatabasePath(ENCRYPTED_DB_NAME).getAbsolutePath();
+//        return getDatabasePath(ENCRYPTED_DB_NAME).getAbsolutePath();
+        return getDatabasePath("test.db").getAbsolutePath();
+        
     }
 
 
@@ -178,6 +207,8 @@ public class GdydApplication extends Application {
             e.printStackTrace();
         } finally {
             try {
+//                ToastUtils.showShort("" + file.length() / 1024 / 1024);
+                ToastUtils.showShort("" + context.getDatabasePath("test.db").length() / 1024);
                 if (in != null) in.close();
                 if (out != null) out.close();
             } catch (IOException e1) {

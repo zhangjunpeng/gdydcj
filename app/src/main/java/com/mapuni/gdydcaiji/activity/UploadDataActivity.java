@@ -286,13 +286,14 @@ public class UploadDataActivity extends BaseActivity {
             @Override
             public void onResponse(@NonNull Call<UploadBean> call, @NonNull Response<UploadBean> response) {
                 LogUtils.d("onResponse" + response.body());
+                LogUtils.i("onResponse" + response.body().getResult());
 
                 UploadBean body = response.body();
                 if (body == null) {
                     if (pd.isShowing()) {
                         pd.dismiss();
                     }
-                    showResponseDialog("上传失败");
+                    showResponseDialog("上传失败1");
                     updataNum = 0;
                     upStartTime = null;
                     upStopTime = null;
@@ -379,11 +380,14 @@ public class UploadDataActivity extends BaseActivity {
 
         } else {
 
-            showResponseDialog("上传失败");
+            showResponseDialog("上传失败2");
+            if (pd.isShowing()) {
+                pd.dismiss();
+            }
             updataNum = 0;
             upStartTime = null;
             upStopTime = null;
-            deleteUpdateFile();
+//            deleteUpdateFile();
         }
 
     }
