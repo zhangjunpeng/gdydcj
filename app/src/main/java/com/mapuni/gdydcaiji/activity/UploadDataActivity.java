@@ -3,11 +3,13 @@ package com.mapuni.gdydcaiji.activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
@@ -95,6 +97,7 @@ public class UploadDataActivity extends BaseActivity {
     private final String filePath = PathConstant.UPLOAD_DATA + "/upload.txt";
     private ProgressDialog pd;
     private Call<UploadBean> call;
+
 
     @Override
     protected int getLayoutResId() {
@@ -638,5 +641,8 @@ public class UploadDataActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         deleteUpdateFile();
+
     }
+
+
 }
