@@ -3,6 +3,7 @@ package com.mapuni.gdydcaiji.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapuni.gdydcaiji.R;
@@ -43,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText etPassword;
     @BindView(R.id.cb_remember)
     CheckBox cbRemember;
+    @BindView(R.id.version_name)
+    TextView versionText;
     private String spUsername;
     private String spPassword;
 
@@ -66,6 +70,11 @@ public class LoginActivity extends AppCompatActivity {
             etUsername.setText(spUsername);
             etPassword.setText(spPassword);
 
+        }
+        try {
+            versionText.setText(getPackageManager().getPackageInfo(getPackageName(),0).versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
 
     }

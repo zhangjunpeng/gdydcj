@@ -10,12 +10,18 @@ android {
         applicationId "com.mapuni.gdydcaiji"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 5
-        versionName "2.3"
+        versionCode 6
+        versionName "2.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "广东移动采集_${variant.versionName}_${releaseTime()}.apk"
+            }
         }
     }
 
@@ -99,4 +105,8 @@ dependencies {
 
 repositories {
     mavenCentral()
+}
+
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd-HH-mm", TimeZone.getTimeZone("UTC"))
 }
