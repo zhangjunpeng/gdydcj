@@ -300,7 +300,7 @@ public class UploadDataActivity extends BaseActivity {
                     updataNum = 0;
                     upStartTime = null;
                     upStopTime = null;
-                    deleteUpdateFile();
+//                    deleteUpdateFile();
                     return;
                 }
                 processData(body);
@@ -322,7 +322,7 @@ public class UploadDataActivity extends BaseActivity {
                 updataNum = 0;
                 upStartTime = null;
                 upStopTime = null;
-                deleteUpdateFile();
+//                deleteUpdateFile();
 
             }
         });
@@ -375,7 +375,7 @@ public class UploadDataActivity extends BaseActivity {
                             updataNum = 0;
                             upStartTime = null;
                             upStopTime = null;
-                            deleteUpdateFile();
+//                            deleteUpdateFile();
                         }
                     });
                 }
@@ -640,7 +640,7 @@ public class UploadDataActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        deleteUpdateFile();
+//        deleteUpdateFile();
 
     }
 
