@@ -22,9 +22,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitFactory {
 
     //正式
-    public static final String BASE_URL = "http://123.160.246.203:8281/gdwycj/post/";
+//    public static final String BASE_URL = "http://123.160.246.203:8281/gdwycj/post/";
     //测试
 //    public static final String BASE_URL = "http://123.160.246.203:8055/gdwycj1/post/";
+
+    //测试机器
+    public static final String BASE_URL = "http://192.168.120.248:8080/gdwycj/post/";
 
     /**
      * 请求超时时间
