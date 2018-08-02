@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:divider="@drawable/shape_divider"
+    android:keepScreenOn="true"
     app:showDividers="middle">
 
     <include layout="@layout/layout_title" />
