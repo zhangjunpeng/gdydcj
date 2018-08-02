@@ -141,7 +141,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
             if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
-                cover.setVisibility(View.VISIBLE);
+//                cover.setVisibility(View.VISIBLE);
             }
         }
         super.showData();

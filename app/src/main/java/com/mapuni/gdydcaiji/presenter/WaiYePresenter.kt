@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.AsyncTask
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -413,7 +414,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private fun getPointName(info: TbPoint): String {
         var name = ""
-        val string_poi = listOf(info.name, info.lytype, info.lyxz, info.fl, info.dz, info.lyxz, info.dy, info.lxdh, info.dj, info.lycs, info.lyzhs, info.opttime.toString())
+        val string_poi = listOf(info.name, info.lytype, info.lyxz, info.fl, info.dz, info.dy, info.lxdh, info.dj, info.lycs, info.lyzhs, DateUtil.getStringByFormat(info.opttime,DateUtil.YMDHMS))
         for (i in 0 until point_bz_array.size) {
             if (point_bz_array[i] && string_poi[i].isNotEmpty()) {
                 name += string_poi[i] + "/"
@@ -424,7 +425,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private fun getLineName(info: TbLine): String {
         var name = ""
-        val string_poi = listOf(info.name, info.sfz, info.zdz, info.opttime.toString())
+        val string_poi = listOf(info.name, info.sfz, info.zdz, DateUtil.getStringByFormat(info.opttime,DateUtil.YMDHMS))
         for (i in 0 until line_bz_array.size) {
             if (line_bz_array[i] && string_poi[i].isNotEmpty()) {
                 name += string_poi[i] + "/"
@@ -435,7 +436,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private fun getSurfaceName(info: TbSurface): String {
         var name = ""
-        val string_poi = listOf(info.name, info.xqdz, info.fl, info.wyxx, info.lxdh, info.lds, info.opttime.toString())
+        val string_poi = listOf(info.name, info.xqdz, info.fl, info.wyxx, info.lxdh, info.lds, DateUtil.getStringByFormat(info.opttime,DateUtil.YMDHMS))
         for (i in 0 until surface_bz_array.size) {
             if (surface_bz_array[i] && string_poi[i].isNotEmpty()) {
                 name += string_poi[i] + "/"

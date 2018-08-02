@@ -60,8 +60,8 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     LinearLayout llZj;
     @BindView(R.id.ll_container)
     LinearLayoutCompat llContainer;
-    @BindView(R.id.cover)
-    View cover;
+//    @BindView(R.id.cover)
+//    View cover;
 
     //    protected boolean isEdit;
     protected T resultBean;
@@ -79,16 +79,16 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
         EventBus.getDefault().register(this);
 
-        llContainer
-                .getViewTreeObserver()
-                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        ViewGroup.LayoutParams layoutParams = cover.getLayoutParams();
-                        layoutParams.height = llContainer.getHeight();
-                        cover.setLayoutParams(layoutParams);
-                    }
-                });
+//        llContainer
+//                .getViewTreeObserver()
+//                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        ViewGroup.LayoutParams layoutParams = cover.getLayoutParams();
+//                        layoutParams.height = llContainer.getHeight();
+//                        cover.setLayoutParams(layoutParams);
+//                    }
+//                });
         
         /*设置dialog的宽*/
         WindowManager.LayoutParams lp = getWindow().getAttributes();
