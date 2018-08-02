@@ -24,7 +24,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+<<<<<<< HEAD
         android:largeHeap="true"
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".activity.LoginActivity">
             <intent-filter>

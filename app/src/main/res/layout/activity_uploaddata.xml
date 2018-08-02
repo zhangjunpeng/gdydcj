@@ -5,7 +5,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:divider="@drawable/shape_divider"
+<<<<<<< HEAD
     android:keepScreenOn="true"
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
     app:showDividers="middle">
 
     <include layout="@layout/layout_title" />

@@ -114,8 +114,12 @@ public class SaveToExcelUtil {
                 for (int j = 0; j < mContext.getResources().getStringArray(R.array.poi_item).length; j++) {
                     Label label = null;
                     if (j == 0) {
+<<<<<<< HEAD
 //                        label = new Label(j, i, tbPoint.getId().toString());
                         label = new Label(j, i, "");
+=======
+                        label = new Label(j, i, tbPoint.getId().toString());
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                     } else if (j == 1) {
                         label = new Label(j, i, tbPoint.getLytype());
                     } else if (j == 2) {
@@ -152,8 +156,12 @@ public class SaveToExcelUtil {
                 for (int j = 0; j < mContext.getResources().getStringArray(R.array.line_item).length; j++) {
                     Label label = null;
                     if (j == 0) {
+<<<<<<< HEAD
 //                        label = new Label(j, i, tbLine.getId().toString());
                         label = new Label(j, i, "");
+=======
+                        label = new Label(j, i, tbLine.getId().toString());
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                     } else if (j == 1) {
                         label = new Label(j, i, tbLine.getName());
                     } else if (j == 2) {
@@ -176,8 +184,12 @@ public class SaveToExcelUtil {
                 for (int j = 0; j < mContext.getResources().getStringArray(R.array.surface_item).length; j++) {
                     Label label = null;
                     if (j == 0) {
+<<<<<<< HEAD
 //                        label = new Label(j, i, tbSurface.getId().toString());
                         label = new Label(j, i, "");
+=======
+                        label = new Label(j, i, tbSurface.getId().toString());
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                     } else if (j == 1) {
                         label = new Label(j, i, tbSurface.getName());
                     } else if (j == 2) {

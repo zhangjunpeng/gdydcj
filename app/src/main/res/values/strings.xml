@@ -1,4 +1,8 @@
 <resources>
+<<<<<<< HEAD
     <string name="app_name">广东移动采集_质检</string>
+=======
+    <string name="app_name">广东移动采集</string>
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
     <string name="version_name">v2.3</string>
 </resources>

@@ -21,10 +21,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitFactory {
 
+<<<<<<< HEAD
     //正式
     public static final String BASE_URL = "http://123.160.246.203:8281/gdwycj/post/";
     //测试
 //    public static final String BASE_URL = "http://123.160.246.203:8055/gdwycj/post/";
+=======
+//        public static final String BASE_URL = "http://123.160.246.203:8055/gdwycj/post/";
+    public static final String BASE_URL = "http://123.160.246.203:8281/gdwycj/post/";
+//    public static final String BASE_URL = "http://192.168.120.190:8080/gdwycj/post/";
+
+//    public static final String BASE_URL = "http://192.168.100.15:8080/gdwycj/post/";
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 
     /**
      * 请求超时时间

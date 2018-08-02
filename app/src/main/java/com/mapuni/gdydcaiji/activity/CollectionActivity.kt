@@ -122,7 +122,11 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_collection)
+<<<<<<< HEAD
 //        PermissionUtils.requestAllPermission(this)
+=======
+        PermissionUtils.requestAllPermission(this)
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         instance = this
 
         MODE = SPUtils.getInstance().getString("roleid").toInt()
@@ -465,8 +469,13 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
         var roleid = SPUtils.getInstance().getString("roleid")
         if ("2" == roleid || "8" == roleid) {
             //质检
+<<<<<<< HEAD
 //            data.add("下载数据")
 //            data.add("删除数据")
+=======
+            data.add("下载数据")
+            data.add("删除数据")
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
             data.add("导出质检数据")
         } else if ("6" == roleid) {
             //外业
@@ -536,18 +545,23 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
                 6 -> {
                     if ("2" == roleid || "8" == roleid) {
                         //质检下载数据
+<<<<<<< HEAD
 //                        startActivity(Intent(this, QCListActivity::class.java))
                         //导出质检数据
                         ThreadUtils.executeSubThread {
 
                             waiYeInterface.databaseToExcel()
                         }
+=======
+                        startActivity(Intent(this, QCListActivity::class.java))
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                     } else if ("6" == roleid) {
                         //处理内业上传的数据
                         startActivity(Intent(this, EditInteriorActivity::class.java))
                     }
                 }
                 7 -> {
+<<<<<<< HEAD
 //                    if ("2" == roleid || "8" == roleid) {
 //                        //质检删除数据
 //                        ThreadUtils.executeSubThread {
@@ -578,6 +592,38 @@ class CollectionActivity : AppCompatActivity(), View.OnClickListener, OnSingleTa
 //                        waiYeInterface.databaseToExcel()
 //                    }
 //                }
+=======
+                    if ("2" == roleid || "8" == roleid) {
+                        //质检删除数据
+                        ThreadUtils.executeSubThread {
+
+                            if (DbUtils().noUpdateNum == 0) {
+                                DbUtils().deleteData()
+                                ThreadUtils.executeMainThread {
+                                    ToastUtils.showShort("删除成功")
+                                    waiYeInterface.updateGraphic()
+                                }
+                            } else {
+                                ThreadUtils.executeMainThread {
+                                    showWarnDialog()
+                                }
+                            }
+
+                        }
+                    } else if ("6" == roleid) {
+                        //外业纠错
+                        startActivity(Intent(this, CheckActivity::class.java))
+                    }
+
+                }
+                8 -> {
+                    //导出质检数据
+                    ThreadUtils.executeSubThread {
+
+                        waiYeInterface.databaseToExcel()
+                    }
+                }
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 
             }
         }

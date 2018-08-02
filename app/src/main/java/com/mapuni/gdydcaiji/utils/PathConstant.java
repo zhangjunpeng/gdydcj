@@ -31,7 +31,10 @@ public class PathConstant {
     public static final String CAPTURE_SCREEN = ROOT_PATH + "/capturescreen";
     //导出质检数据路径
     public static final String QC_DATA_PATH = ROOT_PATH + "/qcdata";
+<<<<<<< HEAD
     // 质检拷贝到本地的数据库路径
     public static final String QC_DATABASE_PATH = ROOT_PATH + "/qclocaldb";
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 
 }

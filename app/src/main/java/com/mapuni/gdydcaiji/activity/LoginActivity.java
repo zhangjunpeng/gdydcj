@@ -3,7 +3,10 @@ package com.mapuni.gdydcaiji.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.content.pm.PackageManager;
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -12,7 +15,10 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+<<<<<<< HEAD
 import android.widget.TextView;
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 import android.widget.Toast;
 
 import com.mapuni.gdydcaiji.R;
@@ -20,7 +26,10 @@ import com.mapuni.gdydcaiji.bean.LoginBean;
 import com.mapuni.gdydcaiji.net.RetrofitFactory;
 import com.mapuni.gdydcaiji.net.RetrofitService;
 import com.mapuni.gdydcaiji.utils.LogUtils;
+<<<<<<< HEAD
 import com.mapuni.gdydcaiji.utils.PermissionUtils;
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ToastUtils;
 
@@ -46,8 +55,11 @@ public class LoginActivity extends AppCompatActivity {
     EditText etPassword;
     @BindView(R.id.cb_remember)
     CheckBox cbRemember;
+<<<<<<< HEAD
     @BindView(R.id.version_name)
     TextView versionText;
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
     private String spUsername;
     private String spPassword;
 
@@ -61,7 +73,10 @@ public class LoginActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+<<<<<<< HEAD
         PermissionUtils.requestAllPermission(this);
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         // 用户名&密码回显
         boolean isRemember = SPUtils.getInstance().getBoolean("isRemember", false);
         cbRemember.setChecked(isRemember);
@@ -73,11 +88,14 @@ public class LoginActivity extends AppCompatActivity {
             etPassword.setText(spPassword);
 
         }
+<<<<<<< HEAD
         try {
             versionText.setText(getPackageManager().getPackageInfo(getPackageName(),0).versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 
     }
 

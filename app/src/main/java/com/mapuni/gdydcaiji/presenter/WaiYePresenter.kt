@@ -180,7 +180,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     override fun addPointInMap(point: Point) {
 
+<<<<<<< HEAD
         if (point.x > 200 || point.y > 200) {
+=======
+        if (point.x>200||point.y>200){
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
             ToastUtils.showLong("经纬度错误")
             return
         }
@@ -240,7 +244,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     inner class UPDateGraphicTask : AsyncTask<String, Void, Polygon>() {
         override fun doInBackground(vararg params: String?): Polygon {
             var currentPloygon = getCurrentExtent()
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
             val leftTopP = currentPloygon.getPoint(0)
             val rightTopP = currentPloygon.getPoint(1)
             val leftBottomP = currentPloygon.getPoint(2)
@@ -259,12 +267,15 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                     surfaceList = tbSurfaceDao.queryBuilder().where(
                             TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
                     ).listLazy()
+<<<<<<< HEAD
 //                    surfaceList = tbSurfaceDao.queryBuilder().where(
 //                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
 //                    ).
                     for (item in surfaceList!!){
                         item.img=""
                     }
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                 }
                 6 -> {
                     //外业
@@ -289,7 +300,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         }
 
         override fun onPostExecute(result: Polygon) {
+<<<<<<< HEAD
             updateGraphicInLocal()
+=======
+            updateGraphicInLocal(result)
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
             super.onPostExecute(result)
         }
 
@@ -300,7 +315,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         if (name.isEmpty()) {
             return
         }
+<<<<<<< HEAD
 //        if ("samsung" == android.os.Build.BRAND) {
+=======
+        if ("samsung" == android.os.Build.BRAND) {
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
             val tv = TextView(context)
             tv.text = name
             tv.textSize = 8f
@@ -315,6 +334,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             picturSymbol.offsetY = 10f
             val nameGraphic = Graphic(point, picturSymbol)
             graphicName.addGraphic(nameGraphic)
+<<<<<<< HEAD
         bitmap.recycle()
 //        } else {
 //            val textSymbol = TextSymbol(10, name, currentTvColor)
@@ -326,6 +346,18 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
 
     private fun updateGraphicInLocal() {
+=======
+        } else {
+            val textSymbol = TextSymbol(10, name, currentTvColor)
+            textSymbol.offsetY = 6f
+            val nameGraphic = Graphic(point, textSymbol)
+            graphicName.addGraphic(nameGraphic)
+        }
+    }
+
+
+    private fun updateGraphicInLocal(currentPloygon: Polygon) {
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         for (info: TbPoint in pointList as LazyList) {
             val point = Point(info.lng, info.lat)
             var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()) {
@@ -356,8 +388,13 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 } else {
                     polyline.lineTo(point)
                 }
+<<<<<<< HEAD
             }
 
+=======
+
+            }
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
             val simpleLineSymbol = SimpleLineSymbol(Color.RED, 2f, SimpleLineSymbol.STYLE.SOLID)
             val graphic = Graphic(polyline, simpleLineSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
@@ -529,7 +566,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     override fun singleTapOnCollection(v: Float, v1: Float, tolerance: Int) {
         val center = mapView.toMapPoint(v, v1)
+<<<<<<< HEAD
         if (center.x > 200 || center.y > 200) {
+=======
+        if (center.x>200||center.y>200){
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
             ToastUtils.showLong("经纬度错误")
             return
         }
@@ -731,6 +772,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     fun databaseToExcel() {
 
         val tbpoints = tbPointDao.queryBuilder().where(
+<<<<<<< HEAD
 //                TbPointDao.Properties.Flag.eq(2),
 //                TbPointDao.Properties.Id.isNotNull
                 TbPointDao.Properties.Authcontent.notEq("")
@@ -746,6 +788,20 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 //                TbSurfaceDao.Properties.Flag.eq(2),
 //                TbSurfaceDao.Properties.Id.isNotNull
                 TbSurfaceDao.Properties.Authcontent.notEq("")
+=======
+                TbPointDao.Properties.Flag.eq(2),
+                TbPointDao.Properties.Id.isNotNull
+        ).orderAsc(TbPointDao.Properties.Opttime).list()
+
+        val tbLines = tbLineDao.queryBuilder().where(
+                TbLineDao.Properties.Flag.eq(2),
+                TbLineDao.Properties.Id.isNotNull
+        ).orderAsc(TbLineDao.Properties.Opttime).list()
+
+        val tbSurfaces = tbSurfaceDao.queryBuilder().where(
+                TbSurfaceDao.Properties.Flag.eq(2),
+                TbSurfaceDao.Properties.Id.isNotNull
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         ).orderAsc(TbSurfaceDao.Properties.Opttime).list()
 
         if (tbpoints.isEmpty() && tbLines.isEmpty() && tbSurfaces.isEmpty()) {
@@ -823,7 +879,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     private fun showNotHaveMapDialog() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("无地图文件，请先下载地图")
+<<<<<<< HEAD
         builder.setPositiveButton("确定") { _, _ -> context.startActivity(Intent(context, DownloadMapActivity::class.java)) }
+=======
+        builder.setPositiveButton("确定") { dialog, which -> context.startActivity(Intent(context, DownloadMapActivity::class.java)) }
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         builder.setNegativeButton("取消", null)
         builder.show()
     }

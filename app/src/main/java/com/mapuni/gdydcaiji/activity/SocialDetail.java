@@ -62,7 +62,10 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         super.initView();
         title.setText("面采集");
         tbSurfaceDao = GdydApplication.getInstances().getDaoSession().getTbSurfaceDao();
+<<<<<<< HEAD
         tbSurfaceDao.detachAll();
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         setSpinnerData(R.array.social_type, spFl);
 
         bj = getIntent().getStringExtra("bj");
@@ -132,6 +135,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 
         } else if (roleid.equals("2") || roleid.equals("8")) {
             //质检
+<<<<<<< HEAD
 //            if (resultBean.getId() != null) {
 //                llZj.setVisibility(View.VISIBLE);
 //                etZjjg.setText(resultBean.getAuthcontent());
@@ -139,6 +143,9 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 //            }
 
             if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
+=======
+            if (resultBean.getId() != null) {
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
                 cover.setVisibility(View.VISIBLE);
@@ -154,9 +161,13 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
             resultBean.setPolyarrays(bj);
+<<<<<<< HEAD
             if (TextUtils.isEmpty(resultBean.getOprator())) {
                 resultBean.setOprator(SPUtils.getInstance().getString("username"));
             }
+=======
+            resultBean.setOprator(SPUtils.getInstance().getString("username"));
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         }
 
         resultBean.setName(getTextByView(etName));
@@ -169,7 +180,11 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
         resultBean.setImg(getPhotoImg());
 
         resultBean.setOpttime(new Date(System.currentTimeMillis()));
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         if (isInsert) {
             resultBean.setFlag(0);
             tbSurfaceDao.insert(resultBean);
@@ -187,12 +202,16 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 
             } else if (roleid.equals("2") || roleid.equals("8")) {
                 //质检
+<<<<<<< HEAD
 //                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
 //                    resultBean.setAuthcontent(getTextByView(etZjjg));
 //                    resultBean.setAuthflag("1");
 //                }
 
                 if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username")) && !TextUtils.isEmpty(etZjjg.getText())) {
+=======
+                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                     resultBean.setAuthcontent(getTextByView(etZjjg));
                     resultBean.setAuthflag("1");
                 }

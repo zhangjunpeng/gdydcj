@@ -13,7 +13,10 @@
         android:src="@drawable/logo" />
 
     <TextView
+<<<<<<< HEAD
         android:id="@+id/version_name"
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/logo"

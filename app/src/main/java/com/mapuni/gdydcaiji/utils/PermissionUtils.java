@@ -4,7 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 
+<<<<<<< HEAD
 import com.mapuni.gdydcaiji.GdydApplication;
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.PermissionListener;
 import com.yanzhenjie.permission.Rationale;
@@ -80,7 +83,10 @@ public class PermissionUtils {
                             file8.mkdirs();
                         }
 
+<<<<<<< HEAD
                         GdydApplication.getInstances().setDatabase();
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                     }
 
                     @Override

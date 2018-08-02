@@ -103,6 +103,7 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 
         } else if (roleid.equals("2") || roleid.equals("8")) {
             //质检
+<<<<<<< HEAD
 //            if (resultBean.getId() != null) {
 //                llZj.setVisibility(View.VISIBLE);
 //                etZjjg.setText(resultBean.getAuthcontent());
@@ -110,6 +111,9 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 //            }
 
             if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
+=======
+            if (resultBean.getId() != null) {
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                 llZj.setVisibility(View.VISIBLE);
                 etZjjg.setText(resultBean.getAuthcontent());
                 cover.setVisibility(View.VISIBLE);
@@ -123,9 +127,13 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
         if (resultBean == null) {
             resultBean = new TbLine();
             resultBean.setPolyarrays(bj);
+<<<<<<< HEAD
             if (TextUtils.isEmpty(resultBean.getOprator())) {
                 resultBean.setOprator(SPUtils.getInstance().getString("username"));
             }
+=======
+            resultBean.setOprator(SPUtils.getInstance().getString("username"));
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
         }
 
         resultBean.setName(getTextByView(etName));
@@ -153,12 +161,16 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 
             } else if (roleid.equals("2") || roleid.equals("8")) {
                 //质检
+<<<<<<< HEAD
 //                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
 //                    resultBean.setAuthcontent(getTextByView(etZjjg));
 //                    resultBean.setAuthflag("1");
 //                }
 
                 if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username")) && !TextUtils.isEmpty(etZjjg.getText())) {
+=======
+                if (resultBean.getId() != null && !TextUtils.isEmpty(etZjjg.getText())) {
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
                     resultBean.setAuthcontent(getTextByView(etZjjg));
                     resultBean.setAuthflag("1");
                 }
