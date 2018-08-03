@@ -239,6 +239,7 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
             if (TextUtils.isEmpty(resultBean.getOprator())) {
                 resultBean.setOprator(SPUtils.getInstance().getString("username"));
             }
+
         }
 
         if (lat != 0.0) {
@@ -247,10 +248,12 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
         if (lng != 0.0) {
             resultBean.setLng(lng);
         }
+
         if (lat>200||lng>200){
             ToastUtils.showLong("经纬度异常，请重启软件或设备");
             return;
         }
+
         resultBean.setName(getTextByView(etLyName));
 //        resultBean.setLytype(spLyType.getSelectedItemPosition() == 0 ? "" : getResources().getStringArray(R.array.building_types)[spLyType.getSelectedItemPosition()]);
         resultBean.setLytype(lyType);

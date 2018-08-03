@@ -150,6 +150,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
             if (TextUtils.isEmpty(resultBean.getOprator())) {
                 resultBean.setOprator(SPUtils.getInstance().getString("username"));
             }
+
         }
 
         resultBean.setName(getTextByView(etName));

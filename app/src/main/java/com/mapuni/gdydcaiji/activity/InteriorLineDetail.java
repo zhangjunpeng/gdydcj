@@ -138,6 +138,7 @@ public class InteriorLineDetail extends BaseDetailActivity<InLine> {
             if(TextUtils.isEmpty(resultBean.getOprator())){
                 resultBean.setOprator(SPUtils.getInstance().getString("username"));
             }
+
         }
 
         resultBean.setName(getTextByView(etName));

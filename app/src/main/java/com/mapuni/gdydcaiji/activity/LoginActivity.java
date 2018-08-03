@@ -3,7 +3,10 @@ package com.mapuni.gdydcaiji.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.content.pm.PackageManager;
+=======
+>>>>>>> 746d730cb42a41f26875c11a1735a2e36e6a7075
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -47,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     CheckBox cbRemember;
     @BindView(R.id.version_name)
     TextView versionText;
+
     private String spUsername;
     private String spPassword;
 
@@ -76,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
 
     }
 
