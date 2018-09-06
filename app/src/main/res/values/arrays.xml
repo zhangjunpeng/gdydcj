@@ -67,6 +67,7 @@
         <item>楼宇住户数</item>
         <item>备注</item>
         <item>质检结果</item>
+        <item>图片</item>
     </string-array>
     
     <string-array name="line_item">
@@ -76,6 +77,7 @@
         <item>终点</item>
         <item>备注</item>
         <item>质检结果</item>
+        <item>图片</item>
     </string-array>
     
     <string-array name="surface_item">
@@ -88,5 +90,6 @@
         <item>楼栋数</item>
         <item>备注</item>
         <item>质检结果</item>
+        <item>图片</item>
     </string-array>
 </resources>

@@ -138,6 +138,10 @@ public class LineDetail extends BaseDetailActivity<TbLine> {
 
         if (isInsert) {
             resultBean.setFlag(0);
+            if (roleid.equals("2") || roleid.equals("8")) {
+                //如果是质检，authflag直接为1
+                resultBean.setAuthflag("1");
+            }
             tbLineDao.insert(resultBean);
         } else {
             if (resultBean.getFlag() == 0 && resultBean.getId() == null) {

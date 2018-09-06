@@ -140,6 +140,8 @@ public class SaveToExcelUtil {
                         label = new Label(j, i, tbPoint.getNote());
                     } else if (j == 12) {
                         label = new Label(j, i, tbPoint.getAuthcontent());
+                    } else if (j == 13) {
+                        label = new Label(j, i, tbPoint.getImg());
                     }
                     sheet0.addCell(label);
                 }
@@ -164,6 +166,8 @@ public class SaveToExcelUtil {
                         label = new Label(j, i, tbLine.getNote());
                     } else if (j == 5) {
                         label = new Label(j, i, tbLine.getAuthcontent());
+                    } else if (j == 6) {
+                        label = new Label(j, i, tbLine.getImg());
                     }
                     sheet1.addCell(label);
                 }
@@ -194,6 +198,8 @@ public class SaveToExcelUtil {
                         label = new Label(j, i, tbSurface.getNote());
                     } else if (j == 8) {
                         label = new Label(j, i, tbSurface.getAuthcontent());
+                    } else if (j == 9) {
+                        label = new Label(j, i, tbSurface.getImg());
                     }
                     sheet2.addCell(label);
                 }
