@@ -2,12 +2,22 @@ package com.mapuni.gdydcaiji;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
+import android.text.TextUtils;
+import android.util.Base64;
 
+import com.mapuni.gdydcaiji.bean.TbLine;
+import com.mapuni.gdydcaiji.bean.TbPoint;
+import com.mapuni.gdydcaiji.bean.TbSurface;
 import com.mapuni.gdydcaiji.database.greendao.DaoMaster;
 import com.mapuni.gdydcaiji.database.greendao.DaoSession;
 import com.mapuni.gdydcaiji.database.greendao.GreenDaoContext;
 import com.mapuni.gdydcaiji.database.greendao.MyOpenHelper;
+import com.mapuni.gdydcaiji.database.greendao.TbLineDao;
+import com.mapuni.gdydcaiji.database.greendao.TbPointDao;
+import com.mapuni.gdydcaiji.database.greendao.TbSurfaceDao;
 import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.utils.SPUtils;
 import com.mapuni.gdydcaiji.utils.ThreadUtils;
@@ -22,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Created by yf on 2018/3/15.
@@ -92,6 +103,72 @@ public class GdydApplication extends Application {
         // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。  
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
+        setImg2Url();
+    }
+
+    private void setImg2Url() {
+        ThreadUtils.executeSubThread(new Runnable() {
+            @Override
+            public void run() {
+                TbPointDao tbPointDao = mDaoSession.getTbPointDao();
+                TbLineDao tbLineDao = mDaoSession.getTbLineDao();
+                TbSurfaceDao tbSurfaceDao = mDaoSession.getTbSurfaceDao();
+                List<TbPoint> tbPoints = tbPointDao.queryBuilder().where(TbPointDao.Properties.Img.notEq("")).list();
+                List<TbLine> tbLines = tbLineDao.queryBuilder().where(TbLineDao.Properties.Img.notEq("")).list();
+                List<TbSurface> tbSurfaces = tbSurfaceDao.queryBuilder().where(TbSurfaceDao.Properties.Img.notEq("")).list();
+                for (TbPoint tbPoint : tbPoints) {
+                    String img = tbPoint.getImg();
+                    String newImgurl = setImg2Local(img);
+                    tbPoint.setImg(newImgurl);
+                }
+                for (TbLine tbLine : tbLines) {
+                    String img = tbLine.getImg();
+                    String newImgurl = setImg2Local(img);
+                    tbLine.setImg(newImgurl);
+                }
+                for (TbSurface tbSurface : tbSurfaces) {
+                    String img = tbSurface.getImg();
+                    String newImgurl = setImg2Local(img);
+                    tbSurface.setImg(newImgurl);
+                }
+
+                tbPointDao.updateInTx(tbPoints);
+                tbLineDao.updateInTx(tbLines);
+                tbSurfaceDao.updateInTx(tbSurfaces);
+
+            }
+        });
+    }
+
+    //将图片解码到本地并转成名称存储
+    private String setImg2Local(String img) {
+        if (TextUtils.isEmpty(img))
+            return "";
+        String[] imgs = img.split(";");
+        String newImgUrl = "";
+        for (String s : imgs) {
+            if (s.contains(".jpg")) {
+                newImgUrl += s + ";";
+            } else {
+                byte[] decode = Base64.decode(s, Base64.DEFAULT);
+                String imgName = System.currentTimeMillis() + ".jpg";
+                bytesToImageFile(decode, imgName);
+                newImgUrl += imgName + ";";
+            }
+        }
+        return newImgUrl.substring(0, newImgUrl.length() - 1);
+    }
+
+    private void bytesToImageFile(byte[] bytes, String imgName) {
+        try {
+            File file = new File(PathConstant.IMAGE_PATH + "/" + imgName);
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bytes, 0, bytes.length);
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public DaoSession getDaoSession() {

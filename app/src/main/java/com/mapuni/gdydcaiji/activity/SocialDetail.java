@@ -192,7 +192,7 @@ public class SocialDetail extends BaseDetailActivity<TbSurface> {
 //                    resultBean.setAuthflag("1");
 //                }
 
-                if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username")) && !TextUtils.isEmpty(etZjjg.getText())) {
+                if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
                     resultBean.setAuthcontent(getTextByView(etZjjg));
                     resultBean.setAuthflag("1");
                 }

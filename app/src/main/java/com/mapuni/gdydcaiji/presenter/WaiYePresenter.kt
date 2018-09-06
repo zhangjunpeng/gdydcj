@@ -263,8 +263,8 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 //                    surfaceList = tbSurfaceDao.queryBuilder().where(
 //                            TbSurfaceDao.Properties.Opttime.between(DateUtil.getDateByFormat("$dateStartTime 00:00:00", DateUtil.YMDHMS), DateUtil.getDateByFormat("$dateStopTime 24:00:00", DateUtil.YMDHMS))
 //                    ).
-                    for (item in surfaceList!!){
-                        item.img=""
+                    for (item in surfaceList!!) {
+                        item.img = ""
                     }
                 }
                 6 -> {
@@ -302,20 +302,20 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
             return
         }
 //        if ("samsung" == android.os.Build.BRAND) {
-            val tv = TextView(context)
-            tv.text = name
-            tv.textSize = 8f
-            tv.setTextColor(currentTvColor)
-            tv.isDrawingCacheEnabled = true
-            tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
-            tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
-            val bitmap = Bitmap.createBitmap(tv.drawingCache)
+        val tv = TextView(context)
+        tv.text = name
+        tv.textSize = 8f
+        tv.setTextColor(currentTvColor)
+        tv.isDrawingCacheEnabled = true
+        tv.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        tv.layout(0, 0, tv.measuredWidth, tv.measuredHeight)
+        val bitmap = Bitmap.createBitmap(tv.drawingCache)
 //        千万别忘最后一步
-            tv.destroyDrawingCache()
-            val picturSymbol = PictureMarkerSymbol(BitmapDrawable(context.resources, bitmap))
-            picturSymbol.offsetY = 10f
-            val nameGraphic = Graphic(point, picturSymbol)
-            graphicName.addGraphic(nameGraphic)
+        tv.destroyDrawingCache()
+        val picturSymbol = PictureMarkerSymbol(BitmapDrawable(context.resources, bitmap))
+        picturSymbol.offsetY = 10f
+        val nameGraphic = Graphic(point, picturSymbol)
+        graphicName.addGraphic(nameGraphic)
         bitmap.recycle()
 //        } else {
 //            val textSymbol = TextSymbol(10, name, currentTvColor)
@@ -329,7 +329,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
     private fun updateGraphicInLocal() {
         for (info: TbPoint in pointList as LazyList) {
             val point = Point(info.lng, info.lat)
-            var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.authcontent.isNotEmpty()) {
+            var simpleMarkerSymbol: SimpleMarkerSymbol = if (info.authflag == "1") {
                 SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
             } else {
                 SimpleMarkerSymbol(Color.RED, 10, SimpleMarkerSymbol.STYLE.CIRCLE)
@@ -359,7 +359,11 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 }
             }
 
-            val simpleLineSymbol = SimpleLineSymbol(Color.RED, 2f, SimpleLineSymbol.STYLE.SOLID)
+            val simpleLineSymbol = if (info.authflag == "1") {
+                SimpleLineSymbol(Color.BLUE, 2f, SimpleLineSymbol.STYLE.SOLID)
+            } else {
+                SimpleLineSymbol(Color.RED, 2f, SimpleLineSymbol.STYLE.SOLID)
+            }
             val graphic = Graphic(polyline, simpleLineSymbol)
             val uid = localGraphicsLayer.addGraphic(graphic)
             infoMap[uid] = info
@@ -387,7 +391,12 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
                 tempPointList.add(point)
             }
 
-            val fillSymbol = SimpleFillSymbol(Color.argb(100, 255, 0, 0))
+            val fillSymbol = if (info.authflag == "1") {
+
+                SimpleFillSymbol(Color.argb(100, 0, 0, 255))
+            } else {
+                SimpleFillSymbol(Color.argb(100, 255, 0, 0))
+            }
             val polygon = Polygon()
             polygon.startPath(tempPointList[0])
             for (i in 1 until tempPointList.size) {
@@ -414,7 +423,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private fun getPointName(info: TbPoint): String {
         var name = ""
-        val string_poi = listOf(info.name, info.lytype, info.lyxz, info.fl, info.dz, info.dy, info.lxdh, info.dj, info.lycs, info.lyzhs, DateUtil.getStringByFormat(info.opttime,DateUtil.YMDHMS))
+        val string_poi = listOf(info.name, info.lytype, info.lyxz, info.fl, info.dz, info.dy, info.lxdh, info.dj, info.lycs, info.lyzhs, DateUtil.getStringByFormat(info.opttime, DateUtil.YMDHMS))
         for (i in 0 until point_bz_array.size) {
             if (point_bz_array[i] && string_poi[i].isNotEmpty()) {
                 name += string_poi[i] + "/"
@@ -425,7 +434,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private fun getLineName(info: TbLine): String {
         var name = ""
-        val string_poi = listOf(info.name, info.sfz, info.zdz, DateUtil.getStringByFormat(info.opttime,DateUtil.YMDHMS))
+        val string_poi = listOf(info.name, info.sfz, info.zdz, DateUtil.getStringByFormat(info.opttime, DateUtil.YMDHMS))
         for (i in 0 until line_bz_array.size) {
             if (line_bz_array[i] && string_poi[i].isNotEmpty()) {
                 name += string_poi[i] + "/"
@@ -436,7 +445,7 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
 
     private fun getSurfaceName(info: TbSurface): String {
         var name = ""
-        val string_poi = listOf(info.name, info.xqdz, info.fl, info.wyxx, info.lxdh, info.lds, DateUtil.getStringByFormat(info.opttime,DateUtil.YMDHMS))
+        val string_poi = listOf(info.name, info.xqdz, info.fl, info.wyxx, info.lxdh, info.lds, DateUtil.getStringByFormat(info.opttime, DateUtil.YMDHMS))
         for (i in 0 until surface_bz_array.size) {
             if (surface_bz_array[i] && string_poi[i].isNotEmpty()) {
                 name += string_poi[i] + "/"
