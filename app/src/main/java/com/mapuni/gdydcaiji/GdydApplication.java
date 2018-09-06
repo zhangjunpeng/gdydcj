@@ -107,6 +107,11 @@ public class GdydApplication extends Application {
     }
 
     private void setImg2Url() {
+        //创建文件夹
+        new File(PathConstant.IMAGE_PATH + "/point").mkdirs();
+        new File(PathConstant.IMAGE_PATH + "/line").mkdirs();
+        new File(PathConstant.IMAGE_PATH + "/surface").mkdirs();
+
         ThreadUtils.executeSubThread(new Runnable() {
             @Override
             public void run() {
@@ -118,17 +123,17 @@ public class GdydApplication extends Application {
                 List<TbSurface> tbSurfaces = tbSurfaceDao.queryBuilder().where(TbSurfaceDao.Properties.Img.notEq("")).list();
                 for (TbPoint tbPoint : tbPoints) {
                     String img = tbPoint.getImg();
-                    String newImgurl = setImg2Local(img);
+                    String newImgurl = setImg2Local("/img/point", img);
                     tbPoint.setImg(newImgurl);
                 }
                 for (TbLine tbLine : tbLines) {
                     String img = tbLine.getImg();
-                    String newImgurl = setImg2Local(img);
+                    String newImgurl = setImg2Local("/img/line", img);
                     tbLine.setImg(newImgurl);
                 }
                 for (TbSurface tbSurface : tbSurfaces) {
                     String img = tbSurface.getImg();
-                    String newImgurl = setImg2Local(img);
+                    String newImgurl = setImg2Local("/img/surface", img);
                     tbSurface.setImg(newImgurl);
                 }
 
@@ -141,7 +146,7 @@ public class GdydApplication extends Application {
     }
 
     //将图片解码到本地并转成名称存储
-    private String setImg2Local(String img) {
+    private String setImg2Local(String filedir, String img) {
         if (TextUtils.isEmpty(img))
             return "";
         String[] imgs = img.split(";");
@@ -151,7 +156,7 @@ public class GdydApplication extends Application {
                 newImgUrl += s + ";";
             } else {
                 byte[] decode = Base64.decode(s, Base64.DEFAULT);
-                String imgName = System.currentTimeMillis() + ".jpg";
+                String imgName = filedir + File.separator + System.currentTimeMillis() + ".jpg";
                 bytesToImageFile(decode, imgName);
                 newImgUrl += imgName + ";";
             }
@@ -161,7 +166,7 @@ public class GdydApplication extends Application {
 
     private void bytesToImageFile(byte[] bytes, String imgName) {
         try {
-            File file = new File(PathConstant.IMAGE_PATH + "/" + imgName);
+            File file = new File(PathConstant.ROOT_PATH + imgName);
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(bytes, 0, bytes.length);
             fos.flush();

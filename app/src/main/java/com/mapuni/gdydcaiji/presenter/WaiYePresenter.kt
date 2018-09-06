@@ -743,19 +743,20 @@ class WaiYePresenter(context: Context, mapView: MapView) : WaiYeInterface {
         val tbpoints = tbPointDao.queryBuilder().where(
 //                TbPointDao.Properties.Flag.eq(2),
 //                TbPointDao.Properties.Id.isNotNull
-                TbPointDao.Properties.Authcontent.notEq("")
+                TbPointDao.Properties.Authflag.eq("1")
         ).orderAsc(TbPointDao.Properties.Opttime).list()
 
         val tbLines = tbLineDao.queryBuilder().where(
 //                TbLineDao.Properties.Flag.eq(2),
 //                TbLineDao.Properties.Id.isNotNull
-                TbLineDao.Properties.Authcontent.notEq("")
+                TbLineDao.Properties.Authflag.eq("1")
         ).orderAsc(TbLineDao.Properties.Opttime).list()
 
         val tbSurfaces = tbSurfaceDao.queryBuilder().where(
 //                TbSurfaceDao.Properties.Flag.eq(2),
 //                TbSurfaceDao.Properties.Id.isNotNull
-                TbSurfaceDao.Properties.Authcontent.notEq("")
+//                TbSurfaceDao.Properties.Authcontent.notEq("")
+                TbSurfaceDao.Properties.Authflag.eq("1")
         ).orderAsc(TbSurfaceDao.Properties.Opttime).list()
 
         if (tbpoints.isEmpty() && tbLines.isEmpty() && tbSurfaces.isEmpty()) {

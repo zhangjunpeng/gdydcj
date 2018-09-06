@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.mapuni.gdydcaiji.R;
 import com.mapuni.gdydcaiji.bean.EventBean;
 import com.mapuni.gdydcaiji.utils.DialogUtils;
+import com.mapuni.gdydcaiji.utils.PathConstant;
 import com.mapuni.gdydcaiji.view.PinchImageView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,7 +40,7 @@ public class ImageActivity extends AppCompatActivity {
         String path = getIntent().getStringExtra("path");
         position = getIntent().getIntExtra("position", -1);
         Glide.with(this)
-                .load(Base64.decode(path, Base64.DEFAULT))
+                .load(PathConstant.ROOT_PATH + path)
                 .apply(new RequestOptions()
                         .error(R.drawable.not_have_image)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -54,7 +55,7 @@ public class ImageActivity extends AppCompatActivity {
                 DialogUtils.showWarningDialog(this, "确定要删除照片吗", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EventBus.getDefault().post(new EventBean("deleteImg",position));
+                        EventBus.getDefault().post(new EventBean("deleteImg", position));
                         finish();
                     }
                 });

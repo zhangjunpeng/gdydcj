@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.mapuni.gdydcaiji.R;
+import com.mapuni.gdydcaiji.utils.PathConstant;
 
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class PhotoAdapter extends android.widget.BaseAdapter {
         if (position < mList.size()) {
             Glide
                     .with(mContext)
-                    .load(Base64.decode(mList.get(position), Base64.DEFAULT))
+                    .load(PathConstant.ROOT_PATH + mList.get(position))
                     .apply(new RequestOptions()
                             .error(R.drawable.not_have_image)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)

@@ -97,6 +97,7 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
         adapter = new PhotoAdapter(mContext.getApplicationContext(), imgUrls);
         gvPhoto.setAdapter(adapter);
+        
     }
 
     @Override
@@ -145,14 +146,15 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
     }
 
     protected String getPhotoImg() {
-        String photoImgStr = "";
+        String photoImgUrl = "";
         if (imgUrls != null && imgUrls.size() > 0) {
             for (String s :
                     imgUrls) {
-                photoImgStr += s + ";";
+                photoImgUrl += s + ";";
             }
+            photoImgUrl = photoImgUrl.substring(0, photoImgUrl.length() - 1);
         }
-        return TextUtils.isEmpty(photoImgStr) ? "" : photoImgStr.substring(0, photoImgStr.length() - 1);
+        return photoImgUrl;
     }
 
     /**
@@ -184,10 +186,21 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
                     break;
             }
 //            LogUtils.d(pathStr);
+
+            String imgPath = PathConstant.IMAGE_PATH;
+            if (this instanceof PoiDetail) {
+                imgPath += "/point";
+            } else if (this instanceof LineDetail) {
+                imgPath += "/line";
+
+            } else if (this instanceof SocialDetail) {
+                imgPath += "/surface";
+            }
+            
             Luban.with(this)
                     .load(pathStr)  // 传人要压缩的图片列表
                     .ignoreBy(100) // 忽略不压缩图片的大小  KB
-                    .setTargetDir(PathConstant.IMAGE_PATH) // 设置压缩后文件存储位置
+                    .setTargetDir(imgPath) // 设置压缩后文件存储位置
                     .setCompressListener(new OnCompressListener() { //设置回调
                         @Override
                         public void onStart() {
@@ -195,8 +208,8 @@ public abstract class BaseDetailActivity<T> extends BaseActivity {
 
                         @Override
                         public void onSuccess(File file) {
-                            String imgUrl = Base64.encodeToString(FileIOUtils.readFile2BytesByChannel(file), Base64.DEFAULT);
-                            imgUrls.add(imgUrl);
+//                            String imgUrl = Base64.encodeToString(FileIOUtils.readFile2BytesByChannel(file), Base64.DEFAULT);
+                            imgUrls.add(file.getAbsolutePath().replace(PathConstant.ROOT_PATH, ""));
                             adapter.notifyDataSetChanged();
                         }
 
