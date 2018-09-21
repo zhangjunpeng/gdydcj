@@ -20,7 +20,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitFactory {
-
     //正式
     public static final String BASE_URL = "http://123.160.246.203:8281/gdwycj/post/";
     //测试

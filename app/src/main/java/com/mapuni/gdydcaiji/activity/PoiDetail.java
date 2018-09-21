@@ -224,11 +224,17 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
 //                etZjjg.setText(resultBean.getAuthcontent());
 //                cover.setVisibility(View.VISIBLE);
 //            }
-            if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
-                llZj.setVisibility(View.VISIBLE);
-                etZjjg.setText(resultBean.getAuthcontent());
+//            try {
+                if (!resultBean.getOprator().equals(SPUtils.getInstance().getString("username"))) {
+                    llZj.setVisibility(View.VISIBLE);
+                    etZjjg.setText(resultBean.getAuthcontent());
 //                cover.setVisibility(View.VISIBLE);
-            }
+                }
+//            }catch (NullPointerException e){
+//                llZj.setVisibility(View.VISIBLE);
+//                etZjjg.setText(resultBean.getAuthcontent());
+//            }
+
         }
         super.showData();
     }
@@ -241,9 +247,9 @@ public class PoiDetail extends BaseDetailActivity<TbPoint> implements View.OnCli
             resultBean = new TbPoint();
 //            resultBean.setLat(lat);
 //            resultBean.setLng(lng);
-            if (TextUtils.isEmpty(resultBean.getOprator())) {
-                resultBean.setOprator(SPUtils.getInstance().getString("username"));
-            }
+//            if (TextUtils.isEmpty(resultBean.getOprator())) {
+//                resultBean.setOprator(SPUtils.getInstance().getString("username"));
+//            }
         }
 
         if (lat != 0.0) {

@@ -10,8 +10,8 @@ android {
         applicationId "com.mapuni.gdydcaiji"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 6
-        versionName "2.4"
+        versionCode 8
+        versionName "2.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -27,7 +27,7 @@ android {
 
     greendao {
         //版本号，升级时可配置
-        schemaVersion 3
+        schemaVersion 4
         daoPackage 'com.mapuni.gdydcaiji.database.greendao'
         targetGenDir 'src/main/java/'
     }
